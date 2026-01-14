@@ -1,12 +1,12 @@
-# apps/doctors/decorators.py
 from django.shortcuts import redirect
 from functools import wraps
 
 def doctor_required(view_func):
     @wraps(view_func)
     def wrapper(request, *args, **kwargs):
-        if request.user.is_authenticated and hasattr(request.user, 'doctor_profile'):
+        # Allow if user is authenticated and is_staff (or superuser)
+        if request.user.is_authenticated and request.user.is_staff:
             return view_func(request, *args, **kwargs)
-        else:
-            return redirect('doctor_login')  # your login page
+        # Otherwise, redirect to doctor login
+        return redirect('doctors:login')
     return wrapper

@@ -1,126 +1,73 @@
 {% extends 'core/base.html' %}
 {% load static %}
 
-{% block title %}পেশেন্ট লগইন - New Oro Dent Care{% endblock %}
+{% block title %}লগইন - New Oro Dent Care{% endblock %}
 
 {% block content %}
-
 <style>
-    /* --- Login Page Specific Styles --- */
-    
-    /* 1. Section Background */
-    .login-section {
-        background-color: #f4f9fd; /* Light clean background */
-        /* Adding a subtle professional pattern */
-        background-image: radial-gradient(var(--color-primary) 0.5px, transparent 0.5px), radial-gradient(var(--color-primary) 0.5px, #f4f9fd 0.5px);
-        background-size: 20px 20px;
-        background-position: 0 0, 10px 10px;
-        min-height: 80vh; /* Ensure it takes up good screen space */
-        display: flex;
-        align-items: center;
-        padding: 40px 0;
-    }
+/* --- Shared card styles --- */
+.login-section {
+    background-color: #f4f9fd;
+    min-height: 80vh;
+    display: flex;
+    align-items: center;
+    padding: 40px 0;
+}
+.login-card {
+    border: none;
+    border-radius: 12px;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.08);
+    overflow: hidden;
+    margin-bottom: 30px;
+}
+.login-card-header {
+    background-color: var(--color-secondary);
+    padding: 25px 20px;
+    text-align: center;
+    color: white;
+}
+.login-title { font-weight: 700; margin-bottom: 5px; }
+.login-subtitle { font-size: 0.9rem; opacity: 0.8; margin-bottom: 0; }
+.login-card-body { padding: 40px 30px; background: #fff; }
 
-    /* 2. Login Card Styles */
-    .login-card {
-        border: none;
-        border-radius: 12px;
-        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
-        overflow: hidden;
-    }
-
-    .login-card-header {
-        background-color: var(--color-secondary); /* Theme Navy Blue */
-        padding: 25px 20px;
-        text-align: center;
-        color: white;
-    }
-    .login-icon {
-        font-size: 2.5rem;
-        margin-bottom: 10px;
-        color: var(--color-primary);
-    }
-    .login-title {
-        font-weight: 700;
-        margin-bottom: 5px;
-    }
-    .login-subtitle {
-        font-size: 0.9rem;
-        opacity: 0.8;
-        margin-bottom: 0;
-    }
-
-    .login-card-body {
-        padding: 40px 30px;
-        background: #fff;
-    }
-
-    /* 3. Form Controls & Input Groups */
-    .input-group-text {
-        background-color: #f8f9fa;
-        border-color: #dee2e6;
-        color: var(--color-primary);
-    }
-    .form-control:focus {
-        border-color: var(--color-primary);
-        box-shadow: 0 0 0 0.2rem rgba(13, 110, 253, 0.15);
-        z-index: 2;
-    }
-    /* Fixing input group border radius issue on focus */
-    .input-group:focus-within .input-group-text {
-        border-color: var(--color-primary);
-    }
-
-    /* 4. Buttons and Links */
-    .btn-login-pro {
-        background: var(--gradient-btn);
-        border: none;
-        color: white;
-        font-weight: 600;
-        padding: 12px;
-        border-radius: 6px;
-        font-size: 1.05rem;
-        transition: all 0.3s;
-    }
-    .btn-login-pro:hover {
-        transform: translateY(-2px);
-        box-shadow: 0 5px 15px rgba(13, 110, 253, 0.3);
-        color: white;
-    }
-
-    .forgot-link {
-        color: var(--color-text-muted);
-        font-size: 0.9rem;
-        text-decoration: none;
-        transition: color 0.3s;
-    }
-    .forgot-link:hover { color: var(--color-primary); }
-
-    .register-link {
-        font-weight: 600;
-        color: var(--color-primary);
-        text-decoration: none;
-    }
-    .register-link:hover { text-decoration: underline; }
+.input-group-text {
+    background-color: #f8f9fa;
+    border-color: #dee2e6;
+    color: var(--color-primary);
+}
+.form-control:focus {
+    border-color: var(--color-primary);
+    box-shadow: 0 0 0 0.2rem rgba(13,110,253,0.15);
+}
+.btn-login-pro {
+    background: var(--gradient-btn);
+    border: none;
+    color: white;
+    font-weight: 600;
+    padding: 12px;
+    border-radius: 6px;
+    font-size: 1.05rem;
+    transition: all 0.3s;
+}
+.btn-login-pro:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 5px 15px rgba(13,110,253,0.3);
+    color: white;
+}
 </style>
 
 <section class="login-section">
     <div class="container">
         <div class="row justify-content-center">
-            <div class="col-md-6 col-lg-5 col-xl-4 animate__animated animate__fadeInUp">
-                
-                <div class="card login-card">
-                    
-                    <div class="login-card-header">
-                        <div class="login-icon">
-                            <i class="fas fa-user-circle"></i>
-                        </div>
-                        <h3 class="login-title">পেশেন্ট লগইন</h3>
-                        <p class="login-subtitle">আপনার অ্যাকাউন্টে প্রবেশ করুন</p>
-                    </div>
 
+            <!-- Patient Login Card -->
+            <div class="col-md-5 col-lg-4 animate__animated animate__fadeInUp">
+                <div class="card login-card">
+                    <div class="login-card-header">
+                        <h3 class="login-title">রোগী লগইন</h3>
+                        <p class="login-subtitle">আপনার ফোন নাম্বার ও পাসওয়ার্ড দিয়ে প্রবেশ করুন</p>
+                    </div>
                     <div class="login-card-body">
-                        
                         {% if messages %}
                             {% for message in messages %}
                                 <div class="alert alert-{{ message.tags }} alert-dismissible fade show small mb-3" role="alert">
@@ -129,18 +76,15 @@
                                 </div>
                             {% endfor %}
                         {% endif %}
-
-                        <form method="post">
+                        <form method="post" action="{% url 'patients:login' %}">
                             {% csrf_token %}
-                            
                             <div class="mb-3">
-                                <label class="form-label visually-hidden">ইমেইল / ইউজারনেম</label>
+                                <label class="form-label visually-hidden">ফোন নাম্বার</label>
                                 <div class="input-group">
-                                    <span class="input-group-text"><i class="fas fa-user"></i></span>
-                                    <input type="text" name="username" class="form-control form-control-lg" placeholder="ইমেইল বা ইউজারনেম" required>
+                                    <span class="input-group-text"><i class="fas fa-phone"></i></span>
+                                    <input type="text" name="phone" class="form-control form-control-lg" placeholder="ফোন নাম্বার" required>
                                 </div>
                             </div>
-
                             <div class="mb-3">
                                 <label class="form-label visually-hidden">পাসওয়ার্ড</label>
                                 <div class="input-group">
@@ -148,29 +92,40 @@
                                     <input type="password" name="password" class="form-control form-control-lg" placeholder="পাসওয়ার্ড" required>
                                 </div>
                             </div>
-
-                            <div class="d-flex justify-content-end mb-4">
-                                <a href="#" class="forgot-link">পাসওয়ার্ড ভুলে গেছেন?</a>
-                            </div>
-
                             <div class="d-grid">
-                                <button type="submit" class="btn btn-login-pro">
-                                    নিরাপদ লগইন <i class="fas fa-sign-in-alt ms-2"></i>
-                                </button>
+                                <button type="submit" class="btn btn-login-pro">লগইন করুন</button>
                             </div>
                         </form>
                     </div>
-                    
-                    <div class="card-footer text-center py-3 bg-light border-0">
-                        <p class="mb-0 text-muted">
-                            নতুন পেশেন্ট? <a href="#" class="register-link">এখানে রেজিস্ট্রেশন করুন</a>
-                        </p>
-                    </div>
-
                 </div>
             </div>
+
+            <!-- Doctor Login Card -->
+            <div class="col-md-5 col-lg-4 animate__animated animate__fadeInUp">
+                <div class="card login-card">
+                    <div class="login-card-header">
+                        <h3 class="login-title">ডাক্তার লগইন</h3>
+                        <p class="login-subtitle">শুধুমাত্র পাসওয়ার্ড দিয়ে প্রবেশ করুন</p>
+                    </div>
+                    <div class="login-card-body">
+                        <form method="post" action="{% url 'doctors:login' %}">
+                            {% csrf_token %}
+                            <div class="mb-3">
+                                <label class="form-label visually-hidden">পাসওয়ার্ড</label>
+                                <div class="input-group">
+                                    <span class="input-group-text"><i class="fas fa-lock"></i></span>
+                                    <input type="password" name="password" class="form-control form-control-lg" placeholder="পাসওয়ার্ড" required>
+                                </div>
+                            </div>
+                            <div class="d-grid">
+                                <button type="submit" class="btn btn-login-pro">লগইন করুন</button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+
         </div>
     </div>
 </section>
-
 {% endblock %}

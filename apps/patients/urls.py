@@ -4,12 +4,25 @@ from . import views
 app_name = 'patients'
 
 urlpatterns = [
-    path('login/', views.PatientLoginView.as_view(), name='login'),
-    path('logout/', views.PatientLogoutView.as_view(), name='logout'),
-    path('dashboard/', views.PatientDashboardView.as_view(), name='dashboard'),
-    path('profile/', views.PatientProfileUpdateView.as_view(), name='profile'),
-    path('prescriptions/', views.PrescriptionListView.as_view(), name='prescription_list'),
-    path('prescriptions/<int:pk>/', views.PrescriptionDetailView.as_view(), name='prescription_detail'),
-    path('payments/', views.PaymentListView.as_view(), name='payments'),
-    path('payments/<int:pk>/', views.PaymentDetailView.as_view(), name='payment_detail'),
+    # Login / Logout
+    path('login/', views.patient_login, name='login'),
+    path('logout/', views.patient_logout, name='logout'),
+
+    # Dashboard
+    path('dashboard/', views.patient_dashboard, name='dashboard'),
+
+    # Profile
+    path('profile/', views.patient_profile_update, name='profile'),
+
+    # Prescriptions
+    path('prescriptions/', views.prescription_list, name='prescription_list'),
+    path('prescriptions/<int:pk>/', views.prescription_detail, name='prescription_detail'),
+
+    # Payments
+    path('payments/', views.payment_list, name='payments'),
+    path('payments/<int:pk>/', views.payment_detail, name='payment_detail'),
+
+    # Appointments
+    path('appointments/', views.appointment_list, name='appointments'),
+    path('appointments/<int:pk>/', views.appointment_detail, name='appointment_detail'),
 ]

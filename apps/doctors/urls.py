@@ -5,7 +5,7 @@ app_name = 'doctors'
 
 urlpatterns = [
     # Login / Logout
-    path('login/', views.DoctorLoginView.as_view(), name='login'),
+    path('login/', views.doctor_login, name='login'),
     path('logout/', views.DoctorLogoutView.as_view(), name='logout'),
 
     # Dashboard

@@ -267,10 +267,10 @@
                     </li>
                 </ul>
                 <div class="d-flex align-items-center mt-3 mt-lg-0">
-                    <a href="{% url 'login' %}" class="text-secondary fw-bold me-4 text-decoration-none {% if url_name == 'login' %}text-primary{% endif %}">
+                    <a href="{% url 'patients:login' %}" class="text-secondary fw-bold me-4 text-decoration-none {% if url_name == 'login' %}text-primary{% endif %}">
                         <i class="fas fa-user-circle me-1"></i> লগইন
                     </a>
-                    <a href="{% url 'appointment' %}" class="btn btn-nav-cta shadow-sm">অ্যাপয়েন্টমেন্ট নিন</a>
+                    <a href="{% url 'doctors:login' %}" class="btn btn-nav-cta shadow-sm">Doctor Panel</a>
                 </div>
             </div>
             {% endwith %} </div>

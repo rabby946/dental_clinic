@@ -1,12 +1,67 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Doctor Dashboard</title>
-</head>
-<body>
-    <h1>Doctor Dashboard</h1>
-    <p>Welcome to your dashboard.</p>
-</body>
-</html>
+{% extends 'core/base.html' %}
+{% load static %}
+
+{% block title %}ডাক্তার ড্যাশবোর্ড - New Oro Dent Care{% endblock %}
+
+{% block content %}
+<style>
+.dashboard-section {
+    min-height: 80vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 40px 0;
+    background-color: #f4f9fd;
+}
+
+.dashboard-card {
+    background: #fff;
+    padding: 40px 30px;
+    border-radius: 12px;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.08);
+    text-align: center;
+    max-width: 500px;
+    width: 100%;
+}
+
+.dashboard-card h2 {
+    font-weight: 700;
+    margin-bottom: 20px;
+}
+
+.btn-logout {
+    background: #dc3545;
+    color: #fff;
+    font-weight: 600;
+    padding: 12px 25px;
+    border-radius: 6px;
+    border: none;
+    font-size: 1.05rem;
+    transition: all 0.3s;
+}
+.btn-logout:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 5px 15px rgba(220,53,69,0.3);
+    color: white;
+}
+</style>
+
+<section class="dashboard-section">
+    <div class="dashboard-card">
+        {% if messages %}
+            {% for message in messages %}
+                <div class="alert alert-{{ message.tags }} alert-dismissible fade show small mb-3" role="alert">
+                    {{ message }}
+                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                </div>
+            {% endfor %}
+        {% endif %}
+
+        <h2>স্বাগতম, Dr. {{ request.user.get_full_name|default:request.user.username }}!</h2>
+        <p>আপনি ড্যাশবোর্ডে লগইন করেছেন।</p>
+
+        <a href="{% url 'doctors:logout' %}" class="btn btn-logout mt-3">লগআউট</a>
+    </div>
+</section>
+{% endblock %}
