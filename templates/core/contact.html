@@ -5,7 +5,140 @@
 
 {% block content %}
 
+<style>
+    /* --- Page Specific Styles --- */
+    .contact-section {
+        background-color: #f4f9fd;
+        position: relative;
+    }
 
+    /* Section Header */
+    .section-header-sm {
+        color: var(--color-primary);
+        font-weight: 600;
+        text-transform: uppercase;
+        letter-spacing: 1px;
+        display: block;
+        margin-bottom: 10px;
+        font-size: 0.9rem; /* Default size */
+    }
+    .section-title-main {
+        color: var(--color-secondary);
+        font-weight: 800;
+        margin-bottom: 30px;
+        font-size: 2.5rem; /* Default for desktop */
+    }
+
+    /* Info Cards */
+    .info-card {
+        background: #fff;
+        padding: 35px; /* Increased slightly for better desktop view */
+        border-radius: 12px;
+        box-shadow: 0 10px 30px rgba(0,0,0,0.05);
+        border-bottom: 3px solid transparent;
+        transition: all 0.3s ease;
+    }
+    .info-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 15px 35px rgba(13, 110, 253, 0.1);
+        border-bottom-color: var(--color-primary);
+    }
+    
+    .doctor-highlight {
+        border-left: 4px solid var(--color-primary);
+        padding-left: 20px;
+        margin-bottom: 30px;
+    }
+    .doctor-name { color: var(--color-secondary); font-weight: 700; font-size: 1.3rem;}
+    .doctor-designation { color: var(--color-text-muted); font-size: 1rem; line-height: 1.6; }
+
+    .contact-item {
+        display: flex;
+        margin-bottom: 25px;
+        align-items: flex-start;
+    }
+    .contact-item:last-child {
+        margin-bottom: 0;
+    }
+
+    .contact-icon {
+        width: 50px; height: 50px;
+        background: rgba(13, 110, 253, 0.1);
+        color: var(--color-primary);
+        border-radius: 50%;
+        display: flex; align-items: center; justify-content: center;
+        font-size: 1.2rem; margin-right: 15px; flex-shrink: 0;
+    }
+    .contact-details h6 { color: var(--color-secondary); font-weight: 700; margin-bottom: 5px; font-size: 1.1rem; }
+    .contact-details p { color: var(--color-text-muted); margin-bottom: 0; font-size: 1rem; font-weight: 500; line-height: 1.5;}
+    
+    /* --- OPTIMIZATION: Better touch targets for links --- */
+    .contact-details a { 
+        color: var(--color-text-muted); 
+        text-decoration: none; 
+        transition: color 0.3s; 
+        display: inline-block; /* Required for padding to work */
+        padding: 2px 0; /* Easier to tap on mobile */
+    }
+    .contact-details a:hover { color: var(--color-primary); }
+
+    /* Map Container */
+    .map-container {
+        border-radius: 12px;
+        overflow: hidden;
+        box-shadow: 0 10px 30px rgba(0,0,0,0.05);
+        height: 350px; /* Default taller height */
+        border: 5px solid #fff;
+        margin-top: 30px;
+    }
+    .map-container iframe { width: 100%; height: 100%; border: none; }
+
+    /* Contact Form Card */
+    .form-card {
+        background: #fff;
+        padding: 40px;
+        border-radius: 12px;
+        box-shadow: 0 15px 40px rgba(0,0,0,0.08);
+    }
+    .form-floating label { color: var(--color-text-muted); }
+    .form-control:focus {
+        border-color: var(--color-primary);
+        box-shadow: 0 0 0 0.25rem rgba(13, 110, 253, 0.15);
+    }
+    .btn-form-submit {
+        background: var(--gradient-btn); border: none; color: white;
+        font-weight: 600; padding: 12px 30px; border-radius: 4px;
+        box-shadow: 0 5px 15px rgba(13, 110, 253, 0.3); transition: all 0.3s;
+        width: 100%;
+        font-size: 1.1rem;
+    }
+    .btn-form-submit:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 10px 25px rgba(13, 110, 253, 0.4); color: white;
+    }
+
+    /* --- MOBILE OPTIMIZATIONS (iPhone 14 Pro Max & others) --- */
+    @media (max-width: 991.98px) {
+        .contact-section { padding-top: 60px; padding-bottom: 60px; }
+        .form-card, .info-card { padding: 30px 25px; } /* Adjusted padding for mobile */
+        .section-title-main { font-size: 2rem; } /* Smaller title on mobile */
+        .doctor-name { font-size: 1.2rem; }
+        
+        /* Taller map for large mobile screens */
+        .map-container { height: 350px; } 
+        
+        /* Ensure form inputs are large enough */
+        .form-control, .form-floating label { font-size: 1rem; }
+    }
+    
+    /* --- Extra small devices tweaks --- */
+    @media (max-width: 575.98px) {
+         .section-title-main { font-size: 1.75rem; }
+         .info-card, .form-card { padding: 25px 20px; }
+         .contact-icon { width: 40px; height: 40px; font-size: 1rem; margin-right: 10px;}
+         .map-container { height: 300px; } /* Slightly shorter on very small phones */
+    }
+</style>
 
 <section class="contact-section py-5">
     <div class="container py-lg-4">

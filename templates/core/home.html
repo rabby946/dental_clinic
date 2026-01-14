@@ -5,6 +5,184 @@
 
 {% block content %}
 
+<style>
+    /* =========================================
+       PROFESSIONAL HERO SECTION STYLES
+    ========================================= */
+
+    /* --- 1. Section Background & Layout --- */
+    .hero-section {
+        /* A very clean, light clinical blue-white background */
+        background-color: #f4f9fd;
+        /* Adding a subtle modern geometric pattern overlay */
+        background-image: radial-gradient(var(--color-primary) 0.5px, transparent 0.5px), radial-gradient(var(--color-primary) 0.5px, #f4f9fd 0.5px);
+        background-size: 20px 20px;
+        background-position: 0 0, 10px 10px;
+        
+        padding: 120px 0; /* Increased padding for more breathing room */
+        position: relative;
+        overflow: hidden;
+    }
+
+    /* --- 2. Typography & Content (Left Column) --- */
+    
+    /* Small tagline above the main heading */
+    .hero-tagline {
+        font-weight: 600;
+        color: var(--color-primary);
+        text-transform: uppercase;
+        letter-spacing: 2px;
+        margin-bottom: 1rem;
+        display: inline-block;
+        background: rgba(13, 110, 253, 0.1); /* Subtle tint background */
+        padding: 5px 15px;
+        border-radius: 50px;
+        font-size: 0.9rem;
+    }
+
+    /* Main Heading Style - Using the Navy Blue from Base */
+    .hero-title {
+        font-size: 3.5rem;
+        font-weight: 800;
+        line-height: 1.15;
+        /* Matches the top bar color for strong branding */
+        color: var(--color-secondary); 
+        margin-bottom: 1.5rem;
+    }
+
+    /* Subtext Style */
+    .hero-text {
+        font-size: 1.15rem;
+        color: var(--color-text-muted);
+        line-height: 1.7;
+        margin-bottom: 3rem;
+        max-width: 550px;
+    }
+
+    /* Hero Button - Using the gradient from Base */
+    .btn-hero-cta {
+        background: var(--gradient-btn);
+        border: none;
+        color: white;
+        font-weight: 600;
+        padding: 1rem 2.8rem;
+        border-radius: 4px; /* Matching the navbar button shape */
+        font-size: 1.1rem;
+        box-shadow: 0 10px 30px -5px rgba(13, 110, 253, 0.5);
+        transition: all 0.3s ease;
+        display: inline-flex;
+        align-items: center;
+    }
+    .btn-hero-cta i { margin-left: 10px; transition: margin 0.3s; }
+
+    .btn-hero-cta:hover {
+        transform: translateY(-3px);
+        box-shadow: 0 15px 35px -5px rgba(13, 110, 253, 0.6);
+        color: white;
+    }
+    .btn-hero-cta:hover i { margin-left: 15px; }
+
+
+    /* --- 3. Modern Doctor Image Composition (Right Column) --- */
+    .doctor-image-wrapper {
+        position: relative;
+        z-index: 1;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        /* Adding decorative abstract shapes behind the image */
+    }
+
+    /* Abstract Shape 1 (Dark Navy) */
+    .doctor-image-wrapper::before {
+        content: '';
+        position: absolute;
+        width: 480px;
+        height: 480px;
+        background-color: var(--color-secondary);
+        opacity: 0.1;
+        border-radius: 40% 60% 70% 30% / 40% 50% 60% 50%;
+        z-index: -1;
+        top: -10%;
+        right: -10%;
+        animation: morphShape 8s ease-in-out infinite alternate;
+    }
+
+    /* Abstract Shape 2 (Bright Blue) */
+    .doctor-image-wrapper::after {
+        content: '';
+        position: absolute;
+        width: 400px;
+        height: 400px;
+        background-color: var(--color-primary);
+        opacity: 0.15;
+        border-radius: 60% 40% 30% 70% / 60% 30% 70% 40%;
+        z-index: -2;
+        bottom: -15%;
+        left: -5%;
+        animation: morphShape 10s ease-in-out infinite alternate-reverse;
+    }
+
+    /* Subtle animation for background shapes */
+    @keyframes morphShape {
+        0% { border-radius: 40% 60% 70% 30% / 40% 50% 60% 50%; }
+        100% { border-radius: 60% 40% 30% 70% / 60% 30% 70% 40%; }
+    }
+
+    /* The main image container */
+    .doctor-frame {
+        width: 420px;
+        height: 420px;
+        border-radius: 50%;
+        overflow: hidden;
+        /* Crisp white border with a modern, deep shadow */
+        border: 8px solid #ffffff;
+        box-shadow: 0 20px 40px rgba(0, 0, 0, 0.15), 
+                    0 0 0 1px rgba(13, 110, 253, 0.1); /* Subtle outer ring line */
+        background-color: #eef9ff;
+        position: relative;
+        z-index: 2;
+    }
+
+    .doctor-frame img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        /* Adjust focus slightly upwards for better portrait framing */
+        object-position: center 20%; 
+    }
+
+    /* --- Responsive Adjustments --- */
+    @media (max-width: 1199.98px) {
+        .hero-title { font-size: 3rem; }
+    }
+
+    @media (max-width: 991.98px) {
+        .hero-section { padding: 80px 0; text-align: center; }
+        .hero-tagline { margin-top: 1rem; }
+        .hero-text { margin-left: auto; margin-right: auto; }
+        
+        .doctor-image-wrapper { margin-top: 60px; }
+        /* Hide complex shapes on mobile for cleaner look */
+        .doctor-image-wrapper::before, .doctor-image-wrapper::after { display: none; }
+        
+        .doctor-frame { width: 350px; height: 350px; }
+    }
+
+    @media (max-width: 575.98px) {
+        .hero-title { font-size: 2.2rem; }
+        .doctor-frame { width: 280px; height: 280px; border-width: 5px;}
+    }
+    
+    /* Custom Animation Classes (If Animate.css is not in base) */
+    .fade-in-left { animation: fadeInLeft 1s ease both; }
+    .fade-in-right { animation: fadeInRight 1s ease both; }
+    @keyframes fadeInLeft { from { opacity: 0; transform: translateX(-30px); } to { opacity: 1; transform: translateX(0); } }
+    @keyframes fadeInRight { from { opacity: 0; transform: translateX(30px); } to { opacity: 1; transform: translateX(0); } }
+
+</style>
+
+
 <section class="hero-section">
     <div class="container">
         <div class="row align-items-center gy-5">
