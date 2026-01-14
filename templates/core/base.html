@@ -1,0 +1,373 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="bn">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <title>{% block title %}New Oro Dent Care{% endblock %}</title>
+
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+
+    <style>
+        :root {
+            /* Theme Colors */
+            --color-primary: #0d6efd;       /* Bright Blue */
+            --color-primary-dark: #0a58ca;  /* Darker Blue for hover */
+            --color-secondary: #052c65;     /* Deep Navy Blue for Top Bar */
+            --color-text-dark: #212529;
+            --color-text-muted: #6c757d;
+            --color-footer-bg: #f8f9fa;
+            /* Gradient for Button */
+            --gradient-btn: linear-gradient(135deg, #0d6efd 0%, #00d2ff 100%);
+            /* Navbar Height variables */
+            --top-bar-height: 45px;
+            --main-nav-height: 80px;
+        }
+
+        body {
+            font-family: 'Poppins', sans-serif;
+            color: var(--color-text-dark);
+            overflow-x: hidden;
+            padding-top: calc(var(--top-bar-height) + var(--main-nav-height)); /* Push body down */
+        }
+
+        a { text-decoration: none; }
+
+        /* =========================================
+           NEW PROFESSIONAL HEADER STYLES
+        ========================================= */
+
+        /* --- 1. Top Info Bar (The new addition) --- */
+        .top-bar {
+            background-color: var(--color-secondary);
+            color: #fff;
+            height: var(--top-bar-height);
+            font-size: 0.9rem;
+            display: flex;
+            align-items: center;
+            position: fixed;
+            top: 0;
+            width: 100%;
+            z-index: 1031;
+            border-bottom: 1px solid rgba(255,255,255,0.1);
+        }
+
+        .top-bar-info a {
+            color: #fff;
+            margin-right: 20px;
+            transition: color 0.3s;
+        }
+        .top-bar-info a:hover { color: var(--color-primary); }
+        .top-bar i { margin-right: 8px; color: var(--color-primary); }
+
+        /* --- 2. Main Navbar --- */
+        .navbar-main {
+            background-color: #fff;
+            height: var(--main-nav-height);
+            box-shadow: 0 4px 20px rgba(0,0,0,0.05);
+            position: fixed;
+            top: var(--top-bar-height); /* Positioned right below the top bar */
+            width: 100%;
+            z-index: 1030;
+            padding: 0; /* Reset padding to use height instead */
+        }
+
+        .navbar-brand {
+            font-weight: 700;
+            font-size: 1.5rem;
+            color: var(--color-secondary);
+            display: flex;
+            align-items: center;
+            letter-spacing: -0.5px;
+        }
+        .navbar-brand i { color: var(--color-primary); filter: drop-shadow(0 2px 2px rgba(13, 110, 253, 0.3)); }
+
+        /* Navigation Links Styling */
+        .navbar-nav .nav-item { margin: 0 2px; }
+
+        .navbar-nav .nav-link {
+            color: var(--color-secondary);
+            font-weight: 600;
+            font-size: 0.9rem;
+            text-transform: uppercase; /* Professional look */
+            letter-spacing: 0.5px;
+            padding: 10px 15px !important;
+            position: relative; /* Needed for the underline effect */
+            transition: color 0.3s;
+        }
+
+        /* The animated underline effect */
+        .navbar-nav .nav-link::after {
+            content: '';
+            position: absolute;
+            width: 0;
+            height: 3px;
+            display: block;
+            margin-top: 5px;
+            right: 0;
+            background: var(--color-primary);
+            transition: width 0.3s ease;
+            -webkit-transition: width 0.3s ease;
+        }
+
+        .navbar-nav .nav-link:hover::after,
+        .navbar-nav .nav-link.active::after {
+            width: 100%;
+            left: 0;
+            background: var(--color-primary);
+        }
+
+        .navbar-nav .nav-link:hover,
+        .navbar-nav .nav-link.active {
+            color: var(--color-primary);
+        }
+
+        /* Dropdown Menu Polish */
+        .dropdown-menu {
+            border: none;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+            border-top: 3px solid var(--color-primary);
+            border-radius: 0 0 8px 8px;
+            margin-top: 0px !important;
+        }
+        .dropdown-item {
+            font-weight: 500;
+            font-size: 0.9rem;
+            padding: 10px 20px;
+            color: var(--color-secondary);
+        }
+        .dropdown-item:hover {
+            background-color: rgba(13, 110, 253, 0.05);
+            color: var(--color-primary);
+        }
+
+        /* CTA Button */
+        .btn-nav-cta {
+            background: var(--gradient-btn);
+            border: none;
+            color: white;
+            font-weight: 600;
+            padding: 0.7rem 1.8rem;
+            border-radius: 4px; /* Slightly less rounded for professional look */
+            box-shadow: 0 4px 15px rgba(13, 110, 253, 0.3);
+            transition: all 0.3s;
+        }
+        .btn-nav-cta:hover {
+            color: white;
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(13, 110, 253, 0.4);
+        }
+
+        /* Mobile Toggler Styling */
+        .navbar-toggler { border: none; padding: 0; }
+        .navbar-toggler:focus { outline: none; box-shadow: none; }
+
+        /* Responsive Adjustments */
+        @media (max-width: 991.98px) {
+            /* Hide top bar info on smaller screens to save space */
+            .top-bar .top-bar-info { display: none; }
+            .top-bar { justify-content: center; height: 35px; }
+            .top-bar-schedule { font-size: 0.8rem; }
+            
+            body { padding-top: calc(35px + var(--main-nav-height)); }
+
+            .navbar-main { padding: 10px 0; height: auto; }
+            .navbar-collapse {
+                background: #fff;
+                padding: 20px;
+                border-radius: 8px;
+                box-shadow: 0 10px 30px rgba(0,0,0,0.05);
+                margin-top: 15px;
+            }
+            .navbar-nav .nav-link::after { display: none; /* Disable underline effect on mobile */ }
+            .navbar-nav .nav-link.active { background-color: rgba(13, 110, 253, 0.05); border-radius: 4px;}
+            .btn-nav-cta { width: 100%; margin-top: 15px; }
+        }
+        /* ================= END HEADER STYLES ================= */
+
+
+        /* --- Footer Styles --- */
+        .footer-section {
+            background-color: var(--color-footer-bg);
+            padding-top: 80px;
+            padding-bottom: 30px;
+            color: var(--color-text-muted);
+            border-top: 1px solid #edf2f7;
+        }
+        .footer-heading { color: var(--color-secondary); font-weight: 700; margin-bottom: 1.5rem; }
+        .footer-links { list-style: none; padding: 0; margin: 0; }
+        .footer-links li { margin-bottom: 0.8rem; }
+        .footer-links a { color: var(--color-text-muted); transition: all 0.3s; font-weight: 500; }
+        .footer-links a:hover { color: var(--color-primary); padding-left: 5px; }
+        .social-icons a {
+            display: inline-flex; align-items: center; justify-content: center; width: 36px; height: 36px;
+            background-color: #fff; color: var(--color-secondary); border-radius: 4px; margin-right: 8px;
+            transition: all 0.3s; box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+        }
+        .social-icons a:hover { background-color: var(--color-primary); color: white; transform: translateY(-3px); }
+        .footer-bottom { margin-top: 60px; padding-top: 30px; border-top: 1px solid #dee2e6; font-size: 0.9rem; }
+        main { min-height: 60vh; }
+
+    </style>
+</head>
+<body>
+
+    <div class="top-bar">
+        <div class="container d-flex justify-content-between align-items-center">
+            <!-- <div class="top-bar-info d-flex">
+                <a href="tel:+8801712782020"><i class="fas fa-phone-alt"></i> 01712-782020</a>
+                <a href="mailto:info@neworodent.com"><i class="fas fa-envelope"></i> info@neworodent.com</a>
+            </div> -->
+            <div class="top-bar-schedule">
+                <i class="far fa-clock"></i> খোলা: শনি - বৃহস্পতি (বিকেল ৫টা - রাত ৯টা)
+            </div>
+        </div>
+    </div>
+
+    <nav class="navbar navbar-expand-lg navbar-main">
+        <div class="container">
+            <a class="navbar-brand" href="{% url 'home' %}">
+                <i class="fa-solid fa-tooth me-2 fa-lg"></i>
+                New Oro Dent Care
+            </a>
+
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#mainNavbarContent" aria-controls="mainNavbarContent" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="fa-solid fa-bars text-primary fs-3"></span>
+            </button>
+
+            {% with url_name=request.resolver_match.url_name %}
+            <div class="collapse navbar-collapse" id="mainNavbarContent">
+                <ul class="navbar-nav mx-auto mb-2 mb-lg-0 align-items-lg-center">
+                    <li class="nav-item">
+                        <a class="nav-link {% if url_name == 'home' %}active{% endif %}" href="{% url 'home' %}">হোম</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link {% if url_name == 'services' %}active{% endif %}" href="{% url 'services' %}">সেবাসমূহ</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link {% if url_name == 'appointment' %}active{% endif %}" href="{% url 'appointment' %}">অ্যাপয়েন্টমেন্ট</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link {% if url_name == 'chamber' %}active{% endif %}" href="{% url 'chamber' %}">চেম্বার</a>
+                    </li>
+                    <!-- <li class="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle {% if url_name == 'appointment' %}active{% endif %}" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                            রোগীদের জন্য
+                        </a>
+                        <ul class="dropdown-menu">
+                            <li><a class="dropdown-item" href="{% url 'appointment' %}"></a></li>
+                            <li><a class="dropdown-item" href="#">পরামর্শ</a></li>
+                        </ul>
+                    </li> -->
+                    <li class="nav-item">
+                        <a class="nav-link {% if url_name == 'contact' %}active{% endif %}" href="{% url 'contact' %}">যোগাযোগ</a>
+                    </li>
+                </ul>
+                <div class="d-flex align-items-center mt-3 mt-lg-0">
+                    <a href="{% url 'login' %}" class="text-secondary fw-bold me-4 text-decoration-none {% if url_name == 'login' %}text-primary{% endif %}">
+                        <i class="fas fa-user-circle me-1"></i> লগইন
+                    </a>
+                    <a href="{% url 'appointment' %}" class="btn btn-nav-cta shadow-sm">অ্যাপয়েন্টমেন্ট নিন</a>
+                </div>
+            </div>
+            {% endwith %} </div>
+    </nav>
+    <main>
+        {% if messages %}
+            <div class="container mt-4 animate__animated animate__fadeInDown">
+                {% for message in messages %}
+                    <div class="alert alert-{{ message.tags }} alert-dismissible fade show shadow-sm border-0" role="alert">
+                        <i class="fas fa-info-circle me-2"></i> {{ message }}
+                        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                    </div>
+                {% endfor %}
+            </div>
+        {% endif %}
+
+        {% block content %}{% endblock %}
+    </main>
+
+
+    <footer class="footer-section">
+        <div class="container">
+            <div class="row gy-5">
+                <div class="col-lg-4 col-md-6">
+                    <h5 class="footer-heading">New Oro Dent Care</h5>
+                    <p class="footer-text">
+                        আমরা অত্যাধুনিক প্রযুক্তি এবং অভিজ্ঞ ডাক্তারদের মাধ্যমে আপনার দাঁতের সর্বোত্তম যত্ন নিশ্চিত করি। আপনার সুন্দর ও সুস্থ হাসি আমাদের অঙ্গীকার।
+                    </p>
+                    <div class="footer-contact-info mt-4">
+                        <p class="mb-2"><i class="fas fa-map-marker-alt text-primary me-2"></i> যাত্রাবাড়ী, ঢাকা</p>
+                        <p class="mb-2"><i class="fas fa-phone-alt text-primary me-2"></i> 01712-782020</p>
+                        <p class="mb-2"><i class="fas fa-envelope text-primary me-2"></i> info@neworodent.com</p>
+                    </div>
+                </div>
+
+                <div class="col-lg-2 col-md-6 offset-lg-1">
+                    <h5 class="footer-heading">দ্রুত লিঙ্ক</h5>
+                    <ul class="footer-links">
+                        <li><a href="{% url 'home' %}">হোম</a></li>
+                        <li><a href="{% url 'services' %}">সেবা সমূহ</a></li>
+                        <li><a href="{% url 'appointment' %}">অ্যাপয়েন্টমেন্ট</a></li>
+                        <li><a href="{% url 'contact' %}">যোগাযোগ</a></li>
+                        <li><a href="{% url 'login' %}">লগইন</a></li>
+                    </ul>
+                </div>
+
+                <div class="col-lg-2 col-md-6">
+                    <h5 class="footer-heading">জনপ্রিয় সেবা</h5>
+                    <ul class="footer-links">
+                        <li><a href="https://en.wikipedia.org/wiki/Dental_implant">ডেন্টাল ইমপ্ল্যান্ট</a></li>
+                        <li><a href="https://en.wikipedia.org/wiki/Root_canal">রুট ক্যানেল</a></li>
+                        <li><a href="https://en.wikipedia.org/wiki/Tooth_whitening">টিথ হোয়াইটেনিং</a></li>
+                        <li><a href="https://en.wikipedia.org/wiki/Diastema">আঁকাবাঁকা দাঁত</a></li>
+                        <li><a href="https://en.wikipedia.org/wiki/Orthodontics">অর্থোডন্টিক্স</a></li>
+
+
+                    </ul>
+                </div>
+                
+                <div class="col-lg-3 col-md-6">
+                    <h5 class="footer-heading">অনুসরণ করুন</h5>
+                    <p class="text-muted mb-3 small">সোশ্যাল মিডিয়াতে আমাদের সাথে যুক্ত থাকুন।</p>
+                    <div class="social-icons">
+                        <a href="https://www.facebook.com/profile.php?id=100057402312433"><i class="fab fa-facebook-f"></i></a>
+                        <a href="#"><i class="fab fa-twitter"></i></a>
+                        <a href="#"><i class="fab fa-instagram"></i></a>
+                        <a href="#"><i class="fab fa-linkedin-in"></i></a>
+                    </div>
+                </div>
+            </div>
+
+            <div class="footer-bottom">
+                <div class="row align-items-center">
+                    <div class="col-md-6 text-md-start mb-3 mb-md-0">
+                        <p class="mb-0">&copy; {{ now|date:"Y" }} <strong>New Oro Dent Care</strong>. সর্বস্বত্ব সংরক্ষিত।</p>
+                    </div>
+                    <div class="col-md-6 text-md-end">
+                       <p class="mb-0 small text-muted">Design by TechCare Solutions</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+
+    <script>
+        // Auto-dismiss alerts after 5 seconds
+        document.addEventListener("DOMContentLoaded", function(){
+            setTimeout(function() {
+                let alerts = document.querySelectorAll('.alert-dismissible');
+                alerts.forEach(function(alert) {
+                    let bsAlert = new bootstrap.Alert(alert);
+                    bsAlert.close();
+                });
+            }, 5000);
+        });
+    </script>
+</body>
+</html>

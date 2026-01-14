@@ -1,0 +1,141 @@
+:root {
+            /* Theme Colors based on image_0.png */
+            --color-primary: #0d6efd; /* Bright Blue */
+            --color-primary-dark: #0a58ca;
+            --color-text-dark: #212529;
+            --color-text-muted: #6c757d;
+            --color-footer-bg: #f8f9fa; /* Very light gray/blue for footer */
+            --color-footer-text: #5a6a7e; /* Slightly bluish gray for footer text */
+            --gradient-blue-btn: linear-gradient(90deg, #0d6efd 0%, #0dcaf0 100%);
+        }
+
+        body {
+            font-family: 'Poppins', sans-serif;
+            color: var(--color-text-dark);
+            overflow-x: hidden;
+        }
+
+        a { text-decoration: none; }
+
+        /* --- Header / Navbar Styles --- */
+        .navbar {
+            background-color: #fff;
+            padding-top: 1rem;
+            padding-bottom: 1rem;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.05); /* Subtle shadow */
+        }
+
+        .navbar-brand {
+            font-weight: 700;
+            font-size: 1.5rem;
+            color: var(--color-text-dark);
+            display: flex;
+            align-items: center;
+        }
+        
+        /* Tooth Icon color */
+        .navbar-brand i {
+            color: var(--color-primary);
+        }
+
+        .navbar-nav .nav-link {
+            color: var(--color-text-dark);
+            font-weight: 500;
+            padding: 0.5rem 1rem;
+            transition: color 0.3s;
+        }
+
+        .navbar-nav .nav-link:hover,
+        .navbar-nav .nav-link.active {
+            color: var(--color-primary);
+        }
+
+        /* The blue gradient button in navbar */
+        .btn-nav-primary {
+            background: var(--color-primary);
+            border: none;
+            color: white;
+            font-weight: 600;
+            padding: 0.6rem 1.5rem;
+            border-radius: 50px;
+            transition: all 0.3s;
+        }
+
+        .btn-nav-primary:hover {
+            background: var(--color-primary-dark);
+            color: white;
+            transform: translateY(-2px);
+        }
+
+
+        /* --- Footer Styles (Matches bottom of image_0.png) --- */
+        .footer-section {
+            background-color: var(--color-footer-bg);
+            padding-top: 80px;
+            padding-bottom: 30px;
+            color: var(--color-footer-text);
+        }
+
+        .footer-heading {
+            color: var(--color-text-dark);
+            font-weight: 700;
+            margin-bottom: 1.5rem;
+            font-size: 1.2rem;
+        }
+
+        .footer-links {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+
+        .footer-links li {
+            margin-bottom: 1rem;
+        }
+
+        .footer-links a {
+            color: var(--color-footer-text);
+            transition: color 0.3s;
+            font-weight: 500;
+        }
+
+        .footer-links a:hover {
+            color: var(--color-primary);
+        }
+
+        .footer-text {
+            line-height: 1.8;
+            margin-bottom: 1.5rem;
+        }
+
+        /* Social Icons */
+        .social-icons a {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 40px;
+            height: 40px;
+            background-color: #e9ecef;
+            color: var(--color-primary);
+            border-radius: 50%;
+            margin-right: 10px;
+            transition: all 0.3s;
+        }
+
+        .social-icons a:hover {
+            background-color: var(--color-primary);
+            color: white;
+        }
+
+        .footer-bottom {
+            margin-top: 60px;
+            padding-top: 30px;
+            border-top: 1px solid #dee2e6;
+            text-align: center;
+            font-size: 0.9rem;
+        }
+
+        /* Main Content Wrapper to ensure footer stays down */
+        main {
+            min-height: calc(100vh - 400px); 
+        }

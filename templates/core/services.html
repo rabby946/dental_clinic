@@ -1,0 +1,338 @@
+{% extends 'core/base.html' %}
+{% load static %}
+
+{% block content %}
+
+<style>
+    /* --- Google Fonts (যদি base.html এ না থাকে) --- */
+    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500&family=Poppins:wght@600;700;800&display=swap');
+
+    /* --- CSS Variables & Theme Colors --- */
+    :root {
+        --color-primary: #00A8E8;       /* উজ্জ্বল আকাশী নীল */
+        --color-primary-dark: #007ea7;  /* গাঢ় নীল (হোভারের জন্য) */
+        --color-secondary: #0F2C4C;     /* খুব গাঢ় নেভি ব্লু (টেক্সটের জন্য) */
+        --color-accent-bg: #E3F6FF;     /* খুব হালকা নীল ব্যাকগ্রাউন্ড */
+        --color-white: #FFFFFF;
+        --color-text-muted: #637381;    /* হালকা ছাই রঙের টেক্সট */
+        
+        --font-heading: 'Poppins', sans-serif;
+        --font-body: 'Inter', sans-serif;
+
+        --gradient-primary: linear-gradient(135deg, var(--color-primary) 0%, #00C6FF 100%);
+        --gradient-soft: linear-gradient(180deg, #F8FDFF 0%, #E3F6FF 100%);
+        --shadow-soft: 0 10px 30px -10px rgba(0, 168, 232, 0.15);
+        --shadow-hover: 0 20px 40px -15px rgba(0, 168, 232, 0.25);
+        --border-radius-xl: 24px;
+    }
+
+    /* --- Global Styles Reset for this page --- */
+    body {
+        font-family: var(--font-body);
+        color: var(--color-secondary);
+        background-color: #FAFCFE;
+    }
+
+    h1, h2, h3, h4, h5 {
+        font-family: var(--font-heading);
+        color: var(--color-secondary);
+        font-weight: 700;
+    }
+
+    /* --- Utility Classes --- */
+    .text-primary-gradient {
+        background: var(--gradient-primary);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
+    }
+
+    .bg-soft-blue { background: var(--gradient-soft); }
+    .section-padding { padding: 100px 0; }
+
+    /* --- Page Header Modern Style --- */
+    .page-header-modern {
+        /* clinic1.jpg ছবি ব্যবহার করা হয়েছে */
+        background: linear-gradient(rgba(15, 44, 76, 0.8), rgba(15, 44, 76, 0.8)), url("{% static 'images/clinic1.jpg' %}");
+        background-size: cover;
+        background-position: center;
+        padding: 120px 0 80px;
+        position: relative;
+        color: var(--color-white);
+         /* নিচের দিকে ঢেউ খেলানো শেপ */
+        clip-path: polygon(0 0, 100% 0, 100% 85%, 50% 100%, 0 85%);
+        margin-bottom: -50px; /* পরবর্তী সেকশনের সাথে ওভারল্যাপ */
+        z-index: 1;
+    }
+
+    .breadcrumb-item a {
+        color: rgba(255, 255, 255, 0.7);
+    }
+    .breadcrumb-item.active {
+        color: var(--color-primary);
+        font-weight: 600;
+    }
+
+    /* --- WOW Service Card Design --- */
+    .service-card-wow {
+        background: var(--color-white);
+        border-radius: var(--border-radius-xl);
+        padding: 2.5rem;
+        height: 100%;
+        border: 1px solid rgba(0, 168, 232, 0.1);
+        box-shadow: var(--shadow-soft);
+        transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275); /* বাউন্সি ইফেক্ট */
+        position: relative;
+        overflow: hidden;
+        z-index: 2;
+    }
+
+    /* কার্ডের পেছনে হালকা গ্লো ইফেক্ট */
+    .service-card-wow::before {
+        content: '';
+        position: absolute;
+        top: 0; left: 0; right: 0;
+        height: 5px;
+        background: var(--gradient-primary);
+        opacity: 0;
+        transition: opacity 0.4s ease;
+    }
+
+    .service-card-wow:hover {
+        transform: translateY(-12px) scale(1.02);
+        box-shadow: var(--shadow-hover);
+        border-color: transparent;
+    }
+
+    .service-card-wow:hover::before {
+        opacity: 1;
+    }
+
+    /* আইকন বক্স ডিজাইন */
+    .icon-box-wow {
+        width: 80px;
+        height: 80px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        border-radius: 20px;
+        background: var(--color-accent-bg);
+        color: var(--color-primary);
+        font-size: 2rem;
+        margin-bottom: 1.5rem;
+        transition: all 0.4s ease;
+        box-shadow: inset 0 0 15px rgba(0, 168, 232, 0.05);
+    }
+
+    .service-card-wow:hover .icon-box-wow {
+        background: var(--gradient-primary);
+        color: var(--color-white);
+        transform: rotateY(360deg); /* হোভারে আইকন ঘুরবে */
+    }
+
+    .service-card-wow h4 {
+        font-size: 1.35rem;
+        margin-bottom: 1rem;
+    }
+
+    /* স্পেশাল ইমপ্ল্যান্ট কার্ড */
+    .service-card-special {
+        background: linear-gradient(145deg, #ffffff, #f0f9ff);
+        border: 2px solid var(--color-primary);
+    }
+    .service-card-special .icon-box-wow {
+        background: var(--gradient-primary);
+        color: var(--color-white);
+        box-shadow: 0 10px 20px rgba(0, 168, 232, 0.3);
+    }
+
+    /* --- CTA Section Modern --- */
+    .cta-modern {
+        background: var(--gradient-primary);
+        position: relative;
+        overflow: hidden;
+    }
+    /* ব্যাকগ্রাউন্ডে হালকা প্যাটার্ন */
+    .cta-modern::after {
+        content: '';
+        position: absolute;
+        top: -50%; left: -50%;
+        width: 200%; height: 200%;
+        background: radial-gradient(circle, rgba(255,255,255,0.1) 10%, transparent 10%);
+        background-size: 30px 30px;
+        opacity: 0.5;
+        transform: rotate(30deg);
+    }
+
+    .btn-glow {
+        background: var(--color-white);
+        color: var(--color-primary);
+        font-weight: 700;
+        padding: 12px 40px;
+        border-radius: 50px;
+        box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+        transition: all 0.3s ease;
+        position: relative;
+        z-index: 2;
+    }
+    .btn-glow:hover {
+        transform: translateY(-3px);
+        box-shadow: 0 15px 35px rgba(0, 0, 0, 0.2);
+        color: var(--color-primary-dark);
+    }
+
+    /* --- Placeholder Styles (অন্য পেজের জন্য) --- */
+    /* এগুলো হোম পেজ বা এবাউট পেজে ব্যবহার করতে পারবেন */
+
+    .hero-placeholder {
+        /* clinic2.jpg ব্যবহার করার উদাহরণ */
+        background: linear-gradient(to right, rgba(227, 246, 255, 0.9), rgba(255, 255, 255, 0.4)), url("{% static 'images/clinic2.jpg' %}");
+        background-size: cover;
+        padding: 150px 0;
+    }
+
+    .doctor-image-frame {
+        border-radius: var(--border-radius-xl);
+        box-shadow: var(--shadow-hover);
+        border: 5px solid var(--color-white);
+        /* doctor.jpg ব্যবহার করার উদাহরণ */
+        background-image: url("{% static 'images/doctor.jpg' %}"); /* ধরে নিচ্ছি এই নামে ইমেজ আছে */
+        background-size: cover;
+        background-position: center;
+        height: 500px;
+        width: 100%;
+    }
+
+</style>
+<header class="page-header-modern text-center">
+    <div class="container">
+        <h1 class="display-4 mb-3 animate__animated animate__fadeInDown">আমাদের <span class="text-primary-gradient">সেবাসমূহ</span></h1>
+        <p class="lead mb-4 opacity-75">আপনার হাসির সুরক্ষায় আমরা সর্বদা নিয়োজিত</p>
+        <nav aria-label="breadcrumb">
+            <ol class="breadcrumb justify-content-center mb-0 animate__animated animate__fadeInUp">
+              <li class="breadcrumb-item"><a href="{% url 'home' %}" class="text-decoration-none">হোম</a></li>
+              <li class="breadcrumb-item active" aria-current="page">সেবা সমূহ</li>
+            </ol>
+        </nav>
+    </div>
+</header>
+
+
+<section class="section-padding bg-soft-blue" style="padding-top: 100px;">
+    <div class="container">
+        <div class="row g-4">
+            <div class="col-md-6 col-lg-4">
+                <div class="service-card-wow">
+                    <div class="icon-box-wow">
+                        <i class="fas fa-user-doctor"></i>
+                    </div>
+                    <h4>রুটিন ডেন্টাল চেকআপ</h4>
+                    <p class="text-muted mb-0">ডেন্টাল হাইজিন মেইনটেইন সংক্রান্ত পরামর্শ প্রদান এবং নিয়মিত দাঁত ও মাড়ির পরীক্ষা।</p>
+                </div>
+            </div>
+
+            <div class="col-md-6 col-lg-4">
+                <div class="service-card-wow">
+                    <div class="icon-box-wow">
+                        <i class="fas fa-teeth-open"></i>
+                    </div>
+                    <h4>পেরিওডন্টিক্স</h4>
+                    <p class="text-muted mb-0">মাড়ির প্রদাহ, রক্ত পড়া এবং মাড়ির অন্যান্য যাবতীয় রোগের আধুনিক চিকিৎসা।</p>
+                </div>
+            </div>
+
+             <div class="col-md-6 col-lg-4">
+                <div class="service-card-wow">
+                    <div class="icon-box-wow">
+                        <i class="fas fa-wand-magic-sparkles"></i>
+                    </div>
+                    <h4>স্কেলিং ও পলিশিং</h4>
+                    <p class="text-muted mb-0">দাঁতের পাথর ও দাগ দূর করে দাঁতকে ঝকঝকে ও স্বাস্থ্যোজ্জ্বল করার পদ্ধতি।</p>
+                </div>
+            </div>
+
+            <div class="col-md-6 col-lg-4">
+                <div class="service-card-wow">
+                    <div class="icon-box-wow">
+                        <i class="fas fa-face-smile-beam"></i>
+                    </div>
+                    <h4>স্মাইল ডিজাইন ও ফিলিং</h4>
+                    <p class="text-muted mb-0">সামনের দাঁতের ফাঁকা পূরণ এবং অন্যান্য দাঁতের কসমেটিক ফিলিং এর মাধ্যমে সুন্দর হাসি।</p>
+                </div>
+            </div>
+
+            <div class="col-md-6 col-lg-4">
+                <div class="service-card-wow">
+                    <div class="icon-box-wow">
+                        <i class="fas fa-child"></i>
+                    </div>
+                    <h4>পেডিয়াট্রিক ডেন্টিস্ট্রি</h4>
+                    <p class="text-muted mb-0">বাচ্চাদের অস্থায়ী দাঁতের ফিলিং, পাল্পোটমি ও পাল্পেক্টমি সহ বিশেষায়িত চিকিৎসা।</p>
+                </div>
+            </div>
+
+            <div class="col-md-6 col-lg-4">
+                <div class="service-card-wow">
+                    <div class="icon-box-wow">
+                        <i class="fas fa-teeth"></i>
+                    </div>
+                    <h4>অর্থোডন্টিক্স</h4>
+                    <p class="text-muted mb-0">ব্রেসেস বা ক্লিপের মাধ্যমে আঁকাবাঁকা, উঁচুনীচু ও ফাঁকা দাঁত সোজা করার চিকিৎসা।</p>
+                </div>
+            </div>
+
+            <div class="col-md-6 col-lg-4">
+                <div class="service-card-wow">
+                    <div class="icon-box-wow">
+                         <i class="fas fa-tooth"></i>
+                    </div>
+                    <h4>রুট ক্যানেল ট্রিটমেন্ট</h4>
+                    <p class="text-muted mb-0">দাঁতের গভীরের সংক্রমণ দূর করে দাঁত না ফেলে রক্ষা করার আধুনিক ও ব্যথামুক্ত পদ্ধতি।</p>
+                </div>
+            </div>
+
+            <div class="col-md-6 col-lg-4">
+                <div class="service-card-wow">
+                    <div class="icon-box-wow">
+                        <i class="fas fa-puzzle-piece"></i>
+                    </div>
+                    <h4>প্রস্থোডন্টিক্স</h4>
+                    <p class="text-muted mb-0">হারানো দাঁত প্রতিস্থাপনে ক্রাউন (ক্যাপ), ব্রীজ, ডেনচার, ইনলে ও অনলে সংযোজন।</p>
+                </div>
+            </div>
+
+             <div class="col-md-6 col-lg-4">
+                <div class="service-card-wow">
+                    <div class="icon-box-wow">
+                        <i class="fas fa-syringe"></i>
+                    </div>
+                    <h4>ওরাল সার্জারী</h4>
+                    <p class="text-muted mb-0">আক্কেল দাঁত তোলা সহ মুখ ও চোয়ালের যাবতীয় মাইনর সার্জিক্যাল চিকিৎসা।</p>
+                </div>
+            </div>
+
+             <div class="col-md-6 col-lg-4 mx-auto">
+                <div class="service-card-wow service-card-special">
+                    <div class="icon-box-wow">
+                        <i class="fas fa-screw"></i>
+                    </div>
+                    <h4 class="text-primary-gradient">ডেন্টাল ইমপ্ল্যান্ট</h4>
+                    <p class="text-muted mb-0">হারানো দাঁতের স্থানে কৃত্রিম দাঁত প্রতিস্থাপনের সবচেয়ে আধুনিক ও স্থায়ী সমাধান।</p>
+                </div>
+            </div>
+
+        </div>
+    </div>
+</section>
+
+
+<section class="cta-modern py-5 text-white text-center">
+    <div class="container position-relative z-2">
+        <h2 class="fw-bold mb-3 display-6">আপনার দাঁতের সমস্যা নিয়ে চিন্তিত?</h2>
+        <p class="lead mb-4 opacity-90">আজই আমাদের বিশেষজ্ঞ ডাক্তারের পরামর্শ নিন এবং সুস্থ হাসি ফিরে পান।</p>
+        <a href="{% url 'appointment' %}" class="btn btn-glow btn-lg">অ্যাপয়েন্টমেন্ট বুক করুন <i class="fas fa-calendar-check ms-2"></i></a>
+    </div>
+</section>
+
+
+{% endblock %}

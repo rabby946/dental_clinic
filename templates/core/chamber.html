@@ -1,0 +1,287 @@
+{% extends 'core/base.html' %}
+{% load static %}
+
+{% block title %}About Us - New Oro Dent Care{% endblock %}
+
+{% block content %}
+
+<style>
+    /* =========================================
+       PROFESSIONAL ABOUT PAGE STYLES
+    ========================================= */
+
+    /* --- 1. Page Header Banner --- */
+    .about-header-banner {
+        background-color: var(--color-secondary); /* Using theme navy blue */
+        /* Adding a professional pattern overlay */
+        background-image: linear-gradient(rgba(5, 44, 101, 0.92), rgba(5, 44, 101, 0.92)), url("data:image/svg+xml,%3Csvg width='80' height='80' viewBox='0 0 80 80' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%230d6efd' fill-opacity='0.05'%3E%3Cpath d='M50 50c0-5.523 4.477-10 10-10s10 4.477 10 10-4.477 10-10 10c0 5.523-4.477 10-10 10s-10-4.477-10-10 4.477-10 10-10zM10 10c0-5.523 4.477-10 10-10s10 4.477 10 10-4.477 10-10 10c0 5.523-4.477 10-10 10S0 25.523 0 20s4.477-10 10-10zm10 8c4.418 0 8-3.582 8-8s-3.582-8-8-8-8 3.582-8 8 3.582 8 8 8zm40 40c4.418 0 8-3.582 8-8s-3.582-8-8-8-8 3.582-8 8 3.582 8 8 8z' /%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
+        padding: 80px 0 60px;
+        color: white;
+        text-align: center;
+        margin-bottom: 60px;
+    }
+    .about-header-title {
+        font-weight: 800;
+        font-size: 3rem;
+        margin-bottom: 15px;
+    }
+    .about-header-lead {
+        font-size: 1.2rem;
+        opacity: 0.9;
+        max-width: 750px;
+        margin: 0 auto;
+        line-height: 1.6;
+    }
+
+    /* --- 2. Content Section Styles --- */
+    .section-title-pro {
+        color: var(--color-secondary);
+        font-weight: 700;
+        margin-bottom: 30px;
+        position: relative;
+        padding-bottom: 15px;
+    }
+    .section-title-pro::after {
+        content: '';
+        position: absolute;
+        bottom: 0;
+        left: 0;
+        width: 70px;
+        height: 3px;
+        background-color: var(--color-primary);
+    }
+    .about-intro-text p {
+        font-size: 1.05rem;
+        line-height: 1.8;
+        color: var(--color-text-muted);
+        margin-bottom: 20px;
+    }
+
+    /* --- 3. Featured Doctor Profile --- */
+    .doctor-profile-card {
+        background: #fff;
+        border-radius: 12px;
+        box-shadow: 0 10px 30px rgba(0,0,0,0.08);
+        overflow: hidden;
+        border: 1px solid #edf2f7;
+        height: 100%;
+        transition: transform 0.3s ease;
+    }
+    .doctor-profile-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 15px 40px rgba(13, 110, 253, 0.1);
+    }
+    .doctor-image-box {
+        height: 350px; /* Fixed height for consistency */
+        overflow: hidden;
+        position: relative;
+    }
+    .doctor-image-box img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        object-position: top center;
+    }
+    /* Overlay effect */
+    .doctor-image-box::after {
+        content: '';
+        position: absolute;
+        bottom: 0; left: 0; width: 100%; height: 40%;
+        background: linear-gradient(to top, rgba(5, 44, 101, 0.8), transparent);
+    }
+    .doctor-info-box {
+        padding: 25px;
+        text-align: center;
+        background: #fff;
+    }
+    .doctor-name {
+        color: var(--color-secondary);
+        font-weight: 800;
+        font-size: 1.6rem;
+        margin-bottom: 8px;
+    }
+    .doctor-qualification {
+        color: var(--color-primary);
+        font-weight: 600;
+        margin-bottom: 8px;
+        font-size: 1.1rem;
+    }
+    .doctor-designation {
+        color: var(--color-text-muted);
+        font-size: 1rem;
+        font-weight: 500;
+    }
+
+    /* --- 4. Services List (Modern Checkmark Style) --- */
+    .services-list-pro {
+        list-style: none;
+        padding: 0;
+        margin-top: 20px;
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+        gap: 15px;
+    }
+    .services-list-pro li {
+        display: flex;
+        align-items: center;
+        font-size: 1.05rem;
+        color: var(--color-text-dark);
+        font-weight: 500;
+        background: #f8fbfc;
+        padding: 12px 15px;
+        border-radius: 8px;
+        border-left: 4px solid var(--color-primary);
+    }
+    .services-list-pro i {
+        color: var(--color-primary);
+        font-size: 1.2rem;
+        margin-right: 12px;
+    }
+
+    /* --- 5. Clinic Gallery (Responsive Grid: 3 cols desk, 1 col mobile) --- */
+    .gallery-grid-pro {
+        display: grid;
+        /* Default: 1 column for mobile */
+        grid-template-columns: 1fr; 
+        gap: 25px;
+    }
+    /* For tablets and desktops: 3 columns */
+    @media (min-width: 768px) {
+        .gallery-grid-pro {
+            grid-template-columns: repeat(3, 1fr);
+        }
+    }
+    .gallery-item {
+        border-radius: 12px;
+        overflow: hidden;
+        box-shadow: 0 5px 15px rgba(0,0,0,0.05);
+        position: relative;
+        height: 240px; /* Fixed height for uniformity */
+    }
+    .gallery-item img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        transition: transform 0.4s ease;
+    }
+    .gallery-item:hover img {
+        transform: scale(1.08); /* Smooth zoom effect on hover */
+    }
+    
+    /* --- 6. Visiting Card Section --- */
+    .visiting-card-box {
+        background: #f8fbfc;
+        padding: 40px;
+        border-radius: 12px;
+        text-align: center;
+        border: 1px solid #edf2f7;
+    }
+    .visiting-card-img {
+        max-width: 450px;
+        width: 100%;
+        border-radius: 12px;
+        box-shadow: 0 15px 35px rgba(0,0,0,0.1);
+        transition: transform 0.3s ease;
+    }
+    .visiting-card-img:hover {
+        transform: translateY(-5px);
+    }
+
+    /* Responsive Adjustments */
+    @media (max-width: 991.98px) {
+        .about-header-banner { padding: 60px 0 40px; }
+        .about-header-title { font-size: 2.4rem; }
+        .section-title-pro { font-size: 1.8rem; }
+        .doctor-image-box { height: 300px; }
+    }
+</style>
+
+<header class="about-header-banner animate__animated animate__fadeIn">
+    <div class="container">
+        <h1 class="about-header-title">About Our Clinic</h1>
+        <p class="about-header-lead">
+            Trusted dental care powered by modern technology and a team of experienced professionals dedicated to your oral health and beautiful smile.
+        </p>
+    </div>
+</header>
+
+
+<section class="container pb-5">
+    
+    <div class="row gy-5 mb-5 align-items-center">
+        <div class="col-lg-7 animate__animated animate__fadeInLeft">
+            <div class="pe-lg-4">
+                <h2 class="section-title-pro">Welcome to New Oro Dent Care</h2>
+                <div class="about-intro-text">
+                    <p>
+                        Welcome to our state-of-the-art dental chamber, where patient comfort, strict hygiene protocols, and advanced dental care are our top priorities. We are committed to providing a relaxing and stress-free environment for patients of all ages.
+                    </p>
+                    <p>
+                        Our mission is to deliver comprehensive, evidence-based dental treatments using the latest modern equipment. We ensure every patient receives safe, affordable, and long-lasting solutions tailored to their unique needs.
+                    </p>
+                </div>
+
+                <h3 class="section-title-pro mt-5" style="font-size: 1.5rem;">Key Dental Services</h3>
+                <ul class="services-list-pro">
+                    <li><i class="fas fa-check-circle"></i> Teeth Cleaning & Polishing</li>
+                    <li><i class="fas fa-check-circle"></i> Tooth Filling & Restoration</li>
+                    <li><i class="fas fa-check-circle"></i> Root Canal Treatment (RCT)</li>
+                    <li><i class="fas fa-check-circle"></i> Tooth Extraction & Minor Surgery</li>
+                    <li><i class="fas fa-check-circle"></i> Teeth Whitening & Cosmetic Dentistry</li>
+                    <li><i class="fas fa-check-circle"></i> Orthodontic Consultation (Braces)</li>
+                </ul>
+            </div>
+        </div>
+
+        <div class="col-lg-5 animate__animated animate__fadeInRight">
+            <div class="doctor-profile-card mx-auto" style="max-width: 400px;">
+                <div class="doctor-image-box">
+                    <img src="{% static 'images/doctor.jpg' %}" alt="Dr. Md. Abul Kalam Azad">
+                </div>
+                <div class="doctor-info-box">
+                    <h3 class="doctor-name">Dr. Md. Abul Kalam Azad</h3>
+                    <p class="doctor-qualification">BDS, MS (Orthodontics)</p>
+                    <p class="doctor-designation mb-0">Assistant Professor & Head of Department<br>Dhaka National Medical College</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+    <div class="mb-5 pt-4 animate__animated animate__fadeInUp">
+        <h2 class="section-title-pro text-center mx-auto mb-5" style="max-width: 600px;">Our Modern Chamber & Facilities</h2>
+        
+        <div class="gallery-grid-pro">
+            <div class="gallery-item">
+                <img src="{% static 'images/clinic1.jpg' %}" alt="Modern Dental Reception">
+            </div>
+            <div class="gallery-item">
+                <img src="{% static 'images/clinic2.jpg' %}" alt="Advanced Treatment Room">
+            </div>
+            <div class="gallery-item">
+                <img src="{% static 'images/clinic3.png' %}" alt="Sterilization & Equipment">
+            </div>
+            <div class="gallery-item">
+                <img src="{% static 'images/clinic4.jpg' %}" alt="Comfortable Waiting Area">
+            </div>
+            <div class="gallery-item">
+                <img src="{% static 'images/clinic5.jpg' %}" alt="Hygienic Clinical Environment">
+            </div>
+            <div class="gallery-item">
+                <img src="{% static 'images/clinic6.jpg' %}" alt="Patient Consultation Desk">
+            </div>
+        </div>
+    </div>
+
+
+    <div class="pt-4 animate__animated animate__fadeInUp">
+        <div class="visiting-card-box">
+            <h2 class="section-title-pro mx-auto mb-4" style="max-width: 400px; border-bottom: none; padding-bottom: 0;">Digital Visiting Card</h2>
+            <p class="text-muted mb-4">Save our contact details for easy access.</p>
+            <img src="{% static 'images/visiting-card.jpg' %}" alt="New Oro Dent Care Visiting Card" class="visiting-card-img">
+        </div>
+    </div>
+
+</section>
+
+{% endblock %}
