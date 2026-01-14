@@ -30,22 +30,13 @@ class PatientRequiredMixin(UserPassesTestMixin):
     def test_func(self):
         return self.request.user.is_authenticated and self.request.user.groups.filter(name='Patient').exists()
 
-# -------------------
 # Login / Logout
-# -------------------
-
 def patient_login(request):
-    """
-    Patient login view
-    GET: render login form
-    POST: authenticate patient by phone + password
-    """
     if request.method == 'POST':
         phone = request.POST.get('phone')
         password = request.POST.get('password')
 
         try:
-            # ধরো Patient এর username field এ phone save আছে
             patient_user = User.objects.get(username=phone)
         except User.DoesNotExist:
             messages.error(request, "Patient user not found.")

@@ -75,10 +75,13 @@ def doctor_login(request):
 
 from django.contrib.auth.views import LogoutView
 
-class DoctorLogoutView(LogoutView):
-    next_page = '/doctors/login/'  # redirect after logout
-    allow_get = True  # this allows GET requests to log out
-
+def doctor_logout(request):
+    """
+    Doctor logout view
+    """
+    logout(request)
+    messages.info(request, "You have been logged out.")
+    return redirect('/doctors/login/')
 # -------------------
 # Dashboard
 # -------------------

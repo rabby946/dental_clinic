@@ -1,48 +1,109 @@
-:root {
-            /* Theme Colors based on image_0.png */
-            --color-primary: #0d6efd; /* Bright Blue */
-            --color-primary-dark: #0a58ca;
+        :root {
+            /* Theme Colors */
+            --color-primary: #0d6efd;       /* Bright Blue */
+            --color-primary-dark: #0a58ca;  /* Darker Blue for hover */
+            --color-secondary: #052c65;     /* Deep Navy Blue for Top Bar */
             --color-text-dark: #212529;
             --color-text-muted: #6c757d;
-            --color-footer-bg: #f8f9fa; /* Very light gray/blue for footer */
-            --color-footer-text: #5a6a7e; /* Slightly bluish gray for footer text */
-            --gradient-blue-btn: linear-gradient(90deg, #0d6efd 0%, #0dcaf0 100%);
+            --color-footer-bg: #f8f9fa;
+            /* Gradient for Button */
+            --gradient-btn: linear-gradient(135deg, #0d6efd 0%, #00d2ff 100%);
+            /* Navbar Height variables */
+            --top-bar-height: 45px;
+            --main-nav-height: 80px;
         }
 
         body {
             font-family: 'Poppins', sans-serif;
             color: var(--color-text-dark);
             overflow-x: hidden;
+            padding-top: calc(var(--top-bar-height) + var(--main-nav-height)); /* Push body down */
         }
 
         a { text-decoration: none; }
 
-        /* --- Header / Navbar Styles --- */
-        .navbar {
+        /* =========================================
+           NEW PROFESSIONAL HEADER STYLES
+        ========================================= */
+
+        /* --- 1. Top Info Bar (The new addition) --- */
+        .top-bar {
+            background-color: var(--color-secondary);
+            color: #fff;
+            height: var(--top-bar-height);
+            font-size: 0.9rem;
+            display: flex;
+            align-items: center;
+            position: fixed;
+            top: 0;
+            width: 100%;
+            z-index: 1031;
+            border-bottom: 1px solid rgba(255,255,255,0.1);
+        }
+
+        .top-bar-info a {
+            color: #fff;
+            margin-right: 20px;
+            transition: color 0.3s;
+        }
+        .top-bar-info a:hover { color: var(--color-primary); }
+        .top-bar i { margin-right: 8px; color: var(--color-primary); }
+
+        /* --- 2. Main Navbar --- */
+        .navbar-main {
             background-color: #fff;
-            padding-top: 1rem;
-            padding-bottom: 1rem;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.05); /* Subtle shadow */
+            height: var(--main-nav-height);
+            box-shadow: 0 4px 20px rgba(0,0,0,0.05);
+            position: fixed;
+            top: var(--top-bar-height); /* Positioned right below the top bar */
+            width: 100%;
+            z-index: 1030;
+            padding: 0; /* Reset padding to use height instead */
         }
 
         .navbar-brand {
             font-weight: 700;
             font-size: 1.5rem;
-            color: var(--color-text-dark);
+            color: var(--color-secondary);
             display: flex;
             align-items: center;
+            letter-spacing: -0.5px;
         }
-        
-        /* Tooth Icon color */
-        .navbar-brand i {
-            color: var(--color-primary);
-        }
+        .navbar-brand i { color: var(--color-primary); filter: drop-shadow(0 2px 2px rgba(13, 110, 253, 0.3)); }
+
+        /* Navigation Links Styling */
+        .navbar-nav .nav-item { margin: 0 2px; }
 
         .navbar-nav .nav-link {
-            color: var(--color-text-dark);
-            font-weight: 500;
-            padding: 0.5rem 1rem;
+            color: var(--color-secondary);
+            font-weight: 600;
+            font-size: 0.9rem;
+            text-transform: uppercase; /* Professional look */
+            letter-spacing: 0.5px;
+            padding: 10px 15px !important;
+            position: relative; /* Needed for the underline effect */
             transition: color 0.3s;
+        }
+
+        /* The animated underline effect */
+        .navbar-nav .nav-link::after {
+            content: '';
+            position: absolute;
+            width: 0;
+            height: 3px;
+            display: block;
+            margin-top: 5px;
+            right: 0;
+            background: var(--color-primary);
+            transition: width 0.3s ease;
+            -webkit-transition: width 0.3s ease;
+        }
+
+        .navbar-nav .nav-link:hover::after,
+        .navbar-nav .nav-link.active::after {
+            width: 100%;
+            left: 0;
+            background: var(--color-primary);
         }
 
         .navbar-nav .nav-link:hover,
@@ -50,92 +111,504 @@
             color: var(--color-primary);
         }
 
-        /* The blue gradient button in navbar */
-        .btn-nav-primary {
-            background: var(--color-primary);
+        /* Dropdown Menu Polish */
+        .dropdown-menu {
+            border: none;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+            border-top: 3px solid var(--color-primary);
+            border-radius: 0 0 8px 8px;
+            margin-top: 0px !important;
+        }
+        .dropdown-item {
+            font-weight: 500;
+            font-size: 0.9rem;
+            padding: 10px 20px;
+            color: var(--color-secondary);
+        }
+        .dropdown-item:hover {
+            background-color: rgba(13, 110, 253, 0.05);
+            color: var(--color-primary);
+        }
+
+        /* CTA Button */
+        .btn-nav-cta {
+            background: var(--gradient-btn);
             border: none;
             color: white;
             font-weight: 600;
-            padding: 0.6rem 1.5rem;
-            border-radius: 50px;
+            padding: 0.7rem 1.8rem;
+            border-radius: 4px; /* Slightly less rounded for professional look */
+            box-shadow: 0 4px 15px rgba(13, 110, 253, 0.3);
             transition: all 0.3s;
         }
-
-        .btn-nav-primary:hover {
-            background: var(--color-primary-dark);
+        .btn-nav-cta:hover {
             color: white;
             transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(13, 110, 253, 0.4);
         }
 
+        /* Mobile Toggler Styling */
+        .navbar-toggler { border: none; padding: 0; }
+        .navbar-toggler:focus { outline: none; box-shadow: none; }
 
-        /* --- Footer Styles (Matches bottom of image_0.png) --- */
+        /* Responsive Adjustments */
+        @media (max-width: 991.98px) {
+            /* Hide top bar info on smaller screens to save space */
+            .top-bar .top-bar-info { display: none; }
+            .top-bar { justify-content: center; height: 35px; }
+            .top-bar-schedule { font-size: 0.8rem; }
+            
+            body { padding-top: calc(35px + var(--main-nav-height)); }
+
+            .navbar-main { padding: 10px 0; height: auto; }
+            .navbar-collapse {
+                background: #fff;
+                padding: 20px;
+                border-radius: 8px;
+                box-shadow: 0 10px 30px rgba(0,0,0,0.05);
+                margin-top: 15px;
+            }
+            .navbar-nav .nav-link::after { display: none; /* Disable underline effect on mobile */ }
+            .navbar-nav .nav-link.active { background-color: rgba(13, 110, 253, 0.05); border-radius: 4px;}
+            .btn-nav-cta { width: 100%; margin-top: 15px; }
+        }
+        /* ================= END HEADER STYLES ================= */
+
+
+        /* --- Footer Styles --- */
         .footer-section {
             background-color: var(--color-footer-bg);
             padding-top: 80px;
             padding-bottom: 30px;
-            color: var(--color-footer-text);
+            color: var(--color-text-muted);
+            border-top: 1px solid #edf2f7;
         }
-
-        .footer-heading {
-            color: var(--color-text-dark);
-            font-weight: 700;
-            margin-bottom: 1.5rem;
-            font-size: 1.2rem;
-        }
-
-        .footer-links {
-            list-style: none;
-            padding: 0;
-            margin: 0;
-        }
-
-        .footer-links li {
-            margin-bottom: 1rem;
-        }
-
-        .footer-links a {
-            color: var(--color-footer-text);
-            transition: color 0.3s;
-            font-weight: 500;
-        }
-
-        .footer-links a:hover {
-            color: var(--color-primary);
-        }
-
-        .footer-text {
-            line-height: 1.8;
-            margin-bottom: 1.5rem;
-        }
-
-        /* Social Icons */
+        .footer-heading { color: var(--color-secondary); font-weight: 700; margin-bottom: 1.5rem; }
+        .footer-links { list-style: none; padding: 0; margin: 0; }
+        .footer-links li { margin-bottom: 0.8rem; }
+        .footer-links a { color: var(--color-text-muted); transition: all 0.3s; font-weight: 500; }
+        .footer-links a:hover { color: var(--color-primary); padding-left: 5px; }
         .social-icons a {
-            display: inline-flex;
-            align-items: center;
-            justify-content: center;
-            width: 40px;
-            height: 40px;
-            background-color: #e9ecef;
-            color: var(--color-primary);
-            border-radius: 50%;
-            margin-right: 10px;
-            transition: all 0.3s;
+            display: inline-flex; align-items: center; justify-content: center; width: 36px; height: 36px;
+            background-color: #fff; color: var(--color-secondary); border-radius: 4px; margin-right: 8px;
+            transition: all 0.3s; box-shadow: 0 2px 5px rgba(0,0,0,0.05);
         }
+        .social-icons a:hover { background-color: var(--color-primary); color: white; transform: translateY(-3px); }
+        .footer-bottom { margin-top: 60px; padding-top: 30px; border-top: 1px solid #dee2e6; font-size: 0.9rem; }
+        main { min-height: 60vh; }
 
-        .social-icons a:hover {
-            background-color: var(--color-primary);
-            color: white;
-        }
+        
+    /* --- 1. Section Background & Layout --- */
+    .hero-section {
+        /* A very clean, light clinical blue-white background */
+        background-color: #f4f9fd;
+        /* Adding a subtle modern geometric pattern overlay */
+        background-image: radial-gradient(var(--color-primary) 0.5px, transparent 0.5px), radial-gradient(var(--color-primary) 0.5px, #f4f9fd 0.5px);
+        background-size: 20px 20px;
+        background-position: 0 0, 10px 10px;
+        
+        padding: 120px 0; /* Increased padding for more breathing room */
+        position: relative;
+        overflow: hidden;
+    }
 
-        .footer-bottom {
-            margin-top: 60px;
-            padding-top: 30px;
-            border-top: 1px solid #dee2e6;
-            text-align: center;
-            font-size: 0.9rem;
-        }
+    /* --- 2. Typography & Content (Left Column) --- */
+    
+    /* Small tagline above the main heading */
+    .hero-tagline {
+        font-weight: 600;
+        color: var(--color-primary);
+        text-transform: uppercase;
+        letter-spacing: 2px;
+        margin-bottom: 1rem;
+        display: inline-block;
+        background: rgba(13, 110, 253, 0.1); /* Subtle tint background */
+        padding: 5px 15px;
+        border-radius: 50px;
+        font-size: 0.9rem;
+    }
 
-        /* Main Content Wrapper to ensure footer stays down */
-        main {
-            min-height: calc(100vh - 400px); 
-        }
+    /* Main Heading Style - Using the Navy Blue from Base */
+    .hero-title {
+        font-size: 3.5rem;
+        font-weight: 800;
+        line-height: 1.15;
+        /* Matches the top bar color for strong branding */
+        color: var(--color-secondary); 
+        margin-bottom: 1.5rem;
+    }
+
+    /* Subtext Style */
+    .hero-text {
+        font-size: 1.15rem;
+        color: var(--color-text-muted);
+        line-height: 1.7;
+        margin-bottom: 3rem;
+        max-width: 550px;
+    }
+
+    /* Hero Button - Using the gradient from Base */
+    .btn-hero-cta {
+        background: var(--gradient-btn);
+        border: none;
+        color: white;
+        font-weight: 600;
+        padding: 1rem 2.8rem;
+        border-radius: 4px; /* Matching the navbar button shape */
+        font-size: 1.1rem;
+        box-shadow: 0 10px 30px -5px rgba(13, 110, 253, 0.5);
+        transition: all 0.3s ease;
+        display: inline-flex;
+        align-items: center;
+    }
+    .btn-hero-cta i { margin-left: 10px; transition: margin 0.3s; }
+
+    .btn-hero-cta:hover {
+        transform: translateY(-3px);
+        box-shadow: 0 15px 35px -5px rgba(13, 110, 253, 0.6);
+        color: white;
+    }
+    .btn-hero-cta:hover i { margin-left: 15px; }
+
+
+    /* --- 3. Modern Doctor Image Composition (Right Column) --- */
+    .doctor-image-wrapper {
+        position: relative;
+        z-index: 1;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        /* Adding decorative abstract shapes behind the image */
+    }
+
+    /* Abstract Shape 1 (Dark Navy) */
+    .doctor-image-wrapper::before {
+        content: '';
+        position: absolute;
+        width: 480px;
+        height: 480px;
+        background-color: var(--color-secondary);
+        opacity: 0.1;
+        border-radius: 40% 60% 70% 30% / 40% 50% 60% 50%;
+        z-index: -1;
+        top: -10%;
+        right: -10%;
+        animation: morphShape 8s ease-in-out infinite alternate;
+    }
+
+    /* Abstract Shape 2 (Bright Blue) */
+    .doctor-image-wrapper::after {
+        content: '';
+        position: absolute;
+        width: 400px;
+        height: 400px;
+        background-color: var(--color-primary);
+        opacity: 0.15;
+        border-radius: 60% 40% 30% 70% / 60% 30% 70% 40%;
+        z-index: -2;
+        bottom: -15%;
+        left: -5%;
+        animation: morphShape 10s ease-in-out infinite alternate-reverse;
+    }
+
+    /* Subtle animation for background shapes */
+    @keyframes morphShape {
+        0% { border-radius: 40% 60% 70% 30% / 40% 50% 60% 50%; }
+        100% { border-radius: 60% 40% 30% 70% / 60% 30% 70% 40%; }
+    }
+
+    /* The main image container */
+    .doctor-frame {
+        width: 420px;
+        height: 420px;
+        border-radius: 50%;
+        overflow: hidden;
+        /* Crisp white border with a modern, deep shadow */
+        border: 8px solid #ffffff;
+        box-shadow: 0 20px 40px rgba(0, 0, 0, 0.15), 
+                    0 0 0 1px rgba(13, 110, 253, 0.1); /* Subtle outer ring line */
+        background-color: #eef9ff;
+        position: relative;
+        z-index: 2;
+    }
+
+    .doctor-frame img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        /* Adjust focus slightly upwards for better portrait framing */
+        object-position: center 20%; 
+    }
+
+    /* --- Responsive Adjustments --- */
+    @media (max-width: 1199.98px) {
+        .hero-title { font-size: 3rem; }
+    }
+
+    @media (max-width: 991.98px) {
+        .hero-section { padding: 80px 0; text-align: center; }
+        .hero-tagline { margin-top: 1rem; }
+        .hero-text { margin-left: auto; margin-right: auto; }
+        
+        .doctor-image-wrapper { margin-top: 60px; }
+        /* Hide complex shapes on mobile for cleaner look */
+        .doctor-image-wrapper::before, .doctor-image-wrapper::after { display: none; }
+        
+        .doctor-frame { width: 350px; height: 350px; }
+    }
+
+    @media (max-width: 575.98px) {
+        .hero-title { font-size: 2.2rem; }
+        .doctor-frame { width: 280px; height: 280px; border-width: 5px;}
+    }
+    
+    /* Custom Animation Classes (If Animate.css is not in base) */
+    .fade-in-left { animation: fadeInLeft 1s ease both; }
+    .fade-in-right { animation: fadeInRight 1s ease both; }
+    @keyframes fadeInLeft { from { opacity: 0; transform: translateX(-30px); } to { opacity: 1; transform: translateX(0); } }
+    @keyframes fadeInRight { from { opacity: 0; transform: translateX(30px); } to { opacity: 1; transform: translateX(0); } }
+
+
+     /* --- Page Specific Styles --- */
+    .contact-section {
+        background-color: #f4f9fd;
+        position: relative;
+    }
+
+    /* Section Header */
+    .section-header-sm {
+        color: var(--color-primary);
+        font-weight: 600;
+        text-transform: uppercase;
+        letter-spacing: 1px;
+        display: block;
+        margin-bottom: 10px;
+        font-size: 0.9rem; /* Default size */
+    }
+    .section-title-main {
+        color: var(--color-secondary);
+        font-weight: 800;
+        margin-bottom: 30px;
+        font-size: 2.5rem; /* Default for desktop */
+    }
+
+    /* Info Cards */
+    .info-card {
+        background: #fff;
+        padding: 35px; /* Increased slightly for better desktop view */
+        border-radius: 12px;
+        box-shadow: 0 10px 30px rgba(0,0,0,0.05);
+        border-bottom: 3px solid transparent;
+        transition: all 0.3s ease;
+    }
+    .info-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 15px 35px rgba(13, 110, 253, 0.1);
+        border-bottom-color: var(--color-primary);
+    }
+    
+    .doctor-highlight {
+        border-left: 4px solid var(--color-primary);
+        padding-left: 20px;
+        margin-bottom: 30px;
+    }
+    .doctor-name { color: var(--color-secondary); font-weight: 700; font-size: 1.3rem;}
+    .doctor-designation { color: var(--color-text-muted); font-size: 1rem; line-height: 1.6; }
+
+    .contact-item {
+        display: flex;
+        margin-bottom: 25px;
+        align-items: flex-start;
+    }
+    .contact-item:last-child {
+        margin-bottom: 0;
+    }
+
+    .contact-icon {
+        width: 50px; height: 50px;
+        background: rgba(13, 110, 253, 0.1);
+        color: var(--color-primary);
+        border-radius: 50%;
+        display: flex; align-items: center; justify-content: center;
+        font-size: 1.2rem; margin-right: 15px; flex-shrink: 0;
+    }
+    .contact-details h6 { color: var(--color-secondary); font-weight: 700; margin-bottom: 5px; font-size: 1.1rem; }
+    .contact-details p { color: var(--color-text-muted); margin-bottom: 0; font-size: 1rem; font-weight: 500; line-height: 1.5;}
+    
+    /* --- OPTIMIZATION: Better touch targets for links --- */
+    .contact-details a { 
+        color: var(--color-text-muted); 
+        text-decoration: none; 
+        transition: color 0.3s; 
+        display: inline-block; /* Required for padding to work */
+        padding: 2px 0; /* Easier to tap on mobile */
+    }
+    .contact-details a:hover { color: var(--color-primary); }
+
+    /* Map Container */
+    .map-container {
+        border-radius: 12px;
+        overflow: hidden;
+        box-shadow: 0 10px 30px rgba(0,0,0,0.05);
+        height: 350px; /* Default taller height */
+        border: 5px solid #fff;
+        margin-top: 30px;
+    }
+    .map-container iframe { width: 100%; height: 100%; border: none; }
+
+    /* Contact Form Card */
+    .form-card {
+        background: #fff;
+        padding: 40px;
+        border-radius: 12px;
+        box-shadow: 0 15px 40px rgba(0,0,0,0.08);
+    }
+    .form-floating label { color: var(--color-text-muted); }
+    .form-control:focus {
+        border-color: var(--color-primary);
+        box-shadow: 0 0 0 0.25rem rgba(13, 110, 253, 0.15);
+    }
+    .btn-form-submit {
+        background: var(--gradient-btn); border: none; color: white;
+        font-weight: 600; padding: 12px 30px; border-radius: 4px;
+        box-shadow: 0 5px 15px rgba(13, 110, 253, 0.3); transition: all 0.3s;
+        width: 100%;
+        font-size: 1.1rem;
+    }
+    .btn-form-submit:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 10px 25px rgba(13, 110, 253, 0.4); color: white;
+    }
+
+    /* --- MOBILE OPTIMIZATIONS (iPhone 14 Pro Max & others) --- */
+    @media (max-width: 991.98px) {
+        .contact-section { padding-top: 60px; padding-bottom: 60px; }
+        .form-card, .info-card { padding: 30px 25px; } /* Adjusted padding for mobile */
+        .section-title-main { font-size: 2rem; } /* Smaller title on mobile */
+        .doctor-name { font-size: 1.2rem; }
+        
+        /* Taller map for large mobile screens */
+        .map-container { height: 350px; } 
+        
+        /* Ensure form inputs are large enough */
+        .form-control, .form-floating label { font-size: 1rem; }
+    }
+    
+    /* --- Extra small devices tweaks --- */
+    @media (max-width: 575.98px) {
+         .section-title-main { font-size: 1.75rem; }
+         .info-card, .form-card { padding: 25px 20px; }
+         .contact-icon { width: 40px; height: 40px; font-size: 1rem; margin-right: 10px;}
+         .map-container { height: 300px; } /* Slightly shorter on very small phones */
+    }
+
+    /* --- Page Specific Styles for Professional Look --- */
+    
+    /* 1. Page Header Banner */
+    .page-header-banner {
+        background-color: var(--color-secondary); /* Using theme navy blue */
+        /* Adding a subtle, professional pattern overlay */
+        background-image: linear-gradient(rgba(5, 44, 101, 0.9), rgba(5, 44, 101, 0.9)), url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%230d6efd' fill-opacity='0.08'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
+        padding: 80px 0 60px;
+        color: white;
+        text-align: center;
+        margin-bottom: 50px;
+    }
+    .page-header-title {
+        font-weight: 700;
+        font-size: 2.8rem;
+        margin-bottom: 15px;
+    }
+    .page-header-lead {
+        font-size: 1.15rem;
+        opacity: 0.9;
+        max-width: 700px;
+        margin: 0 auto;
+    }
+
+    /* 2. Main Content Structure */
+    .form-container-professional {
+        background: #fff;
+        padding: 40px;
+        border-radius: 8px;
+        /* A subtle, clean shadow for depth */
+        box-shadow: 0 5px 25px rgba(0,0,0,0.05);
+        border: 1px solid #edf2f7;
+    }
+    .form-section-title {
+        color: var(--color-secondary);
+        font-weight: 700;
+        margin-bottom: 25px;
+        padding-bottom: 15px;
+        border-bottom: 2px solid #f0f0f0;
+        position: relative;
+    }
+    /* Small accent line under title */
+    .form-section-title::after {
+        content: '';
+        position: absolute;
+        bottom: -2px;
+        left: 0;
+        width: 60px;
+        height: 2px;
+        background-color: var(--color-primary);
+    }
+
+    /* 3. Sidebar Information Boxes */
+    .sidebar-box {
+        background: #f8fbfc;
+        padding: 30px;
+        border-radius: 8px;
+        border: 1px solid #eef4f8;
+        margin-bottom: 30px;
+    }
+    .sidebar-title {
+        font-weight: 700;
+        color: var(--color-secondary);
+        margin-bottom: 20px;
+        display: flex;
+        align-items: center;
+    }
+    .sidebar-title i { color: var(--color-primary); margin-right: 10px; }
+    
+    .trust-list { list-style: none; padding: 0; margin: 0; }
+    .trust-list li {
+        margin-bottom: 12px;
+        display: flex;
+        align-items: flex-start;
+        font-size: 0.95rem;
+        color: var(--color-text-dark);
+    }
+    .trust-list i { color: #28a745; margin-right: 10px; margin-top: 4px; }
+
+    .contact-alt-box {
+        text-align: center;
+    }
+    .contact-alt-phone {
+        font-size: 1.5rem;
+        font-weight: 700;
+        color: var(--color-primary);
+        display: block;
+        margin: 10px 0;
+    }
+
+    /* Form Controls & Button */
+    .form-floating label { color: var(--color-text-muted); }
+    .btn-submit-pro {
+        background: var(--gradient-btn); border: none; color: white;
+        font-weight: 600; padding: 12px 40px; border-radius: 4px;
+        box-shadow: 0 5px 15px rgba(13, 110, 253, 0.2); transition: all 0.3s;
+        font-size: 1.05rem;
+    }
+    .btn-submit-pro:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 10px 25px rgba(13, 110, 253, 0.3); color: white;
+    }
+
+    @media (max-width: 991.98px) {
+        .page-header-banner { padding: 60px 0 40px; }
+        .page-header-title { font-size: 2.2rem; }
+        .form-container-professional { padding: 25px; }
+    }
+
+    
