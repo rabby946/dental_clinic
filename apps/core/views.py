@@ -71,7 +71,7 @@ def appointment(request):
         date_str = request.POST.get("date")
         problem = request.POST.get("message")
         print(name, phone, date_str, problem)
-        if not all([name, phone, date_str, problem]):
+        if not all([name, phone, date_str]):
             messages.error(request, "সব তথ্য সঠিকভাবে দিন।")
             return redirect("appointment")
         appointment_date = datetime.strptime(date_str, "%Y-%m-%d").date()
