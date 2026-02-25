@@ -1,0 +1,93 @@
+{% extends "patients/base.html" %}
+{% block title %}My Payments{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+
+    <h3 class="mb-3">My Payments</h3>
+
+    <!-- ===== Due & Payment Box ===== -->
+    <div class="card mb-4">
+        <div class="card-body">
+
+            <p class="mb-2">
+                <strong>Due Amount:</strong>
+                <span class="text-danger fs-5">
+                    ৳ {{ due_amount }}
+                </span>
+            </p>
+
+            {% if due_amount >= 0 and appointment_id %}
+                <form method="post" action="{% url 'billing:bkash_init' %}">
+                    {% csrf_token %}
+
+                    <input type="hidden" name="appointment_id" value="{{ appointment_id }}">
+
+                    <div class="row g-2 align-items-center">
+                        <div class="col-md-4">
+                            <input type="number"
+                                   name="amount"
+                                   class="form-control"
+                                   placeholder="Enter amount"
+                                   min="1"
+                                   max="{{ due_amount }}"
+                                   required>
+                        </div>
+                        <div class="col-md-4">
+                            <button type="submit" class="btn btn-success w-100">
+                                Pay with bKash
+                            </button>
+                        </div>
+                    </div>
+                </form>
+            {% else %}
+                <div class="alert alert-success mt-3">
+                    No dues pending 🎉
+                </div>
+            {% endif %}
+        </div>
+    </div>
+
+    <!-- ===== Payment History ===== -->
+    {% if payments %}
+        <table class="table table-bordered table-hover">
+            <thead class="table-light">
+                <tr>
+                    <th>#</th>
+                    <th>Date</th>
+                    <th>Type</th>
+                    <th>Method</th>
+                    <th>Amount</th>
+                    <th>Action</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for payment in payments %}
+                    <tr>
+                        <td>{{ forloop.counter }}</td>
+                        <td>{{ payment.created_at|date:"d M Y, h:i A" }}</td>
+                        <td>
+                            <span class="badge {% if payment.type == 'paid' %}bg-success{% else %}bg-danger{% endif %}">
+                                {{ payment.type|upper }}
+                            </span>
+                        </td>
+                        <td>{{ payment.method|default:"—"|title }}</td>
+                        <td>৳ {{ payment.amount }}</td>
+                        <td>
+                            <a href="{% url 'patients:payment_detail' payment.id %}"
+                               class="btn btn-sm btn-primary">
+                                View
+                            </a>
+                        </td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    {% else %}
+        <div class="alert alert-info">
+            No payment records found.
+        </div>
+    {% endif %}
+
+</div>
+{% endblock %}

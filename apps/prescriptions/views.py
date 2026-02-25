@@ -1,3 +1,60 @@
-from django.shortcuts import render
+from django.shortcuts import render, redirect, get_object_or_404
+from django.contrib.auth.decorators import login_required
+from django.utils import timezone
 
-# Create your views here.
+from apps.patients.models import Patient
+from apps.core.models import Appointment
+from apps.prescriptions.models import Prescription, PrescriptionItem
+from apps.medicines.models import Medicine
+@login_required
+def prescription_create(request, patient_id):
+    patient = get_object_or_404(Patient, pk=patient_id)
+
+    appointment = (
+        Appointment.objects
+        .filter(patient=patient)
+        .order_by('-date', '-time')
+        .first()
+    )
+
+    if not appointment:
+        appointment = Appointment.objects.create(
+            patient=patient,
+            date=timezone.now().date(),
+            time=timezone.now().time(),
+            serial_number=1,
+            problem="Consultation",
+            status='completed'
+        )
+
+    if request.method == 'POST':
+        prescription = Prescription.objects.create(
+            appointment=appointment,
+            note=request.POST.get('note', '')
+        )
+
+        medicine_ids = request.POST.getlist('medicine')
+        dosages = request.POST.getlist('dosage')
+        durations = request.POST.getlist('duration')
+        instructions = request.POST.getlist('instructions')
+
+        for i in range(len(medicine_ids)):
+            PrescriptionItem.objects.create(
+                prescription=prescription,
+                medicine_id=medicine_ids[i],
+                dosage=dosages[i],
+                duration=durations[i],
+                instructions=instructions[i],
+            )
+
+        return redirect('doctors:patient_detail', pk=patient.id)
+
+    medicines = Medicine.objects.all()
+    return render(request, 'prescriptions/create.html', {
+        'patient': patient,
+        'medicines': medicines,
+    })
+@login_required
+def prescription_detail(request, pk):
+    prescription = get_object_or_404(Prescription, pk=pk)
+    return render(request, 'prescriptions/detail.html', {'prescription': prescription})

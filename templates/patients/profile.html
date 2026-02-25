@@ -1,0 +1,592 @@
+{% extends "patients/base.html" %}
+
+{% block page_title %}My Profile{% endblock %}
+
+{% block content %}
+
+<div class="profile-container">
+    <!-- Profile Header -->
+    <div class="profile-header">
+        <div class="profile-avatar-large">
+            {{ user.first_name|slice:":1"|upper }}{{ user.last_name|slice:":1"|upper }}
+        </div>
+        <div class="profile-header-info">
+            <h2>{{ user.get_full_name|default:user.username }}</h2>
+            <p class="patient-id">Patient ID: #{{ patient.id|stringformat:"05d" }}</p>
+            <div class="profile-badges">
+                <span class="badge-status active">
+                    <i class="bi bi-check-circle-fill"></i> Active Patient
+                </span>
+                {% if patient.blood_group %}
+                <span class="badge-blood">
+                    <i class="bi bi-droplet-fill"></i> {{ patient.blood_group }}
+                </span>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+
+    <!-- Profile Form -->
+    <form method="post" class="profile-form">
+        {% csrf_token %}
+
+        <!-- Personal Information Card -->
+        <div class="form-card">
+            <div class="form-card-header">
+                <div class="form-card-icon gradient-purple">
+                    <i class="bi bi-person-fill"></i>
+                </div>
+                <div>
+                    <h5 class="form-card-title">Personal Information</h5>
+                    <p class="form-card-subtitle">Update your basic details</p>
+                </div>
+            </div>
+
+            <div class="form-card-body">
+                <div class="row g-3">
+                    <div class="col-md-6">
+                        <div class="form-group-modern">
+                            <label class="form-label-modern">
+                                <i class="bi bi-person"></i>
+                                First Name
+                            </label>
+                            <input type="text" 
+                                   name="first_name" 
+                                   class="form-control-modern"
+                                   value="{{ user.first_name }}"
+                                   placeholder="Enter first name">
+                        </div>
+                    </div>
+
+                    <div class="col-md-6">
+                        <div class="form-group-modern">
+                            <label class="form-label-modern">
+                                <i class="bi bi-person"></i>
+                                Last Name
+                            </label>
+                            <input type="text" 
+                                   name="last_name" 
+                                   class="form-control-modern"
+                                   value="{{ user.last_name }}"
+                                   placeholder="Enter last name">
+                        </div>
+                    </div>
+
+                    <div class="col-12">
+                        <div class="form-group-modern">
+                            <label class="form-label-modern">
+                                <i class="bi bi-envelope"></i>
+                                Email Address
+                            </label>
+                            <input type="email" 
+                                   name="email" 
+                                   class="form-control-modern"
+                                   value="{{ user.email }}"
+                                   placeholder="your.email@example.com">
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Contact & Medical Information Card -->
+        <div class="form-card">
+            <div class="form-card-header">
+                <div class="form-card-icon gradient-blue">
+                    <i class="bi bi-telephone-fill"></i>
+                </div>
+                <div>
+                    <h5 class="form-card-title">Contact & Medical Details</h5>
+                    <p class="form-card-subtitle">Your contact and health information</p>
+                </div>
+            </div>
+
+            <div class="form-card-body">
+                <div class="row g-3">
+                    <div class="col-md-6">
+                        <div class="form-group-modern">
+                            <label class="form-label-modern">
+                                <i class="bi bi-phone"></i>
+                                Phone Number
+                            </label>
+                            <input type="text" 
+                                   class="form-control-modern disabled"
+                                   value="{{ patient.phone }}"
+                                   disabled>
+                            <small class="form-help-text">
+                                <i class="bi bi-info-circle"></i>
+                                Contact admin to update phone number
+                            </small>
+                        </div>
+                    </div>
+
+                    <div class="col-md-6">
+                        <div class="form-group-modern">
+                            <label class="form-label-modern">
+                                <i class="bi bi-droplet-half"></i>
+                                Blood Group
+                            </label>
+                            <select name="blood_group" class="form-control-modern">
+                                <option value="">Select blood group</option>
+                                <option value="A+" {% if patient.blood_group == "A+" %}selected{% endif %}>A+</option>
+                                <option value="A-" {% if patient.blood_group == "A-" %}selected{% endif %}>A-</option>
+                                <option value="B+" {% if patient.blood_group == "B+" %}selected{% endif %}>B+</option>
+                                <option value="B-" {% if patient.blood_group == "B-" %}selected{% endif %}>B-</option>
+                                <option value="AB+" {% if patient.blood_group == "AB+" %}selected{% endif %}>AB+</option>
+                                <option value="AB-" {% if patient.blood_group == "AB-" %}selected{% endif %}>AB-</option>
+                                <option value="O+" {% if patient.blood_group == "O+" %}selected{% endif %}>O+</option>
+                                <option value="O-" {% if patient.blood_group == "O-" %}selected{% endif %}>O-</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="col-12">
+                        <div class="form-group-modern">
+                            <label class="form-label-modern">
+                                <i class="bi bi-geo-alt"></i>
+                                Address
+                            </label>
+                            <textarea name="address" 
+                                      class="form-control-modern"
+                                      rows="4"
+                                      placeholder="Enter your complete address">{{ patient.address }}</textarea>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Action Buttons -->
+        <div class="form-actions">
+            <button type="button" class="btn-cancel" onclick="window.location.href='{% url 'patients:dashboard' %}'">
+                <i class="bi bi-x-circle"></i>
+                Cancel
+            </button>
+            <button type="submit" class="btn-save">
+                <i class="bi bi-check-circle-fill"></i>
+                Save Changes
+            </button>
+        </div>
+    </form>
+
+    <!-- Quick Actions -->
+    <div class="quick-actions">
+        <h6 class="quick-actions-title">Quick Actions</h6>
+        <div class="quick-actions-grid">
+            <a href="{% url 'patients:dashboard' %}" class="quick-action-card">
+                <div class="quick-action-icon gradient-green">
+                    <i class="bi bi-shield-lock"></i>
+                </div>
+                <div class="quick-action-content">
+                    <p class="quick-action-title">Change Password</p>
+                    <p class="quick-action-subtitle">Update security</p>
+                </div>
+                <i class="bi bi-chevron-right"></i>
+            </a>
+
+            <a href="{% url 'patients:dashboard' %}" class="quick-action-card">
+                <div class="quick-action-icon gradient-orange">
+                    <i class="bi bi-bell"></i>
+                </div>
+                <div class="quick-action-content">
+                    <p class="quick-action-title">Notifications</p>
+                    <p class="quick-action-subtitle">Manage alerts</p>
+                </div>
+                <i class="bi bi-chevron-right"></i>
+            </a>
+
+            <a href="{% url 'patients:dashboard' %}" class="quick-action-card">
+                <div class="quick-action-icon gradient-red">
+                    <i class="bi bi-file-earmark-medical"></i>
+                </div>
+                <div class="quick-action-content">
+                    <p class="quick-action-title">Medical Records</p>
+                    <p class="quick-action-subtitle">View history</p>
+                </div>
+                <i class="bi bi-chevron-right"></i>
+            </a>
+        </div>
+    </div>
+</div>
+
+<style>
+    .profile-container {
+        max-width: 900px;
+        margin: 0 auto;
+    }
+
+    /* Profile Header */
+    .profile-header {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        padding: 40px;
+        border-radius: 20px;
+        display: flex;
+        align-items: center;
+        gap: 24px;
+        margin-bottom: 32px;
+        box-shadow: 0 10px 30px rgba(102, 126, 234, 0.3);
+    }
+
+    .profile-avatar-large {
+        width: 100px;
+        height: 100px;
+        border-radius: 20px;
+        background: white;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 36px;
+        font-weight: 700;
+        color: #667eea;
+        flex-shrink: 0;
+        box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
+    }
+
+    .profile-header-info {
+        flex: 1;
+        color: white;
+    }
+
+    .profile-header-info h2 {
+        font-size: 32px;
+        font-weight: 700;
+        margin: 0 0 8px;
+    }
+
+    .patient-id {
+        font-size: 14px;
+        opacity: 0.9;
+        margin: 0 0 16px;
+    }
+
+    .profile-badges {
+        display: flex;
+        gap: 12px;
+        flex-wrap: wrap;
+    }
+
+    .badge-status,
+    .badge-blood {
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        padding: 8px 16px;
+        border-radius: 10px;
+        font-size: 13px;
+        font-weight: 600;
+    }
+
+    .badge-status.active {
+        background: rgba(67, 233, 123, 0.2);
+        color: white;
+        border: 1px solid rgba(255, 255, 255, 0.3);
+    }
+
+    .badge-blood {
+        background: rgba(255, 255, 255, 0.2);
+        color: white;
+        border: 1px solid rgba(255, 255, 255, 0.3);
+    }
+
+    /* Form Cards */
+    .form-card {
+        background: white;
+        border-radius: 16px;
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.07);
+        margin-bottom: 24px;
+        overflow: hidden;
+    }
+
+    .form-card-header {
+        padding: 24px;
+        border-bottom: 1px solid #e2e8f0;
+        display: flex;
+        align-items: center;
+        gap: 16px;
+    }
+
+    .form-card-icon {
+        width: 56px;
+        height: 56px;
+        border-radius: 14px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 24px;
+        color: white;
+        flex-shrink: 0;
+    }
+
+    .gradient-purple {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    }
+
+    .gradient-blue {
+        background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+    }
+
+    .gradient-green {
+        background: linear-gradient(135deg, #43e97b 0%, #38f9d7 100%);
+    }
+
+    .gradient-orange {
+        background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+    }
+
+    .gradient-red {
+        background: linear-gradient(135deg, #fa709a 0%, #fee140 100%);
+    }
+
+    .form-card-title {
+        font-size: 18px;
+        font-weight: 700;
+        color: #2d3748;
+        margin: 0 0 4px;
+    }
+
+    .form-card-subtitle {
+        font-size: 13px;
+        color: #718096;
+        margin: 0;
+    }
+
+    .form-card-body {
+        padding: 24px;
+    }
+
+    /* Modern Form Inputs */
+    .form-group-modern {
+        margin-bottom: 0;
+    }
+
+    .form-label-modern {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        font-size: 14px;
+        font-weight: 600;
+        color: #2d3748;
+        margin-bottom: 8px;
+    }
+
+    .form-label-modern i {
+        color: #667eea;
+        font-size: 16px;
+    }
+
+    .form-control-modern {
+        width: 100%;
+        padding: 12px 16px;
+        border: 2px solid #e2e8f0;
+        border-radius: 12px;
+        font-size: 14px;
+        color: #2d3748;
+        background: white;
+        transition: all 0.3s ease;
+    }
+
+    .form-control-modern:focus {
+        outline: none;
+        border-color: #667eea;
+        box-shadow: 0 0 0 4px rgba(102, 126, 234, 0.1);
+    }
+
+    .form-control-modern.disabled {
+        background: #f7f8fc;
+        color: #718096;
+        cursor: not-allowed;
+    }
+
+    .form-control-modern::placeholder {
+        color: #cbd5e0;
+    }
+
+    textarea.form-control-modern {
+        resize: vertical;
+        font-family: inherit;
+    }
+
+    select.form-control-modern {
+        cursor: pointer;
+        appearance: none;
+        background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath fill='%23667eea' d='M6 9L1 4h10z'/%3E%3C/svg%3E");
+        background-repeat: no-repeat;
+        background-position: right 16px center;
+        padding-right: 40px;
+    }
+
+    .form-help-text {
+        display: flex;
+        align-items: center;
+        gap: 6px;
+        font-size: 12px;
+        color: #718096;
+        margin-top: 6px;
+    }
+
+    .form-help-text i {
+        font-size: 14px;
+        color: #4facfe;
+    }
+
+    /* Form Actions */
+    .form-actions {
+        display: flex;
+        gap: 16px;
+        justify-content: flex-end;
+        margin-bottom: 32px;
+    }
+
+    .btn-cancel,
+    .btn-save {
+        padding: 14px 28px;
+        border-radius: 12px;
+        font-size: 15px;
+        font-weight: 600;
+        border: none;
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        transition: all 0.3s ease;
+    }
+
+    .btn-cancel {
+        background: #f7f8fc;
+        color: #718096;
+    }
+
+    .btn-cancel:hover {
+        background: #e2e8f0;
+        transform: translateY(-2px);
+    }
+
+    .btn-save {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        color: white;
+        box-shadow: 0 4px 15px rgba(102, 126, 234, 0.3);
+    }
+
+    .btn-save:hover {
+        box-shadow: 0 6px 20px rgba(102, 126, 234, 0.4);
+        transform: translateY(-2px);
+    }
+
+    /* Quick Actions */
+    .quick-actions {
+        background: white;
+        padding: 24px;
+        border-radius: 16px;
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.07);
+    }
+
+    .quick-actions-title {
+        font-size: 14px;
+        font-weight: 700;
+        color: #2d3748;
+        margin: 0 0 16px;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+    }
+
+    .quick-actions-grid {
+        display: grid;
+        gap: 12px;
+    }
+
+    .quick-action-card {
+        display: flex;
+        align-items: center;
+        gap: 16px;
+        padding: 16px;
+        border-radius: 12px;
+        background: #f7f8fc;
+        text-decoration: none;
+        transition: all 0.3s ease;
+    }
+
+    .quick-action-card:hover {
+        background: #e2e8f0;
+        transform: translateX(4px);
+    }
+
+    .quick-action-icon {
+        width: 48px;
+        height: 48px;
+        border-radius: 12px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 20px;
+        color: white;
+        flex-shrink: 0;
+    }
+
+    .quick-action-content {
+        flex: 1;
+    }
+
+    .quick-action-title {
+        font-size: 14px;
+        font-weight: 600;
+        color: #2d3748;
+        margin: 0 0 2px;
+    }
+
+    .quick-action-subtitle {
+        font-size: 12px;
+        color: #718096;
+        margin: 0;
+    }
+
+    .quick-action-card > i {
+        color: #cbd5e0;
+        font-size: 18px;
+    }
+
+    /* Responsive */
+    @media (max-width: 768px) {
+        .profile-header {
+            flex-direction: column;
+            text-align: center;
+            padding: 32px 24px;
+        }
+
+        .profile-header-info h2 {
+            font-size: 24px;
+        }
+
+        .profile-badges {
+            justify-content: center;
+        }
+
+        .form-card-header {
+            flex-direction: column;
+            align-items: flex-start;
+        }
+
+        .form-actions {
+            flex-direction: column-reverse;
+        }
+
+        .btn-cancel,
+        .btn-save {
+            width: 100%;
+            justify-content: center;
+        }
+    }
+
+    @media (max-width: 576px) {
+        .profile-avatar-large {
+            width: 80px;
+            height: 80px;
+            font-size: 28px;
+        }
+
+        .form-card-body {
+            padding: 20px;
+        }
+    }
+</style>
+
+{% endblock %}

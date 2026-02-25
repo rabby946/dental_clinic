@@ -1,0 +1,41 @@
+{% extends "patients/base.html" %}
+
+{% block content %}
+<div class="container mt-4" style="max-width: 700px;">
+
+    <div class="card">
+        <div class="card-body">
+
+            <h5 class="mb-3">Appointment Details</h5>
+
+            <p>
+                <strong>Date:</strong> {{ appointment.date|date:"Y-m-d" }} <br>
+                <strong>Time:</strong> {{ appointment.time|time:"h:i A" }} <br>
+                <strong>Serial:</strong> #{{ appointment.serial_number }} <br>
+                <strong>Status:</strong>
+                <span class="badge
+                    {% if appointment.status == 'completed' %} bg-success
+                    {% elif appointment.status == 'confirmed' %} bg-primary
+                    {% elif appointment.status == 'cancelled' %} bg-danger
+                    {% else %} bg-secondary {% endif %}">
+                    {{ appointment.get_status_display }}
+                </span>
+            </p>
+
+            <hr>
+
+            <h6>Problem Description</h6>
+            <p>{{ appointment.problem }}</p>
+
+            <hr>
+
+            <a href="{% url 'patients:appointments' %}"
+               class="btn btn-sm btn-secondary">
+                Back to Appointments
+            </a>
+
+        </div>
+    </div>
+
+</div>
+{% endblock %}

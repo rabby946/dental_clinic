@@ -1,0 +1,57 @@
+{% extends "patients/base.html" %}
+{% block title %}Payment Details{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+    <h3 class="mb-3">Payment Details</h3>
+
+    <div class="card">
+        <div class="card-body">
+            <table class="table table-borderless">
+                <tr>
+                    <th>Payment Type</th>
+                    <td>
+                        <span class="badge {% if payment.type == 'paid' %}bg-success{% else %}bg-danger{% endif %}">
+                            {{ payment.type|upper }}
+                        </span>
+                    </td>
+                </tr>
+
+                <tr>
+                    <th>Amount</th>
+                    <td>৳ {{ payment.amount }}</td>
+                </tr>
+
+                <tr>
+                    <th>Payment Method</th>
+                    <td>{{ payment.method|default:"N/A"|title }}</td>
+                </tr>
+
+                <tr>
+                    <th>Transaction ID</th>
+                    <td>{{ payment.transaction_id|default:"N/A" }}</td>
+                </tr>
+
+                <tr>
+                    <th>Date</th>
+                    <td>{{ payment.created_at|date:"d M Y, h:i A" }}</td>
+                </tr>
+
+                <tr>
+                    <th>Appointment ID</th>
+                    <td>#{{ payment.appointment.id }}</td>
+                </tr>
+
+                <tr>
+                    <th>Appointment Date</th>
+                    <td>{{ payment.appointment.date }}</td>
+                </tr>
+            </table>
+
+            <a href="{% url 'patients:payment_list' %}" class="btn btn-secondary">
+                Back to Payments
+            </a>
+        </div>
+    </div>
+</div>
+{% endblock %}

@@ -7,61 +7,172 @@
 <style>
 .dashboard-section {
     min-height: 80vh;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
     padding: 40px 0;
     background-color: #f4f9fd;
 }
 
 .dashboard-card {
     background: #fff;
-    padding: 40px 30px;
+    padding: 30px;
     border-radius: 12px;
     box-shadow: 0 10px 30px rgba(0,0,0,0.08);
-    text-align: center;
-    max-width: 500px;
-    width: 100%;
+    margin-bottom: 30px;
 }
 
-.dashboard-card h2 {
+.dashboard-card h2,
+.dashboard-card h4 {
     font-weight: 700;
-    margin-bottom: 20px;
 }
 
-.btn-logout {
-    background: #dc3545;
-    color: #fff;
-    font-weight: 600;
-    padding: 12px 25px;
-    border-radius: 6px;
-    border: none;
-    font-size: 1.05rem;
-    transition: all 0.3s;
+.table th {
+    background-color: #f1f5f9;
 }
-.btn-logout:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 5px 15px rgba(220,53,69,0.3);
-    color: white;
+
+.badge-status {
+    font-size: 0.85rem;
+    padding: 6px 10px;
+}
+
+.quick-action input {
+    height: 46px;
 }
 </style>
 
 <section class="dashboard-section">
-    <div class="dashboard-card">
+<div class="container">
+
+    <!-- ===================== -->
+    <!-- Welcome Card -->
+    <!-- ===================== -->
+    <div class="dashboard-card text-center">
         {% if messages %}
             {% for message in messages %}
-                <div class="alert alert-{{ message.tags }} alert-dismissible fade show small mb-3" role="alert">
+                <div class="alert alert-{{ message.tags }} alert-dismissible fade show small mb-3">
                     {{ message }}
-                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                    <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
                 </div>
             {% endfor %}
         {% endif %}
 
-        <h2>স্বাগতম, Dr. {{ request.user.get_full_name|default:request.user.username }}!</h2>
-        <p>আপনি ড্যাশবোর্ডে লগইন করেছেন।</p>
-
-        <a href="{% url 'doctors:logout' %}" class="btn btn-logout mt-3">লগআউট</a>
+        <h2>স্বাগতম, Dr. {{ request.user.get_full_name|default:request.user.username }}</h2>
+        <p class="text-muted mb-0">আজকের অ্যাপয়েন্টমেন্ট ও রোগীর তথ্য নিচে দেখুন</p>
     </div>
+
+    <!-- ===================== -->
+    <!-- Quick Actions -->
+    <!-- ===================== -->
+    <div class="row">
+        <div class="col-md-6">
+            <div class="dashboard-card quick-action">
+                <h4 class="mb-3">রোগী খুঁজুন</h4>
+                <form method="post" action="{% url 'doctors:patient_search' %}">
+                    {% csrf_token %}
+                    <div class="input-group">
+                        <input type="text" name="phone" class="form-control"
+                               placeholder="রোগীর ফোন নাম্বার লিখুন" required>
+                        <button class="btn btn-primary">Search</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+
+        <div class="col-md-6">
+            <div class="dashboard-card text-center">
+                <h4 class="mb-3">Medicine Management</h4>
+                <a href="{% url 'medicines:create' %}" class="btn btn-success px-4">
+                    + নতুন মেডিসিন যোগ করুন
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <!-- ===================== -->
+    <!-- Today's Appointments -->
+    <!-- ===================== -->
+    <div class="dashboard-card">
+        <h4 class="mb-3">আজকের অ্যাপয়েন্টমেন্ট</h4>
+
+        {% if appointments_today %}
+        <table class="table table-bordered table-hover align-middle">
+            <thead>
+                <tr>
+                    <th>#</th>
+                    <th>সময়</th>
+                    <th>রোগী</th>
+                    <th>ফোন</th>
+                    <th>স্ট্যাটাস</th>
+                    <th>Action</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for appt in appointments_today %}
+                <tr>
+                    <td>{{ forloop.counter }}</td>
+                    <td>{{ appt.time|time:"h:i A" }}</td>
+                    <td>{{ appt.patient.name }}</td>
+                    <td>{{ appt.patient.phone }}</td>
+                    <td>
+                        <span class="badge badge-status
+                        {% if appt.status == 'completed' %}bg-success
+                        {% elif appt.status == 'pending' %}bg-warning
+                        {% else %}bg-secondary{% endif %}">
+                            {{ appt.status|title }}
+                        </span>
+                    </td>
+                    <td>
+                        <a href="{% url 'doctors:patient_detail' appt.patient.id %}"
+                           class="btn btn-sm btn-primary">
+                            Open
+                        </a>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+        {% else %}
+            <div class="alert alert-info mb-0">আজ কোনো অ্যাপয়েন্টমেন্ট নেই</div>
+        {% endif %}
+    </div>
+
+    <!-- ===================== -->
+    <!-- Pending Appointments -->
+    <!-- ===================== -->
+    <div class="dashboard-card">
+        <h4 class="mb-3">Pending Appointments</h4>
+
+        {% if pending_appointments %}
+        <table class="table table-bordered table-hover align-middle">
+            <thead>
+                <tr>
+                    <th>তারিখ</th>
+                    <th>সময়</th>
+                    <th>রোগী</th>
+                    <th>ফোন</th>
+                    <th>Action</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for appt in pending_appointments %}
+                <tr>
+                    <td>{{ appt.date }}</td>
+                    <td>{{ appt.time|time:"h:i A" }}</td>
+                    <td>{{ appt.patient.name }}</td>
+                    <td>{{ appt.patient.phone }}</td>
+                    <td>
+                        <a href="{% url 'doctors:patient_detail' appt.patient.id %}"
+                           class="btn btn-sm btn-outline-primary">
+                            View Patient
+                        </a>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+        {% else %}
+            <div class="alert alert-success mb-0">কোনো Pending অ্যাপয়েন্টমেন্ট নেই 🎉</div>
+        {% endif %}
+    </div>
+
+</div>
 </section>
 {% endblock %}

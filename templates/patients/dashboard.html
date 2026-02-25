@@ -1,0 +1,804 @@
+{% extends "patients/base.html" %}
+{% load humanize %}
+
+{% block page_title %}Dashboard{% endblock %}
+
+{% block content %}
+
+<!-- Welcome Banner -->
+<div class="welcome-banner mb-4">
+    <div class="welcome-content">
+        <h2>Welcome back, <span class="gradient-text">{{ user.get_full_name|default:user.username }}</span>! 👋</h2>
+        <p>Here's what's happening with your dental care today</p>
+    </div>
+    <div class="welcome-actions">
+        <button class="btn-primary-gradient">
+            <i class="bi bi-calendar-plus"></i>
+            Book Appointment
+        </button>
+    </div>
+</div>
+
+<!-- Analytics Cards -->
+<div class="stats-grid mb-4">
+    <!-- Total Appointments Card -->
+    <div class="stat-card gradient-purple">
+        <div class="stat-icon">
+            <i class="bi bi-calendar-check"></i>
+        </div>
+        <div class="stat-content">
+            <p class="stat-label">Total Appointments</p>
+            <h3 class="stat-value">{{ total_appointments }}</h3>
+        </div>
+        <div class="stat-trend">
+            <i class="bi bi-graph-up"></i>
+        </div>
+    </div>
+
+    <!-- Upcoming Card -->
+    <div class="stat-card gradient-blue">
+        <div class="stat-icon">
+            <i class="bi bi-clock-history"></i>
+        </div>
+        <div class="stat-content">
+            <p class="stat-label">Upcoming</p>
+            <h3 class="stat-value">{{ upcoming_count }}</h3>
+        </div>
+        <div class="stat-trend">
+            <span class="badge-upcoming">Next: Soon</span>
+        </div>
+    </div>
+
+    <!-- Completed Card -->
+    <div class="stat-card gradient-green">
+        <div class="stat-icon">
+            <i class="bi bi-check-circle"></i>
+        </div>
+        <div class="stat-content">
+            <p class="stat-label">Completed</p>
+            <h3 class="stat-value">{{ completed_count }}</h3>
+        </div>
+        <div class="stat-trend">
+            <i class="bi bi-emoji-smile"></i>
+        </div>
+    </div>
+
+    <!-- Due Amount Card -->
+    <div class="stat-card gradient-red">
+        <div class="stat-icon">
+            <i class="bi bi-exclamation-circle"></i>
+        </div>
+        <div class="stat-content">
+            <p class="stat-label">Due Amount</p>
+            <h3 class="stat-value">৳ {{ due_amount|intcomma }}</h3>
+        </div>
+        <div class="stat-trend">
+            {% if due_amount > 0 %}
+            <button class="btn-pay-now">Pay Now</button>
+            {% endif %}
+        </div>
+    </div>
+</div>
+
+<!-- Financial Summary -->
+<div class="row g-4 mb-4">
+    <div class="col-lg-6">
+        <div class="finance-card">
+            <div class="finance-header">
+                <div class="finance-icon gradient-orange">
+                    <i class="bi bi-receipt"></i>
+                </div>
+                <div>
+                    <p class="finance-label">Total Charged</p>
+                    <h3 class="finance-value">৳ {{ total_charge|intcomma }}</h3>
+                </div>
+            </div>
+            <div class="finance-progress">
+                <div class="progress-bar-custom">
+                    <div class="progress-fill gradient-orange-fill" style="width: 100%"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-lg-6">
+        <div class="finance-card">
+            <div class="finance-header">
+                <div class="finance-icon gradient-success">
+                    <i class="bi bi-check2-circle"></i>
+                </div>
+                <div>
+                    <p class="finance-label">Total Paid</p>
+                    <h3 class="finance-value text-success">৳ {{ total_paid|intcomma }}</h3>
+                </div>
+            </div>
+            <div class="finance-progress">
+                <div class="progress-bar-custom">
+                    {% widthratio total_paid total_charge 100 as paid_percentage %}
+                    <div class="progress-fill gradient-success-fill" style="width: {{ paid_percentage }}%"></div>
+                </div>
+                <span class="progress-label">{{ paid_percentage }}% Paid</span>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Recent Appointments & Payments -->
+<div class="row g-4">
+    <!-- Recent Appointments -->
+    <div class="col-lg-7">
+        <div class="data-card">
+            <div class="card-header-custom">
+                <div>
+                    <h5 class="card-title-custom">
+                        <i class="bi bi-calendar-event"></i>
+                        Recent Appointments
+                    </h5>
+                    <p class="card-subtitle-custom">Your latest appointment history</p>
+                </div>
+                <a href="{% url 'patients:dashboard' %}" class="btn-view-all">View All</a>
+            </div>
+
+            <div class="table-responsive">
+                <table class="table-modern">
+                    <thead>
+                        <tr>
+                            <th>Date & Time</th>
+                            <th>Serial</th>
+                            <th>Status</th>
+                            <th></th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for a in appointments %}
+                        <tr>
+                            <td>
+                                <div class="table-date">
+                                    <i class="bi bi-calendar3"></i>
+                                    <div>
+                                        <div class="date-text">{{ a.date|date:"M d, Y" }}</div>
+                                        <div class="time-text">{{ a.time|time:"g:i A" }}</div>
+                                    </div>
+                                </div>
+                            </td>
+                            <td>
+                                <span class="serial-badge">#{{ a.serial_number }}</span>
+                            </td>
+                            <td>
+                                {% if a.status == 'completed' %}
+                                <span class="status-badge status-completed">
+                                    <i class="bi bi-check-circle-fill"></i> Completed
+                                </span>
+                                {% elif a.status == 'confirmed' %}
+                                <span class="status-badge status-confirmed">
+                                    <i class="bi bi-clock-fill"></i> Confirmed
+                                </span>
+                                {% elif a.status == 'pending' %}
+                                <span class="status-badge status-pending">
+                                    <i class="bi bi-hourglass-split"></i> Pending
+                                </span>
+                                {% else %}
+                                <span class="status-badge status-cancelled">
+                                    <i class="bi bi-x-circle-fill"></i> {{ a.get_status_display }}
+                                </span>
+                                {% endif %}
+                            </td>
+                            <td>
+                                <button class="btn-icon-action" title="View Details">
+                                    <i class="bi bi-eye"></i>
+                                </button>
+                            </td>
+                        </tr>
+                        {% empty %}
+                        <tr>
+                            <td colspan="4">
+                                <div class="empty-state">
+                                    <i class="bi bi-calendar-x"></i>
+                                    <p>No appointments found</p>
+                                    <button class="btn-secondary-gradient">Schedule Your First Visit</button>
+                                </div>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <!-- Recent Payments -->
+    <div class="col-lg-5">
+        <div class="data-card">
+            <div class="card-header-custom">
+                <div>
+                    <h5 class="card-title-custom">
+                        <i class="bi bi-credit-card"></i>
+                        Recent Payments
+                    </h5>
+                    <p class="card-subtitle-custom">Transaction history</p>
+                </div>
+                <a href="{% url 'patients:dashboard' %}" class="btn-view-all">View All</a>
+            </div>
+
+            <div class="payment-list">
+                {% for p in payments %}
+                <div class="payment-item">
+                    <div class="payment-icon">
+                        {% if p.method == 'cash' %}
+                        <i class="bi bi-cash"></i>
+                        {% elif p.method == 'card' %}
+                        <i class="bi bi-credit-card-2-front"></i>
+                        {% else %}
+                        <i class="bi bi-wallet2"></i>
+                        {% endif %}
+                    </div>
+                    <div class="payment-details">
+                        <p class="payment-type">{{ p.type|title }}</p>
+                        <p class="payment-date">{{ p.created_at|date:"M d, Y" }}</p>
+                    </div>
+                    <div class="payment-amount">
+                        <p class="amount-text">৳ {{ p.amount|intcomma }}</p>
+                        <span class="payment-method-badge">{{ p.method|upper }}</span>
+                    </div>
+                </div>
+                {% empty %}
+                <div class="empty-state-small">
+                    <i class="bi bi-wallet"></i>
+                    <p>No payment records yet</p>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+    /* Welcome Banner */
+    .welcome-banner {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        padding: 32px;
+        border-radius: 20px;
+        color: white;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        box-shadow: 0 10px 30px rgba(102, 126, 234, 0.3);
+    }
+
+    .welcome-content h2 {
+        font-size: 28px;
+        font-weight: 700;
+        margin: 0 0 8px;
+    }
+
+    .gradient-text {
+        background: linear-gradient(135deg, #fff 0%, #f0f0f0 100%);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
+    }
+
+    .welcome-content p {
+        margin: 0;
+        opacity: 0.9;
+        font-size: 15px;
+    }
+
+    .btn-primary-gradient {
+        background: white;
+        color: #667eea;
+        border: none;
+        padding: 12px 24px;
+        border-radius: 12px;
+        font-weight: 600;
+        font-size: 14px;
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        transition: all 0.3s ease;
+        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+    }
+
+    .btn-primary-gradient:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 6px 20px rgba(0, 0, 0, 0.15);
+    }
+
+    /* Stats Grid */
+    .stats-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+        gap: 24px;
+    }
+
+    .stat-card {
+        background: white;
+        padding: 24px;
+        border-radius: 16px;
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.07);
+        display: flex;
+        align-items: flex-start;
+        gap: 16px;
+        position: relative;
+        overflow: hidden;
+        transition: transform 0.3s ease;
+    }
+
+    .stat-card:hover {
+        transform: translateY(-4px);
+    }
+
+    .stat-card::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        height: 4px;
+    }
+
+    .gradient-purple::before {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    }
+
+    .gradient-blue::before {
+        background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+    }
+
+    .gradient-green::before {
+        background: linear-gradient(135deg, #43e97b 0%, #38f9d7 100%);
+    }
+
+    .gradient-red::before {
+        background: linear-gradient(135deg, #fa709a 0%, #fee140 100%);
+    }
+
+    .stat-icon {
+        width: 56px;
+        height: 56px;
+        border-radius: 14px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 24px;
+        flex-shrink: 0;
+    }
+
+    .gradient-purple .stat-icon {
+        background: linear-gradient(135deg, rgba(102, 126, 234, 0.1) 0%, rgba(118, 75, 162, 0.1) 100%);
+        color: #667eea;
+    }
+
+    .gradient-blue .stat-icon {
+        background: linear-gradient(135deg, rgba(79, 172, 254, 0.1) 0%, rgba(0, 242, 254, 0.1) 100%);
+        color: #4facfe;
+    }
+
+    .gradient-green .stat-icon {
+        background: linear-gradient(135deg, rgba(67, 233, 123, 0.1) 0%, rgba(56, 249, 215, 0.1) 100%);
+        color: #43e97b;
+    }
+
+    .gradient-red .stat-icon {
+        background: linear-gradient(135deg, rgba(250, 112, 154, 0.1) 0%, rgba(254, 225, 64, 0.1) 100%);
+        color: #fa709a;
+    }
+
+    .stat-content {
+        flex: 1;
+    }
+
+    .stat-label {
+        font-size: 13px;
+        color: #718096;
+        margin: 0 0 4px;
+        font-weight: 500;
+    }
+
+    .stat-value {
+        font-size: 32px;
+        font-weight: 700;
+        color: #2d3748;
+        margin: 0;
+        line-height: 1;
+    }
+
+    .stat-trend {
+        font-size: 18px;
+        color: #cbd5e0;
+    }
+
+    .badge-upcoming {
+        background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+        color: white;
+        padding: 4px 10px;
+        border-radius: 8px;
+        font-size: 11px;
+        font-weight: 600;
+    }
+
+    .btn-pay-now {
+        background: linear-gradient(135deg, #fa709a 0%, #fee140 100%);
+        color: white;
+        border: none;
+        padding: 6px 14px;
+        border-radius: 8px;
+        font-size: 12px;
+        font-weight: 600;
+        cursor: pointer;
+    }
+
+    /* Finance Cards */
+    .finance-card {
+        background: white;
+        padding: 24px;
+        border-radius: 16px;
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.07);
+        height: 100%;
+    }
+
+    .finance-header {
+        display: flex;
+        align-items: center;
+        gap: 16px;
+        margin-bottom: 20px;
+    }
+
+    .finance-icon {
+        width: 56px;
+        height: 56px;
+        border-radius: 14px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 24px;
+        color: white;
+    }
+
+    .gradient-orange {
+        background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+    }
+
+    .gradient-success {
+        background: linear-gradient(135deg, #43e97b 0%, #38f9d7 100%);
+    }
+
+    .finance-label {
+        font-size: 13px;
+        color: #718096;
+        margin: 0 0 4px;
+        font-weight: 500;
+    }
+
+    .finance-value {
+        font-size: 28px;
+        font-weight: 700;
+        color: #2d3748;
+        margin: 0;
+    }
+
+    .finance-progress {
+        position: relative;
+    }
+
+    .progress-bar-custom {
+        height: 8px;
+        background: #e2e8f0;
+        border-radius: 10px;
+        overflow: hidden;
+        margin-bottom: 8px;
+    }
+
+    .progress-fill {
+        height: 100%;
+        border-radius: 10px;
+        transition: width 0.6s ease;
+    }
+
+    .gradient-orange-fill {
+        background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+    }
+
+    .gradient-success-fill {
+        background: linear-gradient(135deg, #43e97b 0%, #38f9d7 100%);
+    }
+
+    .progress-label {
+        font-size: 12px;
+        color: #718096;
+        font-weight: 500;
+    }
+
+    /* Data Cards */
+    .data-card {
+        background: white;
+        border-radius: 16px;
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.07);
+        overflow: hidden;
+    }
+
+    .card-header-custom {
+        padding: 24px;
+        border-bottom: 1px solid #e2e8f0;
+        display: flex;
+        justify-content: space-between;
+        align-items: flex-start;
+    }
+
+    .card-title-custom {
+        font-size: 18px;
+        font-weight: 700;
+        color: #2d3748;
+        margin: 0 0 4px;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+    }
+
+    .card-title-custom i {
+        color: #667eea;
+    }
+
+    .card-subtitle-custom {
+        font-size: 13px;
+        color: #718096;
+        margin: 0;
+    }
+
+    .btn-view-all {
+        color: #667eea;
+        font-size: 13px;
+        font-weight: 600;
+        text-decoration: none;
+        transition: color 0.2s ease;
+    }
+
+    .btn-view-all:hover {
+        color: #764ba2;
+    }
+
+    /* Modern Table */
+    .table-responsive {
+        overflow-x: auto;
+    }
+
+    .table-modern {
+        width: 100%;
+        border-collapse: separate;
+        border-spacing: 0;
+    }
+
+    .table-modern thead th {
+        background: #f7f8fc;
+        padding: 16px 24px;
+        font-size: 12px;
+        font-weight: 600;
+        color: #718096;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+        border: none;
+    }
+
+    .table-modern tbody td {
+        padding: 16px 24px;
+        border-bottom: 1px solid #e2e8f0;
+        font-size: 14px;
+        color: #2d3748;
+    }
+
+    .table-modern tbody tr:last-child td {
+        border-bottom: none;
+    }
+
+    .table-modern tbody tr:hover {
+        background: #f7f8fc;
+    }
+
+    .table-date {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+    }
+
+    .table-date i {
+        font-size: 20px;
+        color: #667eea;
+    }
+
+    .date-text {
+        font-weight: 600;
+        color: #2d3748;
+    }
+
+    .time-text {
+        font-size: 12px;
+        color: #718096;
+    }
+
+    .serial-badge {
+        background: #f7f8fc;
+        color: #667eea;
+        padding: 6px 12px;
+        border-radius: 8px;
+        font-weight: 600;
+        font-size: 13px;
+    }
+
+    .status-badge {
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        padding: 6px 12px;
+        border-radius: 8px;
+        font-size: 12px;
+        font-weight: 600;
+    }
+
+    .status-completed {
+        background: rgba(67, 233, 123, 0.1);
+        color: #22c55e;
+    }
+
+    .status-confirmed {
+        background: rgba(79, 172, 254, 0.1);
+        color: #4facfe;
+    }
+
+    .status-pending {
+        background: rgba(251, 191, 36, 0.1);
+        color: #f59e0b;
+    }
+
+    .status-cancelled {
+        background: rgba(239, 68, 68, 0.1);
+        color: #ef4444;
+    }
+
+    .btn-icon-action {
+        background: transparent;
+        border: none;
+        color: #cbd5e0;
+        font-size: 18px;
+        cursor: pointer;
+        padding: 4px 8px;
+        border-radius: 6px;
+        transition: all 0.2s ease;
+    }
+
+    .btn-icon-action:hover {
+        background: #f7f8fc;
+        color: #667eea;
+    }
+
+    /* Payment List */
+    .payment-list {
+        padding: 16px 24px;
+    }
+
+    .payment-item {
+        display: flex;
+        align-items: center;
+        gap: 16px;
+        padding: 16px 0;
+        border-bottom: 1px solid #e2e8f0;
+    }
+
+    .payment-item:last-child {
+        border-bottom: none;
+    }
+
+    .payment-icon {
+        width: 48px;
+        height: 48px;
+        border-radius: 12px;
+        background: linear-gradient(135deg, rgba(67, 233, 123, 0.1) 0%, rgba(56, 249, 215, 0.1) 100%);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 20px;
+        color: #43e97b;
+    }
+
+    .payment-details {
+        flex: 1;
+    }
+
+    .payment-type {
+        font-weight: 600;
+        color: #2d3748;
+        margin: 0 0 2px;
+        font-size: 14px;
+    }
+
+    .payment-date {
+        font-size: 12px;
+        color: #718096;
+        margin: 0;
+    }
+
+    .payment-amount {
+        text-align: right;
+    }
+
+    .amount-text {
+        font-weight: 700;
+        color: #2d3748;
+        margin: 0 0 4px;
+        font-size: 16px;
+    }
+
+    .payment-method-badge {
+        background: #f7f8fc;
+        color: #667eea;
+        padding: 4px 8px;
+        border-radius: 6px;
+        font-size: 10px;
+        font-weight: 600;
+    }
+
+    /* Empty States */
+    .empty-state {
+        text-align: center;
+        padding: 48px 24px;
+    }
+
+    .empty-state i {
+        font-size: 48px;
+        color: #cbd5e0;
+        margin-bottom: 16px;
+    }
+
+    .empty-state p {
+        color: #718096;
+        margin-bottom: 16px;
+    }
+
+    .btn-secondary-gradient {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        color: white;
+        border: none;
+        padding: 10px 20px;
+        border-radius: 10px;
+        font-weight: 600;
+        font-size: 13px;
+        cursor: pointer;
+    }
+
+    .empty-state-small {
+        text-align: center;
+        padding: 32px 16px;
+    }
+
+    .empty-state-small i {
+        font-size: 40px;
+        color: #cbd5e0;
+        margin-bottom: 12px;
+    }
+
+    .empty-state-small p {
+        color: #718096;
+        font-size: 14px;
+        margin: 0;
+    }
+
+    /* Responsive */
+    @media (max-width: 768px) {
+        .welcome-banner {
+            flex-direction: column;
+            text-align: center;
+            gap: 20px;
+        }
+
+        .stats-grid {
+            grid-template-columns: 1fr;
+        }
+
+        .table-modern thead th,
+        .table-modern tbody td {
+            padding: 12px 16px;
+        }
+    }
+</style>
+
+{% endblock %}

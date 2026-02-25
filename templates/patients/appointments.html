@@ -1,0 +1,49 @@
+{% extends "patients/base.html" %}
+
+{% block content %}
+<div class="container mt-4">
+
+    <h4 class="mb-3">My Appointments</h4>
+
+    <table class="table table-bordered table-sm">
+        <thead>
+            <tr>
+                <th>Date</th>
+                <th>Time</th>
+                <th>Serial</th>
+                <th>Status</th>
+                <th>Action</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for ap in appointments %}
+            <tr>
+                <td>{{ ap.date|date:"Y-m-d" }}</td>
+                <td>{{ ap.time|time:"h:i A" }}</td>
+                <td>#{{ ap.serial_number }}</td>
+                <td>
+                    <span class="badge
+                        {% if ap.status == 'completed' %} bg-success
+                        {% elif ap.status == 'confirmed' %} bg-primary
+                        {% elif ap.status == 'cancelled' %} bg-danger
+                        {% else %} bg-secondary {% endif %}">
+                        {{ ap.get_status_display }}
+                    </span>
+                </td>
+                <td>
+                    <a href="{% url 'patients:appointment_detail' ap.id %}"
+                       class="btn btn-sm btn-outline-primary">
+                        Details
+                    </a>
+                </td>
+            </tr>
+            {% empty %}
+            <tr>
+                <td colspan="5">No appointments found.</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+
+</div>
+{% endblock %}

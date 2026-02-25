@@ -18,10 +18,6 @@ from django.urls import reverse
 from apps.doctors.decorators import doctor_required
 from django.utils.decorators import method_decorator
 
-# -------------------
-# Login / Logout
-# -------------------
-# apps/doctors/views.py
 from django.shortcuts import redirect
 from django.contrib.auth import authenticate, login
 from django.contrib import messages
@@ -29,6 +25,14 @@ from django.urls import reverse
 from django.views.decorators.http import require_POST
 from django.contrib.auth.models import User
 from django.views.decorators.csrf import csrf_exempt
+from django.shortcuts import render, redirect, get_object_or_404
+from django.contrib import messages
+from django.contrib.auth.decorators import login_required
+from django.utils import timezone
+
+from apps.patients.models import Patient
+from apps.core.models import Appointment, Document
+from apps.prescriptions.models import Prescription
 
 
 
@@ -38,11 +42,6 @@ from django.contrib import messages
 from django.contrib.auth.models import User
 
 def doctor_login(request):
-    """
-    Doctor login view
-    GET: render login form (or redirect to dashboard if already logged in)
-    POST: authenticate and login doctor
-    """
 
     # If already logged in, redirect to dashboard
     if request.user.is_authenticated and request.user.is_staff:
@@ -111,11 +110,54 @@ def appointment_detail(request, pk):
 # Patients
 # -------------------
 @doctor_required
-def patient_list(request):
-    patients = Patient.objects.all()
-    return render(request, 'doctors/patients.html', {'patients': patients})
+def patient_search(request):
+    if request.method == 'POST':
+        phone = request.POST.get('phone')
 
+        try:
+            patient = Patient.objects.get(phone=phone)
+            return redirect('doctors:patient_detail', pk=patient.id)
+        except Patient.DoesNotExist:
+            messages.warning(request, "Patient not found. Create new?")
+            request.session['new_patient_phone'] = phone
+            return redirect('doctors:patient_create')
+
+    return render(request, 'doctors/patient_search.html')
+
+@doctor_required
+def patient_create(request):
+    phone = request.session.get('new_patient_phone')
+
+    if request.method == 'POST':
+        name = request.POST.get('name')
+        gender = request.POST.get('gender')
+
+        patient = Patient.objects.create(
+            name=name,
+            phone=phone,
+            gender=gender
+        )
+
+        messages.success(request, "Patient created successfully.")
+        return redirect('doctors:patient_detail', pk=patient.id)
+
+    return render(request, 'doctors/patient_create.html', {'phone': phone})
 @doctor_required
 def patient_detail(request, pk):
     patient = get_object_or_404(Patient, pk=pk)
-    return render(request, 'doctors/patient_detail.html', {'patient': patient})
+
+    appointments = patient.appointments.order_by('-date')
+    prescriptions = Prescription.objects.filter(
+        appointment__patient=patient
+    ).order_by('-created_at')
+
+    documents = Document.objects.filter(patient=patient).order_by('-uploaded_at')
+
+    context = {
+        'patient': patient,
+        'appointments': appointments,
+        'prescriptions': prescriptions,
+        'documents': documents,
+    }
+    return render(request, 'doctors/patient_detail.html', context)
+

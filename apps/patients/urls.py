@@ -17,6 +17,8 @@ urlpatterns = [
     # Prescriptions
     path('prescriptions/', views.prescription_list, name='prescription_list'),
     path('prescriptions/<int:pk>/', views.prescription_detail, name='prescription_detail'),
+    path('prescriptions/<int:pk>/download/', views.prescription_download, name='prescription_download'),
+
 
     # Payments
     path('payments/', views.payment_list, name='payments'),
@@ -25,4 +27,10 @@ urlpatterns = [
     # Appointments
     path('appointments/', views.appointment_list, name='appointments'),
     path('appointments/<int:pk>/', views.appointment_detail, name='appointment_detail'),
+
+    path('change_password/', views.change_password, name='change_password'),
+
+    # Documents
+    path('documents/', views.documents, name='documents'),
+    path('documents/<int:pk>/', views.document_details, name='document_details'),
 ]

@@ -1,6 +1,10 @@
 from django.db import models
 from apps.patients.models import Patient
 
+# apps/appointments/models.py
+from django.db import models
+from apps.patients.models import Patient
+
 class Appointment(models.Model):
     STATUS_CHOICES = [
         ('pending', 'Pending'),
@@ -13,14 +17,20 @@ class Appointment(models.Model):
     patient = models.ForeignKey(Patient, on_delete=models.CASCADE, related_name='appointments')
     date = models.DateField()
     time = models.TimeField()
+    serial_number = models.PositiveIntegerField()
     problem = models.CharField(max_length=255)
     status = models.CharField(max_length=20, choices=STATUS_CHOICES, default='pending')
 
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 
+    class Meta:
+        unique_together = ('date', 'serial_number')   # ✅ safety
+        ordering = ['date', 'serial_number']
+
     def __str__(self):
-        return f"{self.patient.name} - {self.date}"
+        return f"{self.patient.name} - {self.date} - #{self.serial_number}"
+
 
 class Document(models.Model):
     patient = models.ForeignKey(Patient, on_delete=models.CASCADE)

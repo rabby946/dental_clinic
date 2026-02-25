@@ -1,12 +1,17 @@
 import os
 from pathlib import Path
 import environ
+from pathlib import Path
+import os
+from dotenv import load_dotenv
+
+
 
 # ----------------------
 # BASE DIR
 # ----------------------
 BASE_DIR = Path(__file__).resolve().parent.parent
-
+load_dotenv(BASE_DIR / ".env")
 # ----------------------
 # ENVIRONMENT VARIABLES
 # ----------------------
@@ -32,7 +37,7 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-
+    'django.contrib.humanize',
     'apps.core',
     'apps.patients',
     'apps.medicines',
@@ -89,6 +94,11 @@ DATABASES = {
         conn_max_age=600
     )
 }
+# settings.py
+BREVO_API_KEY = os.getenv('BREVO_API_KEY')
+BREVO_SENDER_EMAIL = os.getenv('BREVO_SENDER_EMAIL')
+ADMIN_EMAIL = os.getenv('ADMIN_EMAIL')
+
 
 # Optional: SSL mode (Supabase requires in production)
 DATABASES['default']['OPTIONS'] = {'sslmode': 'require'}
@@ -129,3 +139,10 @@ STATIC_ROOT = BASE_DIR / 'staticfiles'
 STATICFILES_DIRS = [
     BASE_DIR / 'static',
 ]
+
+
+import os
+
+TWILIO_SID = os.getenv("TWILIO_SID")
+TWILIO_AUTH_TOKEN = os.getenv("TWILIO_AUTH_TOKEN")
+TWILIO_WHATSAPP_FROM = os.getenv("TWILIO_WHATSAPP_FROM")

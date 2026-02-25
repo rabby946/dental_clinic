@@ -1,0 +1,61 @@
+{% extends "patients/base.html" %}
+
+{% block content %}
+<div class="container mt-4" style="max-width: 800px;">
+
+    <div class="card">
+        <div class="card-body">
+
+            <div class="d-flex justify-content-between">
+                <h4>Prescription</h4>
+                <a href="{% url 'patients:prescription_download' prescription.id %}"
+                   class="btn btn-sm btn-outline-success">
+                    Download
+                </a>
+            </div>
+
+            <hr>
+
+            <p>
+                <strong>Patient:</strong>
+                {{ prescription.appointment.patient.name }} <br>
+
+                <strong>Date:</strong>
+                {{ prescription.created_at|date:"Y-m-d" }}
+            </p>
+
+            <hr>
+
+            <h6>Medicines</h6>
+            <table class="table table-sm">
+                <thead>
+                    <tr>
+                        <th>Medicine</th>
+                        <th>Dosage</th>
+                        <th>Duration</th>
+                        <th>Instructions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for item in prescription.items.all %}
+                    <tr>
+                        <td>{{ item.medicine.name }}</td>
+                        <td>{{ item.dosage }}</td>
+                        <td>{{ item.duration }}</td>
+                        <td>{{ item.instructions|default:"—" }}</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+
+            {% if prescription.note %}
+            <hr>
+            <h6>Doctor's Note</h6>
+            <p>{{ prescription.note }}</p>
+            {% endif %}
+
+        </div>
+    </div>
+
+</div>
+{% endblock %}
