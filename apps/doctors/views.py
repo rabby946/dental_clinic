@@ -110,23 +110,42 @@ def appointment_detail(request, pk):
 # Patients
 # -------------------
 @doctor_required
+@doctor_required
 def patient_search(request):
     if request.method == 'POST':
-        phone = request.POST.get('phone')
+        phone = request.POST.get('phone').strip()
+
+        if not phone:
+            messages.error(request, "Phone number required.")
+            return redirect('doctors:doctor_dashboard')
 
         try:
             patient = Patient.objects.get(phone=phone)
             return redirect('doctors:patient_detail', pk=patient.id)
-        except Patient.DoesNotExist:
-            messages.warning(request, "Patient not found. Create new?")
-            request.session['new_patient_phone'] = phone
-            return redirect('doctors:patient_create')
 
-    return render(request, 'doctors/patient_search.html')
+        except Patient.DoesNotExist:
+            request.session['new_patient_phone'] = phone
+            return redirect('doctors:patient_confirm_create')
+
+    return redirect('doctors:doctor_dashboard')
+
+@doctor_required
+def patient_confirm_create(request):
+    phone = request.session.get('new_patient_phone')
+
+    if not phone:
+        return redirect('doctors:doctor_dashboard')
+
+    return render(request, 'doctors/patient_confirm_create.html', {
+        'phone': phone
+    })
 
 @doctor_required
 def patient_create(request):
     phone = request.session.get('new_patient_phone')
+
+    if not phone:
+        return redirect('doctors:doctor_dashboard')
 
     if request.method == 'POST':
         name = request.POST.get('name')
@@ -138,10 +157,13 @@ def patient_create(request):
             gender=gender
         )
 
+        del request.session['new_patient_phone']
+
         messages.success(request, "Patient created successfully.")
         return redirect('doctors:patient_detail', pk=patient.id)
 
     return render(request, 'doctors/patient_create.html', {'phone': phone})
+
 @doctor_required
 def patient_detail(request, pk):
     patient = get_object_or_404(Patient, pk=pk)
@@ -161,3 +183,21 @@ def patient_detail(request, pk):
     }
     return render(request, 'doctors/patient_detail.html', context)
 
+@doctor_required
+def add_document(request, patient_id):
+    patient = get_object_or_404(Patient, id=patient_id)
+
+    if request.method == 'POST':
+        file = request.FILES.get('file')
+
+        Document.objects.create(
+            patient=patient,
+            file=file
+        )
+
+        messages.success(request, "Document uploaded.")
+        return redirect('doctors:patient_detail', pk=patient.id)
+
+    return render(request, 'doctors/add_document.html', {
+        'patient': patient
+    })

@@ -9,16 +9,19 @@ urlpatterns = [
     path('logout/', views.doctor_logout, name='logout'),
 
     # Dashboard
-    path('dashboard/', views.doctor_dashboard, name='dashboard'),
+    path('dashboard/', views.doctor_dashboard, name='doctor_dashboard'),
 
     # Appointments
     path('appointments/', views.appointment_list, name='appointments'),
     path('appointments/<int:pk>/', views.appointment_detail, name='appointment_detail'),
 
     path('dashboard/', views.doctor_dashboard, name='dashboard'),
+    path('patients/<int:patient_id>/add-document/', views.add_document, name='add_document'),
 
     path('patients/search/', views.patient_search, name='patient_search'),
     path('patients/create/', views.patient_create, name='patient_create'),
     path('patients/<int:pk>/', views.patient_detail, name='patient_detail'),
+    path('patients/search/', views.patient_search, name='patient_search'),
+    path('patients/confirm/', views.patient_confirm_create, name='patient_confirm_create'),
 
 ]

@@ -1,0 +1,86 @@
+{% extends 'core/base.html' %}
+{% block title %}Prescription{% endblock %}
+
+{% block content %}
+<div class="container py-5">
+
+    <div class="card shadow p-4">
+
+        <!-- Header -->
+        <div class="text-center mb-4">
+            <h3 class="fw-bold">Dental Clinic</h3>
+            <p>Dr. Name | BDS, DDS</p>
+            <hr>
+        </div>
+
+        <!-- Patient Info -->
+        <div class="mb-3">
+            <strong>Patient:</strong>
+            {{ prescription.appointment.patient.name }} <br>
+
+            <strong>Phone:</strong>
+            {{ prescription.appointment.patient.phone }} <br>
+
+            <strong>Date:</strong>
+            {{ prescription.created_at|date:"d M Y" }}
+        </div>
+
+        <hr>
+
+        <!-- Medicine List -->
+        <h5 class="fw-bold mb-3">Medicines</h5>
+
+        <table class="table">
+            <thead>
+                <tr>
+                    <th>#</th>
+                    <th>Medicine</th>
+                    <th>Dosage</th>
+                    <th>Duration</th>
+                    <th>Instructions</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for item in prescription.items.all %}
+                <tr>
+                    <td>{{ forloop.counter }}</td>
+                    <td>
+                        {{ item.medicine.name }} <br>
+                        <small>
+                            {{ item.medicine.type }} |
+                            {{ item.medicine.strength }} |
+                            {{ item.medicine.brand }}
+                        </small>
+                    </td>
+                    <td>{{ item.dosage }}</td>
+                    <td>{{ item.duration }}</td>
+                    <td>
+                        {{ item.instructions|default:item.medicine.instructions }}
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+
+        {% if prescription.note %}
+        <div class="mt-4">
+            <strong>Note:</strong>
+            <p>{{ prescription.note }}</p>
+        </div>
+        {% endif %}
+
+        <div class="mt-5 text-end">
+            __________________________ <br>
+            Doctor Signature
+        </div>
+
+        <div class="mt-4 text-center">
+            <button onclick="window.print()" class="btn btn-outline-secondary">
+                Print
+            </button>
+        </div>
+
+    </div>
+
+</div>
+{% endblock %}

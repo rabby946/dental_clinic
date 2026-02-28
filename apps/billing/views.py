@@ -106,3 +106,36 @@ def add_manual_payment(request, appointment_id):
         'appointment': appointment,
         'methods': Payment.PAYMENT_METHOD
     })
+
+
+# apps/billing/views.py
+# from django.shortcuts import render, redirect, get_object_or_404
+# from django.contrib import messages
+# from django.utils import timezone
+# from apps.patients.models import Patient
+# from apps.billing.models import Charge
+# from apps.doctors.decorators import doctor_required
+
+
+# @doctor_required
+# def add_charge(request):
+#     patient_id = request.GET.get('patient')
+#     patient = get_object_or_404(Patient, id=patient_id)
+
+#     if request.method == 'POST':
+#         amount = request.POST.get('amount')
+#         description = request.POST.get('description')
+
+#         Charge.objects.create(
+#             patient=patient,
+#             amount=amount,
+#             description=description,
+#             created_at=timezone.now()
+#         )
+
+#         messages.success(request, "Charge added successfully.")
+#         return redirect('doctors:patient_detail', pk=patient.id)
+
+#     return render(request, 'billing/add_charge.html', {
+#         'patient': patient
+#     })

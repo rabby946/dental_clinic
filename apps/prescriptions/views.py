@@ -6,6 +6,7 @@ from apps.patients.models import Patient
 from apps.core.models import Appointment
 from apps.prescriptions.models import Prescription, PrescriptionItem
 from apps.medicines.models import Medicine
+
 @login_required
 def prescription_create(request, patient_id):
     patient = get_object_or_404(Patient, pk=patient_id)
@@ -28,9 +29,11 @@ def prescription_create(request, patient_id):
         )
 
     if request.method == 'POST':
+        note = request.POST.get('note', '')
+
         prescription = Prescription.objects.create(
             appointment=appointment,
-            note=request.POST.get('note', '')
+            note=note
         )
 
         medicine_ids = request.POST.getlist('medicine')
@@ -38,23 +41,37 @@ def prescription_create(request, patient_id):
         durations = request.POST.getlist('duration')
         instructions = request.POST.getlist('instructions')
 
-        for i in range(len(medicine_ids)):
-            PrescriptionItem.objects.create(
-                prescription=prescription,
-                medicine_id=medicine_ids[i],
-                dosage=dosages[i],
-                duration=durations[i],
-                instructions=instructions[i],
-            )
+        for medicine_id, dosage, duration, instruction in zip(
+            medicine_ids, dosages, durations, instructions
+        ):
+            if medicine_id:  # ignore empty rows
+                PrescriptionItem.objects.create(
+                    prescription=prescription,
+                    medicine_id=medicine_id,
+                    dosage=dosage,
+                    duration=duration,
+                    instructions=instruction,
+                )
 
         return redirect('doctors:patient_detail', pk=patient.id)
 
     medicines = Medicine.objects.all()
+
     return render(request, 'prescriptions/create.html', {
         'patient': patient,
         'medicines': medicines,
     })
 @login_required
 def prescription_detail(request, pk):
-    prescription = get_object_or_404(Prescription, pk=pk)
-    return render(request, 'prescriptions/detail.html', {'prescription': prescription})
+    prescription = get_object_or_404(
+        Prescription.objects.select_related(
+            "appointment__patient"
+        ).prefetch_related(
+            "items__medicine"
+        ),
+        pk=pk
+    )
+
+    return render(request, "prescriptions/detail.html", {
+        "prescription": prescription
+    })

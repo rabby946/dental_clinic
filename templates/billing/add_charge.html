@@ -1,0 +1,29 @@
+{% extends 'core/base.html' %}
+
+{% block title %}Add Charge{% endblock %}
+
+{% block content %}
+<div class="container py-5">
+    <div class="card shadow-sm p-4">
+        <h4>Add Charge - {{ patient.name }}</h4>
+
+        <form method="post">
+            {% csrf_token %}
+
+            <div class="mb-3">
+                <label>Amount</label>
+                <input type="number" name="amount" class="form-control" required>
+            </div>
+
+            <div class="mb-3">
+                <label>Description</label>
+                <textarea name="description" class="form-control"></textarea>
+            </div>
+
+            <button type="submit" class="btn btn-success">
+                Save Charge
+            </button>
+        </form>
+    </div>
+</div>
+{% endblock %}

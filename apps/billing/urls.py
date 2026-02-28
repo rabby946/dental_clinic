@@ -18,11 +18,7 @@ urlpatterns = [
     ),
 
     # ---------- Doctor / Staff ----------
-    path(
-        'doctor/charge/<int:appointment_id>/',
-        views.add_charge,
-        name='add_charge'
-    ),
+    path('add-charge/', views.add_charge, name='add_charge'),
     path(
         'doctor/manual-payment/<int:appointment_id>/',
         views.add_manual_payment,

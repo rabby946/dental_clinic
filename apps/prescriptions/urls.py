@@ -5,5 +5,5 @@ app_name = 'prescriptions'
 
 urlpatterns = [
     path('create/<int:patient_id>/', views.prescription_create, name='create'),
-    path('<int:pk>/', views.prescription_detail, name='detail'),
+    path("view/<int:pk>/", views.prescription_detail, name="detail"),
 ]

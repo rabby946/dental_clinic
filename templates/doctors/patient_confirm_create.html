@@ -1,0 +1,28 @@
+{% extends 'core/base.html' %}
+
+{% block title %}Patient Not Found{% endblock %}
+
+{% block content %}
+<div class="container py-5 text-center">
+
+    <div class="card shadow-sm p-4">
+        <h4 class="mb-3">No profile found</h4>
+
+        <p>
+            Phone: <strong>{{ phone }}</strong><br>
+            Do you want to create a new profile?
+        </p>
+
+        <div class="mt-4">
+            <a href="{% url 'doctors:patient_create' %}" class="btn btn-success">
+                Yes, Create Profile
+            </a>
+
+            <a href="{% url 'doctors:doctor_dashboard' %}" class="btn btn-outline-secondary">
+                Cancel
+            </a>
+        </div>
+    </div>
+
+</div>
+{% endblock %}

@@ -1,0 +1,92 @@
+{% extends 'core/base.html' %}
+{% block title %}Create Prescription{% endblock %}
+
+{% block content %}
+<div class="container py-4">
+
+    <div class="card shadow p-4">
+        <h4 class="mb-3">Prescription for {{ patient.name }}</h4>
+
+        <form method="post">
+            {% csrf_token %}
+
+            <div id="medicine-container">
+
+                <div class="medicine-row border p-3 mb-3 rounded">
+                    <div class="row g-2">
+
+                        <div class="col-md-3">
+                            <label>Medicine</label>
+                            <select name="medicine" class="form-select" required>
+                                <option value="">Select</option>
+                                {% for med in medicines %}
+                                    <option value="{{ med.id }}">{{ med.name }}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+
+                        <div class="col-md-3">
+                            <label>Dosage</label>
+                            <input type="text" name="dosage" class="form-control" placeholder="1+0+1" required>
+                        </div>
+
+                        <div class="col-md-2">
+                            <label>Duration</label>
+                            <input type="text" name="duration" class="form-control" placeholder="5 days" required>
+                        </div>
+
+                        <div class="col-md-3">
+                            <label>Instructions</label>
+                            <input type="text" name="instructions" class="form-control" placeholder="After meal">
+                        </div>
+
+                        <div class="col-md-1 d-flex align-items-end">
+                            <button type="button" class="btn btn-danger remove-btn">-</button>
+                        </div>
+
+                    </div>
+                </div>
+
+            </div>
+
+            <button type="button" id="add-btn" class="btn btn-success mb-3">
+                + Add Medicine
+            </button>
+
+            <div class="mb-3">
+                <label>Note</label>
+                <textarea name="note" class="form-control" rows="3"></textarea>
+            </div>
+
+            <button type="submit" class="btn btn-primary">
+                Save Prescription
+            </button>
+
+        </form>
+    </div>
+</div>
+
+<script>
+document.getElementById('add-btn').addEventListener('click', function () {
+    const container = document.getElementById('medicine-container');
+    const firstRow = document.querySelector('.medicine-row');
+    const newRow = firstRow.cloneNode(true);
+
+    // clear input values
+    newRow.querySelectorAll('input').forEach(input => input.value = '');
+    newRow.querySelector('select').selectedIndex = 0;
+
+    container.appendChild(newRow);
+});
+
+document.addEventListener('click', function(e) {
+    if (e.target.classList.contains('remove-btn')) {
+        const rows = document.querySelectorAll('.medicine-row');
+        if (rows.length > 1) {
+            e.target.closest('.medicine-row').remove();
+        }
+    }
+});
+</script>
+
+{% endblock %}

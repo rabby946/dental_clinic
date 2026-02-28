@@ -1,0 +1,24 @@
+{% extends 'core/base.html' %}
+
+{% block title %}Upload Document{% endblock %}
+
+{% block content %}
+<div class="container py-5">
+    <div class="card shadow-sm p-4">
+        <h4>Upload Document - {{ patient.name }}</h4>
+
+        <form method="post" enctype="multipart/form-data">
+            {% csrf_token %}
+
+            <div class="mb-3">
+                <label>Select File</label>
+                <input type="file" name="file" class="form-control" required>
+            </div>
+
+            <button type="submit" class="btn btn-info">
+                Upload
+            </button>
+        </form>
+    </div>
+</div>
+{% endblock %}
