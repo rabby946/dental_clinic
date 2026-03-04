@@ -1,0 +1,437 @@
+{% extends 'core/base.html' %}
+{% load static %}
+
+{% block title %}Medicine Management - New Oro Dent Care{% endblock %}
+
+{% block content %}
+<style>
+:root {
+    --color-primary: #0d6efd;
+    --color-secondary: #052c65;
+    --gradient-btn: linear-gradient(135deg, #0d6efd 0%, #00d2ff 100%);
+    --dash-bg: #eef4fc;
+    --card-radius: 14px;
+    --card-shadow: 0 4px 24px rgba(5,44,101,0.08);
+}
+
+.dash-wrapper {
+    background: var(--dash-bg);
+    min-height: 80vh;
+    padding-bottom: 60px;
+}
+
+/* ─── DOCTOR PANEL TOP BAR ─── */
+.doctor-topbar {
+    background: #fff;
+    border-bottom: 1px solid #e8eef6;
+    box-shadow: 0 2px 12px rgba(5,44,101,0.07);
+    padding: 0 24px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    height: 60px;
+    position: sticky;
+    top: 0;
+    z-index: 500;
+}
+.doctor-topbar .left { display: flex; align-items: center; gap: 6px; flex-wrap: wrap; }
+.topbar-brand {
+    font-weight: 800; font-size: 0.9rem; color: var(--color-secondary);
+    display: flex; align-items: center; gap: 7px; margin-right: 8px;
+    white-space: nowrap;
+}
+.topbar-brand i { color: var(--color-primary); }
+.topbar-divider {
+    width: 1px; height: 22px; background: #dde4f0;
+    margin: 0 6px; flex-shrink: 0;
+}
+.topbar-nav-link {
+    display: inline-flex; align-items: center; gap: 6px;
+    color: #5a6a88; font-weight: 600; font-size: 0.8rem;
+    padding: 6px 11px; border-radius: 7px; text-decoration: none;
+    transition: all 0.2s; white-space: nowrap;
+}
+.topbar-nav-link i { font-size: 0.8rem; }
+.topbar-nav-link:hover { background: #eef4fc; color: var(--color-primary); }
+.topbar-nav-link.active {
+    background: rgba(13,110,253,0.1); color: var(--color-primary); font-weight: 700;
+}
+.doctor-topbar .right { display: flex; align-items: center; gap: 10px; flex-shrink: 0; }
+.doc-profile-chip {
+    display: flex; align-items: center; gap: 9px;
+    background: #f4f8ff; border-radius: 30px;
+    padding: 5px 14px 5px 5px; border: 1px solid #dde8fa;
+}
+.doc-chip-avatar {
+    width: 32px; height: 32px;
+    background: var(--gradient-btn);
+    border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 0.85rem; color: #fff; flex-shrink: 0;
+}
+.doc-chip-name { font-weight: 700; font-size: 0.78rem; color: var(--color-secondary); }
+.doc-chip-role { font-size: 0.68rem; color: #8a9ab5; }
+.btn-logout-top {
+    display: inline-flex; align-items: center; gap: 6px;
+    background: rgba(220,53,69,0.08); color: #dc3545;
+    border: 1px solid rgba(220,53,69,0.2); border-radius: 7px;
+    padding: 7px 14px; font-weight: 600; font-size: 0.78rem;
+    text-decoration: none; transition: all 0.2s; white-space: nowrap;
+}
+.btn-logout-top:hover { background: #dc3545; color: #fff; }
+
+/* ─── MAIN CONTENT ─── */
+.dash-main { padding: 28px 24px 10px; max-width: 1200px; margin: 0 auto; }
+
+/* ─── PAGE HEADER ─── */
+.page-header {
+    background: linear-gradient(125deg, var(--color-secondary) 0%, #1a56db 60%, #0d6efd 100%);
+    border-radius: var(--card-radius);
+    padding: 26px 30px;
+    color: #fff;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 24px;
+    position: relative;
+    overflow: hidden;
+}
+.page-header::before {
+    content: '';
+    position: absolute; right: -20px; top: -40px;
+    width: 180px; height: 180px; border-radius: 50%;
+    background: rgba(255,255,255,0.05);
+}
+.page-header::after {
+    content: '';
+    position: absolute; right: 70px; bottom: -60px;
+    width: 150px; height: 150px; border-radius: 50%;
+    background: rgba(255,255,255,0.04);
+}
+.page-header h2 { font-weight: 700; font-size: 1.3rem; margin-bottom: 3px; }
+.page-header p  { opacity: 0.72; margin: 0; font-size: 0.85rem; }
+.page-header .header-icon {
+    width: 54px; height: 54px;
+    background: rgba(255,255,255,0.15);
+    border-radius: 12px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 1.4rem; z-index: 1; flex-shrink: 0;
+}
+
+/* ─── SECTION CARDS ─── */
+.section-card {
+    background: #fff;
+    border-radius: var(--card-radius);
+    box-shadow: var(--card-shadow);
+    margin-bottom: 22px;
+    overflow: hidden;
+}
+.section-card-header {
+    padding: 16px 22px;
+    border-bottom: 1px solid #eef2f7;
+    display: flex; align-items: center; justify-content: space-between;
+}
+.section-card-header h5 {
+    font-weight: 700; color: var(--color-secondary); margin: 0; font-size: 0.92rem;
+    display: flex; align-items: center; gap: 8px;
+}
+.section-card-header h5 i { color: var(--color-primary); }
+.section-card-body { padding: 24px; }
+
+/* ─── FORM ─── */
+.form-label {
+    font-weight: 600; font-size: 0.78rem; color: var(--color-secondary);
+    text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 6px;
+}
+.form-control {
+    border-color: #dbe4f0; border-radius: 8px; font-size: 0.88rem;
+    padding: 10px 14px; transition: border-color 0.2s, box-shadow 0.2s;
+}
+.form-control:focus {
+    border-color: var(--color-primary);
+    box-shadow: 0 0 0 3px rgba(13,110,253,0.1);
+}
+.form-control::placeholder { color: #adb5bd; font-size: 0.84rem; }
+
+.input-icon-wrap { position: relative; }
+.input-icon-wrap .field-icon {
+    position: absolute; left: 13px; top: 50%; transform: translateY(-50%);
+    color: #adb5bd; font-size: 0.83rem; pointer-events: none;
+}
+.input-icon-wrap .form-control { padding-left: 36px; }
+
+.btn-save {
+    background: var(--gradient-btn); color: #fff; border: none;
+    border-radius: 8px; padding: 10px 28px; font-weight: 600;
+    font-size: 0.87rem; transition: all 0.25s;
+    box-shadow: 0 4px 14px rgba(13,110,253,0.3);
+    display: inline-flex; align-items: center; gap: 8px;
+}
+.btn-save:hover { color: #fff; opacity: 0.88; transform: translateY(-2px); }
+
+/* ─── SEARCH ─── */
+.search-wrap {
+    background: #fff;
+    border-radius: var(--card-radius);
+    box-shadow: var(--card-shadow);
+    padding: 16px 22px;
+    margin-bottom: 22px;
+    display: flex; align-items: center; gap: 10px;
+}
+.search-wrap .form-control { border-radius: 8px !important; }
+.btn-search {
+    background: var(--gradient-btn); color: #fff; border: none;
+    border-radius: 8px; padding: 10px 22px; font-weight: 600;
+    font-size: 0.84rem; white-space: nowrap; flex-shrink: 0;
+    display: inline-flex; align-items: center; gap: 7px; transition: opacity 0.2s;
+}
+.btn-search:hover { opacity: 0.88; color: #fff; }
+.btn-clear {
+    background: transparent; color: #6c757d; border: 1.5px solid #dee2e6;
+    border-radius: 8px; padding: 9px 16px; font-size: 0.82rem; font-weight: 600;
+    white-space: nowrap; flex-shrink: 0; text-decoration: none;
+    display: inline-flex; align-items: center; gap: 6px; transition: all 0.2s;
+}
+.btn-clear:hover { border-color: #adb5bd; color: #495057; }
+
+/* ─── TABLE ─── */
+.dash-table { margin: 0; }
+.dash-table thead th {
+    background: #f7faff; color: var(--color-secondary);
+    font-weight: 600; font-size: 0.73rem; text-transform: uppercase;
+    letter-spacing: 0.5px; padding: 12px 18px; border: none;
+    border-bottom: 2px solid #eef2f7;
+}
+.dash-table tbody td {
+    padding: 12px 18px; border-color: #f0f5fa;
+    font-size: 0.85rem; vertical-align: middle; color: #3d4a60;
+}
+.dash-table tbody tr:hover { background: #f7faff; }
+.med-name { font-weight: 700; color: var(--color-secondary); }
+.type-badge {
+    padding: 4px 11px; border-radius: 20px; font-size: 0.72rem; font-weight: 600;
+    background: rgba(13,110,253,0.08); color: var(--color-primary); display: inline-block;
+}
+.strength-badge {
+    padding: 4px 11px; border-radius: 20px; font-size: 0.72rem; font-weight: 600;
+    background: rgba(34,197,94,0.08); color: #16a34a; display: inline-block;
+}
+.brand-text { color: #6c757d; font-style: italic; font-size: 0.82rem; }
+.instr-text { color: #374151; font-size: 0.82rem; }
+.count-pill {
+    font-size: 0.7rem; font-weight: 700; padding: 3px 10px;
+    border-radius: 20px; background: rgba(13,110,253,0.1); color: var(--color-primary);
+}
+.empty-state {
+    padding: 40px 24px; text-align: center; color: #6c757d; font-size: 0.9rem;
+}
+.empty-state i { font-size: 2.5rem; display: block; margin-bottom: 12px; opacity: 0.3; }
+
+/* ─── RESPONSIVE ─── */
+@media (max-width: 767.98px) {
+    .doctor-topbar { padding: 0 14px; height: auto; min-height: 56px; flex-wrap: wrap; gap: 8px; padding-top: 10px; padding-bottom: 10px; }
+    .doctor-topbar .left { gap: 4px; }
+    .topbar-nav-link span { display: none; }
+    .topbar-nav-link { padding: 6px 9px; }
+    .topbar-divider { display: none; }
+    .doc-chip-name, .doc-chip-role { display: none; }
+    .doc-profile-chip { padding: 5px; }
+    .topbar-brand { font-size: 0.82rem; }
+    .dash-main { padding: 18px 14px 10px; }
+    .page-header { flex-direction: column; align-items: flex-start; gap: 12px; padding: 20px; }
+    .page-header::before, .page-header::after { display: none; }
+    .search-wrap { flex-wrap: wrap; }
+    .search-wrap .form-control { min-width: 0; }
+}
+</style>
+
+<div class="dash-wrapper">
+
+<!-- ══════════════════════════════════════ -->
+<!--  DOCTOR PANEL TOP BAR                 -->
+<!-- ══════════════════════════════════════ -->
+<div class="doctor-topbar">
+    <div class="left">
+        <div class="topbar-brand">
+            <i class="fas fa-tooth"></i>
+            <span>Doctor Panel</span>
+        </div>
+        <div class="topbar-divider"></div>
+
+        <a href="{% url 'doctors:dashboard' %}" class="topbar-nav-link">
+            <i class="fas fa-gauge-high"></i>
+            <span>ড্যাশবোর্ড</span>
+        </a>
+        
+        <a href="{% url 'doctors:patient_list' %}" class="topbar-nav-link">
+            <i class="fas fa-users"></i>
+            <span>রোগী তালিকা</span>
+        </a>
+        <a href="{% url 'medicines:manage' %}" class="topbar-nav-link active">
+            <i class="fas fa-pills"></i>
+            <span>মেডিসিন</span>
+        </a>
+        
+    </div>
+
+    <div class="right">
+        <div class="doc-profile-chip">
+            <div class="doc-chip-avatar">
+                <i class="fas fa-user-doctor"></i>
+            </div>
+            <div>
+                <div class="doc-chip-name">Dr. A. K. Azad</div>
+                <div class="doc-chip-role">BDS, FCPS</div>
+            </div>
+        </div>
+        <a href="{% url 'doctors:logout' %}" class="btn-logout-top">
+            <i class="fas fa-right-from-bracket"></i>
+            <span>Logout</span>
+        </a>
+    </div>
+</div>
+
+<!-- ══════════════════════════════════════ -->
+<!--  MAIN CONTENT                         -->
+<!-- ══════════════════════════════════════ -->
+<div class="dash-main">
+
+    
+
+    <!-- Page Header -->
+    <div class="page-header">
+        <div>
+            <h2><i class="fas fa-pills me-2" style="font-size:1rem;opacity:0.85;"></i>Medicine Management</h2>
+            <p>নতুন মেডিসিন যোগ করুন এবং বিদ্যমান তালিকা পরিচালনা করুন।</p>
+        </div>
+        <div class="header-icon">
+            <i class="fas fa-capsules"></i>
+        </div>
+    </div>
+
+    <!-- Add Medicine Form -->
+    <div class="section-card">
+        <div class="section-card-header">
+            <h5><i class="fas fa-plus-circle"></i> Add New Medicine</h5>
+        </div>
+        <div class="section-card-body">
+            <form method="post">
+                {% csrf_token %}
+                <div class="row g-3">
+                    <div class="col-md-4">
+                        <label class="form-label">Medicine Name</label>
+                        <div class="input-icon-wrap">
+                            <i class="fas fa-capsules field-icon"></i>
+                            <input type="text" name="name" class="form-control" placeholder="e.g. Paracetamol" required>
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <label class="form-label">Type</label>
+                        <div class="input-icon-wrap">
+                            <i class="fas fa-tag field-icon"></i>
+                            <input type="text" name="type" class="form-control" placeholder="Tablet / Syrup / Injection" required>
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <label class="form-label">Strength</label>
+                        <div class="input-icon-wrap">
+                            <i class="fas fa-weight-hanging field-icon"></i>
+                            <input type="text" name="strength" class="form-control" placeholder="500mg / 10ml" required>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <label class="form-label">Brand</label>
+                        <div class="input-icon-wrap">
+                            <i class="fas fa-building field-icon"></i>
+                            <input type="text" name="brand" class="form-control" placeholder="e.g. Square, Beximco">
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <label class="form-label">Instructions</label>
+                        <div class="input-icon-wrap">
+                            <i class="fas fa-notes-medical field-icon"></i>
+                            <input type="text" name="instructions" class="form-control" placeholder="After meal / Twice daily">
+                        </div>
+                    </div>
+                </div>
+                <div class="text-end mt-4">
+                    <button type="submit" class="btn-save">
+                        <i class="fas fa-floppy-disk"></i> Save Medicine
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Search -->
+    <form method="get">
+        <div class="search-wrap">
+            <div class="input-icon-wrap flex-grow-1">
+                <i class="fas fa-magnifying-glass field-icon"></i>
+                <input type="text" name="q" value="{{ query|default:'' }}"
+                       class="form-control"
+                       placeholder="Search by name, type, strength, brand…">
+            </div>
+            <button type="submit" class="btn-search">
+                <i class="fas fa-search"></i> Search
+            </button>
+            {% if query %}
+            <a href="{% url 'medicines:manage' %}" class="btn-clear">
+                <i class="fas fa-xmark"></i> Clear
+            </a>
+            {% endif %}
+        </div>
+    </form>
+
+    <!-- Medicine List -->
+    <div class="section-card">
+        <div class="section-card-header">
+            <h5><i class="fas fa-list-ul"></i> Medicine List</h5>
+            {% if medicines %}
+            <span class="count-pill">{{ medicines|length }} টি</span>
+            {% endif %}
+        </div>
+
+        {% if medicines %}
+        <div class="table-responsive">
+            <table class="table dash-table">
+                <thead>
+                    <tr>
+                        <th>#</th>
+                        <th>Medicine Name</th>
+                        <th>Type</th>
+                        <th>Strength</th>
+                        <th>Brand</th>
+                        <th>Instructions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for medicine in medicines %}
+                    <tr>
+                        <td><strong>{{ forloop.counter }}</strong></td>
+                        <td><span class="med-name">{{ medicine.name }}</span></td>
+                        <td><span class="type-badge">{{ medicine.type }}</span></td>
+                        <td><span class="strength-badge">{{ medicine.strength }}</span></td>
+                        <td><span class="brand-text">{{ medicine.brand|default:"—" }}</span></td>
+                        <td><span class="instr-text">{{ medicine.instructions|default:"—" }}</span></td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+        {% else %}
+        <div class="empty-state">
+            <i class="fas fa-prescription-bottle"></i>
+            {% if query %}
+                "<strong>{{ query }}</strong>" — কোনো ফলাফল পাওয়া যায়নি।
+            {% else %}
+                এখনো কোনো মেডিসিন যোগ করা হয়নি।
+            {% endif %}
+        </div>
+        {% endif %}
+    </div>
+
+</div><!-- /dash-main -->
+</div><!-- /dash-wrapper -->
+
+{% endblock %}

@@ -5,11 +5,7 @@ from django.utils import timezone
 from apps.core.models import Appointment
 from apps.patients.models import Patient
 from apps.doctors.decorators import doctor_required
-
-# -------------------
-# Login / Logout
-# -------------------
-# apps/doctors/views.py
+from apps.utils import upload_to_cloud
 from django.contrib.auth.views import LoginView, LogoutView
 from django.contrib.auth import authenticate, login, logout
 from django.shortcuts import redirect
@@ -17,7 +13,8 @@ from django.contrib import messages
 from django.urls import reverse
 from apps.doctors.decorators import doctor_required
 from django.utils.decorators import method_decorator
-
+from django.utils import timezone
+from django.db.models import Count
 from django.shortcuts import redirect
 from django.contrib.auth import authenticate, login
 from django.contrib import messages
@@ -34,7 +31,9 @@ from apps.patients.models import Patient
 from apps.core.models import Appointment, Document
 from apps.prescriptions.models import Prescription
 
-
+from django.shortcuts import render, get_object_or_404, redirect
+from django.contrib import messages
+from django.contrib.auth.decorators import login_required
 
 from django.shortcuts import render, redirect
 from django.contrib.auth import authenticate, login
@@ -86,11 +85,23 @@ def doctor_logout(request):
 # -------------------
 @doctor_required
 def doctor_dashboard(request):
+    today = timezone.now().date()
+
+    # 1️⃣ Completed today
+    completed_today = Appointment.objects.filter(
+        date=today,
+        status='completed'
+    ).count()
+
+    # 2️⃣ Total patients
+    total_patients = Patient.objects.count()
     appointments_today = Appointment.objects.filter(date=timezone.now().date()).order_by('time')
     pending_appointments = Appointment.objects.filter(status='pending').order_by('date', 'time')
     return render(request, 'doctors/dashboard.html', {
         'appointments_today': appointments_today,
         'pending_appointments': pending_appointments,
+        'completed_today': completed_today,
+        'total_patients': total_patients,
     })
 
 # -------------------
@@ -110,6 +121,15 @@ def appointment_detail(request, pk):
 # Patients
 # -------------------
 @doctor_required
+def patient_list(request):
+    patients = Patient.objects.all().order_by('-created_at')
+
+    context = {
+        "patients": patients
+    }
+
+    return render(request, "doctors/patient_list.html", context)
+
 @doctor_required
 def patient_search(request):
     if request.method == 'POST':
@@ -150,11 +170,13 @@ def patient_create(request):
     if request.method == 'POST':
         name = request.POST.get('name')
         gender = request.POST.get('gender')
+        dob = request.POST.get('b_date')
 
         patient = Patient.objects.create(
             name=name,
             phone=phone,
-            gender=gender
+            gender=gender,
+            date_of_birth=dob,
         )
 
         del request.session['new_patient_phone']
@@ -174,30 +196,59 @@ def patient_detail(request, pk):
     ).order_by('-created_at')
 
     documents = Document.objects.filter(patient=patient).order_by('-uploaded_at')
+    
+    age=None
 
+    if patient.date_of_birth:
+        today = timezone.now().date()
+        age = today.year - patient.date_of_birth.year - (
+            (today.month, today.day) <
+            (patient.date_of_birth.month, patient.date_of_birth.day)
+        )
     context = {
         'patient': patient,
         'appointments': appointments,
         'prescriptions': prescriptions,
         'documents': documents,
+        'age' : age,
     }
     return render(request, 'doctors/patient_detail.html', context)
+
+
 
 @doctor_required
 def add_document(request, patient_id):
     patient = get_object_or_404(Patient, id=patient_id)
 
     if request.method == 'POST':
+        title = request.POST.get('title')
         file = request.FILES.get('file')
+
+        if not title or not file:
+            messages.error(request, "Title and file are required.")
+            return redirect('doctors:add_document', patient_id=patient.id)
 
         Document.objects.create(
             patient=patient,
+            title=title,
             file=file
         )
 
-        messages.success(request, "Document uploaded.")
+        messages.success(request, "Document uploaded successfully.")
         return redirect('doctors:patient_detail', pk=patient.id)
 
     return render(request, 'doctors/add_document.html', {
         'patient': patient
+    })
+
+
+@login_required
+def document_detail(request, pk):
+    document = get_object_or_404(
+        Document.objects.select_related('patient'),
+        pk=pk
+    )
+
+    return render(request, "doctors/document_detail.html", {
+        "document": document
     })

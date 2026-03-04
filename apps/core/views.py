@@ -69,11 +69,13 @@ def appointment(request):
         name = request.POST.get("name")
         phone = request.POST.get("phone")
         date_str = request.POST.get("date")
+        b_date = request.POST.get("b_date")
         problem = request.POST.get("message")
-        print(name, phone, date_str, problem)
-        if not all([name, phone, date_str]):
+        
+        if not all([name, phone, date_str, b_date]):
             messages.error(request, "সব তথ্য সঠিকভাবে দিন।")
             return redirect("appointment")
+       
         appointment_date = datetime.strptime(date_str, "%Y-%m-%d").date()
         if appointment_date.weekday() == 4:
             messages.error(request,"শুক্রবার আমাদের চেম্বার বন্ধ থাকে। অন্য তারিখ নির্বাচন করুন।")
@@ -87,7 +89,7 @@ def appointment(request):
             patient_group, _ = Group.objects.get_or_create(name="Patient")
             user.groups.add(patient_group)
 
-            patient = Patient.objects.create(user=user, name=name, phone=phone)
+            patient = Patient.objects.create(user=user, name=name, phone=phone, date_of_birth=b_date)
             patient_created = True
 
         with transaction.atomic():

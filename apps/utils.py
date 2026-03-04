@@ -1,5 +1,6 @@
 from twilio.rest import Client
 from django.conf import settings
+import cloudinary.uploader
 
 def send_whatsapp(phone, message):
     client = Client(settings.TWILIO_SID, settings.TWILIO_AUTH_TOKEN)
@@ -9,3 +10,7 @@ def send_whatsapp(phone, message):
         body=message,
         to=f"whatsapp:+88{phone}"  # Bangladesh
     )
+
+def upload_to_cloud(file):
+    if file:
+        return cloudinary.uploader.upload(file)

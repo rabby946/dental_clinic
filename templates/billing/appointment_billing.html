@@ -1,0 +1,144 @@
+{% extends "core/base.html" %}
+{% block content %}
+
+<div class="container py-4">
+
+    <!-- 🔝 DUE SECTION -->
+    <div class="card shadow-sm mb-4">
+        <div class="card-body text-center">
+            <h6 class="text-muted">TOTAL DUE</h6>
+            <h2 id="dueAmount"
+                class="fw-bold {% if due > 0 %}text-danger{% else %}text-success{% endif %}">
+                ৳ {{ due }}
+            </h2>
+        </div>
+    </div>
+
+    <!-- ➕ ADD PAYMENT/CHARGE -->
+    <div class="card shadow-sm mb-4">
+        <div class="card-body">
+            <h5 class="mb-3">Add Payment / Charge</h5>
+
+            <form id="paymentForm">
+                {% csrf_token %}
+
+                <div class="row g-3">
+
+                    <div class="col-md-4">
+                        <input type="number"
+                               step="0.01"
+                               name="amount"
+                               class="form-control"
+                               placeholder="Enter Amount"
+                               required>
+                    </div>
+
+                    <div class="col-md-3">
+                        <select name="type" id="typeSelect"
+                                class="form-select" required>
+                            <option value="charge">Charge</option>
+                            <option value="paid">Paid</option>
+                        </select>
+                    </div>
+
+                    <div class="col-md-3">
+                        <select name="method"
+                                id="methodSelect"
+                                class="form-select">
+                            <option value="cash">Cash</option>
+                            <option value="bkash">bKash</option>
+                            <option value="nagad">Nagad</option>
+                            <option value="card">Card</option>
+                            <option value="online">Online</option>
+                            <option value="onhand">On Hand</option>
+                        </select>
+                    </div>
+
+                    <div class="col-md-2">
+                        <button type="submit"
+                                class="btn btn-primary w-100">
+                            Add
+                        </button>
+                    </div>
+
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- 📜 PAYMENT HISTORY -->
+    <div class="card shadow-sm">
+        <div class="card-body">
+            <h5 class="mb-3">Last 100 Transactions</h5>
+
+            <div class="table-responsive">
+                <table class="table table-sm table-bordered align-middle">
+                    <thead class="table-light">
+                        <tr>
+                            <th>Date</th>
+                            <th>Type</th>
+                            <th>Method</th>
+                            <th>Amount</th>
+                        </tr>
+                    </thead>
+                    <tbody id="paymentTable">
+                        {% for p in payments %}
+                        <tr>
+                            <td>{{ p.created_at|date:"d M Y H:i" }}</td>
+                            <td>
+                                {% if p.type == "charge" %}
+                                    <span class="badge bg-danger">Charge</span>
+                                {% else %}
+                                    <span class="badge bg-success">Paid</span>
+                                {% endif %}
+                            </td>
+                            <td>{{ p.method|default:"-" }}</td>
+                            <td>৳ {{ p.amount }}</td>
+                        </tr>
+                        {% empty %}
+                        <tr>
+                            <td colspan="4" class="text-center">
+                                No transactions found
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+
+        </div>
+    </div>
+
+</div>
+
+<script>
+document.getElementById("typeSelect").addEventListener("change", function() {
+    const methodSelect = document.getElementById("methodSelect");
+    methodSelect.disabled = this.value === "charge";
+});
+
+document.getElementById("paymentForm").addEventListener("submit", function(e) {
+    e.preventDefault();
+
+    const form = this;
+    const formData = new FormData(form);
+
+    fetch("", {
+        method: "POST",
+        headers: {
+            "X-CSRFToken": document.querySelector('[name=csrfmiddlewaretoken]').value
+        },
+        body: formData
+    })
+    .then(res => res.json())
+    .then(data => {
+        if (data.success) {
+            location.reload();
+        } else {
+            alert(data.error);
+        }
+    });
+});
+</script>
+
+{% endblock %}

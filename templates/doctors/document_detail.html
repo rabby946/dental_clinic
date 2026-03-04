@@ -1,0 +1,167 @@
+{% extends "core/base.html" %}
+
+{% block title %}Document Details - {{ document.title }}{% endblock %}
+
+{% block content %}
+<style>
+    /* Document Details Custom Styles */
+    .doc-detail-card {
+        border: none;
+        border-radius: 16px;
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.05);
+        background-color: #fff;
+        overflow: hidden;
+    }
+
+    .doc-header {
+        background: rgba(13, 110, 253, 0.05);
+        border-bottom: 1px solid rgba(13, 110, 253, 0.1);
+        padding: 2rem 1.5rem;
+        text-align: center;
+    }
+
+    .doc-icon-large {
+        font-size: 3.5rem;
+        color: var(--color-primary);
+        margin-bottom: 1rem;
+        filter: drop-shadow(0 4px 6px rgba(13, 110, 253, 0.2));
+    }
+
+    .info-list {
+        padding: 0;
+        margin: 0;
+        list-style: none;
+    }
+
+    .info-row {
+        display: flex;
+        padding: 1.2rem 1rem;
+        border-bottom: 1px solid #edf2f7;
+        align-items: center;
+    }
+
+    .info-row:last-child {
+        border-bottom: none;
+    }
+
+    .info-label {
+        width: 40%;
+        color: var(--color-text-muted);
+        font-weight: 500;
+        display: flex;
+        align-items: center;
+    }
+    
+    .info-label i {
+        width: 25px;
+        color: var(--color-primary);
+    }
+
+    .info-value {
+        width: 60%;
+        color: var(--color-secondary);
+        font-weight: 600;
+    }
+
+    .file-action-box {
+        background-color: #f8fafc;
+        border: 2px dashed #cbd5e1;
+        border-radius: 12px;
+        padding: 2rem;
+        text-align: center;
+        margin-top: 1.5rem;
+        transition: all 0.3s ease;
+    }
+
+    .file-action-box:hover {
+        border-color: var(--color-primary);
+        background-color: rgba(13, 110, 253, 0.02);
+    }
+
+    /* Image Preview Style */
+    .document-preview-img {
+        max-width: 100%;
+        max-height: 280px; /* Medium size constraint */
+        object-fit: contain;
+        border-radius: 8px;
+        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08);
+        border: 1px solid #edf2f7;
+        margin-bottom: 1.5rem;
+        background-color: #fff;
+        padding: 5px;
+    }
+
+    .btn-download {
+        background: var(--gradient-btn);
+        color: white;
+        border: none;
+        font-weight: 600;
+        padding: 0.8rem 2rem;
+        border-radius: 8px;
+        transition: all 0.3s ease;
+        display: inline-block;
+        text-decoration: none;
+    }
+
+    .btn-download:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 8px 20px rgba(13, 110, 253, 0.3);
+        color: white;
+    }
+</style>
+
+<div class="container py-5">
+    <div class="row justify-content-center">
+        <div class="col-md-8 col-lg-7">
+            
+            <div class="doc-detail-card">
+                <div class="doc-header">
+                    <i class="fas fa-file-invoice doc-icon-large"></i>
+                    <h4 class="fw-bold mb-1" style="color: var(--color-secondary);">ডকুমেন্ট বিস্তারিত</h4>
+                    <p class="text-muted mb-0 small">পেশেন্ট ডকুমেন্টস রেকর্ড</p>
+                </div>
+
+                <div class="card-body p-4 p-md-5">
+                    
+                    <ul class="info-list mb-4">
+                        <li class="info-row">
+                            <div class="info-label"><i class="fas fa-user-injured"></i> রোগীর নাম</div>
+                            <div class="info-value">{{ document.patient.name }}</div>
+                        </li>
+                        <li class="info-row">
+                            <div class="info-label"><i class="fas fa-heading"></i> শিরোনাম</div>
+                            <div class="info-value">{{ document.title }}</div>
+                        </li>
+                        <li class="info-row">
+                            <div class="info-label"><i class="far fa-calendar-alt"></i> আপলোডের তারিখ</div>
+                            <div class="info-value text-primary">{{ document.uploaded_at|date:"d M Y, h:i A" }}</div>
+                        </li>
+                    </ul>
+
+                    <div class="file-action-box">
+                        {% if document.file %}
+                            <img src="{{ document.file.url }}" alt="{{ document.title }}" class="document-preview-img">
+                        {% else %}
+                            <i class="fas fa-file-alt text-secondary fs-1 mb-3 d-block"></i>
+                        {% endif %}
+                        
+                        <h5 class="fw-bold text-dark mb-3">সংযুক্ত ফাইল</h5>
+                        
+                        <a href="{{ document.file.url }}" target="_blank" class="btn btn-download">
+                            <i class="fas fa-external-link-alt me-2"></i> View / Download File
+                        </a>
+                    </div>
+
+                    <div class="text-center mt-5">
+                        <a href="{% url 'doctors:patient_detail' document.patient.id %}" class="btn btn-light border text-muted px-4 py-2 shadow-sm" style="border-radius: 8px; font-weight: 500;">
+                            <i class="fas fa-arrow-left me-2"></i> রোগীর প্রোফাইলে ফিরে যান
+                        </a>
+                    </div>
+
+                </div>
+            </div>
+
+        </div>
+    </div>
+</div>
+{% endblock %}

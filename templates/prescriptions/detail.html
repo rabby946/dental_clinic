@@ -2,85 +2,128 @@
 {% block title %}Prescription{% endblock %}
 
 {% block content %}
-<div class="container py-5">
+
+<style>
+    @media print {
+
+        body * {
+            visibility: hidden;
+        }
+
+        #print-area,
+        #print-area * {
+            visibility: visible;
+        }
+
+        #print-area {
+            position: absolute;
+            left: 0;
+            top: 0;
+            width: 100%;
+        }
+
+        .no-print {
+            display: none !important;
+        }
+    }
+</style>
+
+<div class="container py-4">
 
     <div class="card shadow p-4">
 
-        <!-- Header -->
-        <div class="text-center mb-4">
-            <h3 class="fw-bold">Dental Clinic</h3>
-            <p>Dr. Name | BDS, DDS</p>
+        <div id="print-area">
+
+            <!-- Header -->
+            <div class="text-center mb-4">
+                <h3 class="fw-bold">Dental Clinic</h3>
+                <p>Dr. Abul Kalam Azad | BDS, DDS</p>
+                <hr>
+            </div>
+
+            <!-- Patient Info -->
+            <div class="row mb-3">
+                <div class="col-md-6">
+                    <strong>Patient:</strong>
+                    {{ prescription.appointment.patient.name }} <br>
+
+                    <strong>Age:</strong>
+                    {{age}} <br>
+
+                    <strong>Phone:</strong>
+                    {{ prescription.appointment.patient.phone }}
+                </div>
+
+                <div class="col-md-6 text-md-end">
+                    <strong>Date:</strong>
+                    {{ prescription.created_at|date:"d M Y" }} <br>
+
+                    <strong>Prescription ID:</strong>
+                    #{{ prescription.id }}
+                </div>
+            </div>
+
             <hr>
+
+            <!-- Medicine List -->
+            <h5 class="fw-bold mb-3">Medicines</h5>
+
+            <table class="table table-bordered">
+                <thead>
+                    <tr>
+                        <th>#</th>
+                        <th>Medicine Details</th>
+                        <th>Dosage</th>
+                        <th>Duration</th>
+                        <th>Instructions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for item in prescription.items.all %}
+                    <tr>
+                        <td>{{ forloop.counter }}</td>
+                        <td>
+                            <strong>{{ item.medicine.name }}</strong><br>
+                            <small>
+                                {{ item.medicine.type }} |
+                                {{ item.medicine.strength }} |
+                                {{ item.medicine.brand }}
+                            </small>
+                        </td>
+                        <td>{{ item.dosage }}</td>
+                        <td>{{ item.duration }}</td>
+                        <td>
+                            {{ item.instructions|default:item.medicine.instructions }}
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+
+            {% if prescription.note %}
+            <div class="mt-4">
+                <strong>Doctor Note:</strong>
+                <p>{{ prescription.note }}</p>
+            </div>
+            {% endif %}
+
+            <!-- Footer -->
+            <div class="mt-5 text-end">
+                __________________________ <br>
+                Doctor Signature
+            </div>
+
         </div>
 
-        <!-- Patient Info -->
-        <div class="mb-3">
-            <strong>Patient:</strong>
-            {{ prescription.appointment.patient.name }} <br>
-
-            <strong>Phone:</strong>
-            {{ prescription.appointment.patient.phone }} <br>
-
-            <strong>Date:</strong>
-            {{ prescription.created_at|date:"d M Y" }}
-        </div>
-
-        <hr>
-
-        <!-- Medicine List -->
-        <h5 class="fw-bold mb-3">Medicines</h5>
-
-        <table class="table">
-            <thead>
-                <tr>
-                    <th>#</th>
-                    <th>Medicine</th>
-                    <th>Dosage</th>
-                    <th>Duration</th>
-                    <th>Instructions</th>
-                </tr>
-            </thead>
-            <tbody>
-                {% for item in prescription.items.all %}
-                <tr>
-                    <td>{{ forloop.counter }}</td>
-                    <td>
-                        {{ item.medicine.name }} <br>
-                        <small>
-                            {{ item.medicine.type }} |
-                            {{ item.medicine.strength }} |
-                            {{ item.medicine.brand }}
-                        </small>
-                    </td>
-                    <td>{{ item.dosage }}</td>
-                    <td>{{ item.duration }}</td>
-                    <td>
-                        {{ item.instructions|default:item.medicine.instructions }}
-                    </td>
-                </tr>
-                {% endfor %}
-            </tbody>
-        </table>
-
-        {% if prescription.note %}
-        <div class="mt-4">
-            <strong>Note:</strong>
-            <p>{{ prescription.note }}</p>
-        </div>
-        {% endif %}
-
-        <div class="mt-5 text-end">
-            __________________________ <br>
-            Doctor Signature
-        </div>
-
-        <div class="mt-4 text-center">
-            <button onclick="window.print()" class="btn btn-outline-secondary">
-                Print
+        <!-- Print Button -->
+        <div class="mt-4 text-center no-print">
+            <button onclick="window.print()" class="btn btn-dark">
+                Download / Print Prescription
             </button>
         </div>
 
     </div>
 
 </div>
+
 {% endblock %}

@@ -1,6 +1,6 @@
 from django.db import models
 from django.contrib.auth.models import User
-
+from django.utils import timezone
 class Patient(models.Model):
     user = models.OneToOneField(User, on_delete=models.SET_NULL, null=True, blank=True)
     name = models.CharField(max_length=255)
@@ -19,3 +19,18 @@ class Patient(models.Model):
 
     def __str__(self):
         return f"{self.name} ({self.phone})"
+    @property
+    def age(self):
+        print(self.date_of_birth)
+        print(101)
+        if not self.date_of_birth:
+            return None
+
+        today = timezone.now().date()
+        return today.year - self.date_of_birth.year - (
+            (today.month, today.day) <
+            (self.date_of_birth.month, self.date_of_birth.day)
+        )
+
+
+

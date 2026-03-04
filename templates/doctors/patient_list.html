@@ -1,0 +1,314 @@
+{% extends 'core/base.html' %}
+{% load static %}
+
+{% block title %}All Patients - New Oro Dent Care{% endblock %}
+
+{% block content %}
+<style>
+:root {
+    --color-primary: #0d6efd;
+    --color-secondary: #052c65;
+    --gradient-btn: linear-gradient(135deg, #0d6efd 0%, #00d2ff 100%);
+    --dash-bg: #eef4fc;
+    --card-radius: 14px;
+    --card-shadow: 0 4px 24px rgba(5,44,101,0.08);
+}
+
+.dash-wrapper {
+    background: var(--dash-bg);
+    min-height: 80vh;
+    padding-bottom: 60px;
+}
+
+/* ─── DOCTOR PANEL TOP BAR ─── */
+.doctor-topbar {
+    background: #fff;
+    border-bottom: 1px solid #e8eef6;
+    box-shadow: 0 2px 12px rgba(5,44,101,0.07);
+    padding: 0 24px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    height: 60px;
+    position: sticky;
+    top: 0;
+    z-index: 500;
+}
+.doctor-topbar .left { display: flex; align-items: center; gap: 6px; flex-wrap: wrap; }
+.topbar-brand {
+    font-weight: 800; font-size: 0.9rem; color: var(--color-secondary);
+    display: flex; align-items: center; gap: 7px; margin-right: 8px;
+    white-space: nowrap;
+}
+.topbar-brand i { color: var(--color-primary); }
+.topbar-divider {
+    width: 1px; height: 22px; background: #dde4f0;
+    margin: 0 6px; flex-shrink: 0;
+}
+.topbar-nav-link {
+    display: inline-flex; align-items: center; gap: 6px;
+    color: #5a6a88; font-weight: 600; font-size: 0.8rem;
+    padding: 6px 11px; border-radius: 7px; text-decoration: none;
+    transition: all 0.2s; white-space: nowrap;
+}
+.topbar-nav-link i { font-size: 0.8rem; }
+.topbar-nav-link:hover { background: #eef4fc; color: var(--color-primary); }
+.topbar-nav-link.active {
+    background: rgba(13,110,253,0.1); color: var(--color-primary); font-weight: 700;
+}
+.doctor-topbar .right { display: flex; align-items: center; gap: 10px; flex-shrink: 0; }
+.doc-profile-chip {
+    display: flex; align-items: center; gap: 9px;
+    background: #f4f8ff; border-radius: 30px;
+    padding: 5px 14px 5px 5px; border: 1px solid #dde8fa;
+}
+.doc-chip-avatar {
+    width: 32px; height: 32px;
+    background: var(--gradient-btn);
+    border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 0.85rem; color: #fff; flex-shrink: 0;
+}
+.doc-chip-name { font-weight: 700; font-size: 0.78rem; color: var(--color-secondary); }
+.doc-chip-role { font-size: 0.68rem; color: #8a9ab5; }
+.btn-logout-top {
+    display: inline-flex; align-items: center; gap: 6px;
+    background: rgba(220,53,69,0.08); color: #dc3545;
+    border: 1px solid rgba(220,53,69,0.2); border-radius: 7px;
+    padding: 7px 14px; font-weight: 600; font-size: 0.78rem;
+    text-decoration: none; transition: all 0.2s; white-space: nowrap;
+}
+.btn-logout-top:hover { background: #dc3545; color: #fff; }
+
+/* ─── MAIN CONTENT ─── */
+.dash-main { padding: 28px 24px 10px; max-width: 1200px; margin: 0 auto; }
+
+/* ─── PAGE HEADER ─── */
+.page-header {
+    background: linear-gradient(125deg, var(--color-secondary) 0%, #1a56db 60%, #0d6efd 100%);
+    border-radius: var(--card-radius);
+    padding: 26px 30px;
+    color: #fff;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 24px;
+    position: relative;
+    overflow: hidden;
+}
+.page-header::before {
+    content: '';
+    position: absolute; right: -20px; top: -40px;
+    width: 180px; height: 180px; border-radius: 50%;
+    background: rgba(255,255,255,0.05);
+}
+.page-header::after {
+    content: '';
+    position: absolute; right: 70px; bottom: -60px;
+    width: 150px; height: 150px; border-radius: 50%;
+    background: rgba(255,255,255,0.04);
+}
+.page-header h2 { font-weight: 700; font-size: 1.3rem; margin-bottom: 3px; }
+.page-header p  { opacity: 0.72; margin: 0; font-size: 0.85rem; }
+.page-header .header-icon {
+    width: 54px; height: 54px;
+    background: rgba(255,255,255,0.15);
+    border-radius: 12px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 1.4rem; z-index: 1; flex-shrink: 0;
+}
+
+/* ─── SECTION CARD ─── */
+.section-card {
+    background: #fff;
+    border-radius: var(--card-radius);
+    box-shadow: var(--card-shadow);
+    overflow: hidden;
+}
+.section-card-header {
+    padding: 16px 22px;
+    border-bottom: 1px solid #eef2f7;
+    display: flex; align-items: center; justify-content: space-between;
+}
+.section-card-header h5 {
+    font-weight: 700; color: var(--color-secondary); margin: 0; font-size: 0.92rem;
+    display: flex; align-items: center; gap: 8px;
+}
+.section-card-header h5 i { color: var(--color-primary); }
+.count-pill {
+    font-size: 0.7rem; font-weight: 700; padding: 3px 10px;
+    border-radius: 20px; background: rgba(13,110,253,0.1); color: var(--color-primary);
+}
+
+/* ─── TABLE ─── */
+.dash-table { margin: 0; }
+.dash-table thead th {
+    background: #f7faff; color: var(--color-secondary);
+    font-weight: 600; font-size: 0.73rem; text-transform: uppercase;
+    letter-spacing: 0.5px; padding: 12px 18px; border: none;
+    border-bottom: 2px solid #eef2f7;
+}
+.dash-table tbody td {
+    padding: 12px 18px; border-color: #f0f5fa;
+    font-size: 0.85rem; vertical-align: middle; color: #3d4a60;
+}
+.dash-table tbody tr:hover { background: #f7faff; }
+.patient-name { font-weight: 600; color: var(--color-secondary); }
+.phone-tag {
+    background: #eef4fc; color: var(--color-primary);
+    padding: 3px 9px; border-radius: 20px; font-size: 0.74rem; font-weight: 600;
+}
+.gender-badge {
+    padding: 4px 11px; border-radius: 20px; font-size: 0.72rem; font-weight: 600;
+    display: inline-block;
+}
+.gender-badge.male   { background: rgba(13,110,253,0.08); color: var(--color-primary); }
+.gender-badge.female { background: rgba(236,72,153,0.08); color: #db2777; }
+.gender-badge.other  { background: rgba(107,114,128,0.08); color: #4b5563; }
+
+.btn-open {
+    background: var(--gradient-btn); color: #fff; border: none;
+    padding: 5px 14px; border-radius: 6px; font-size: 0.76rem; font-weight: 600;
+    text-decoration: none; transition: all 0.2s; display: inline-block;
+    box-shadow: 0 2px 8px rgba(13,110,253,0.2);
+}
+.btn-open:hover { color: #fff; opacity: 0.88; transform: translateY(-1px); }
+
+.empty-state {
+    padding: 50px 24px; text-align: center; color: #6c757d; font-size: 0.9rem;
+}
+.empty-state i { font-size: 2.5rem; display: block; margin-bottom: 12px; opacity: 0.3; }
+
+/* ─── RESPONSIVE ─── */
+@media (max-width: 767.98px) {
+    .doctor-topbar { padding: 0 14px; height: auto; min-height: 56px; flex-wrap: wrap; gap: 8px; padding-top: 10px; padding-bottom: 10px; }
+    .doctor-topbar .left { gap: 4px; }
+    .topbar-nav-link span { display: none; }
+    .topbar-nav-link { padding: 6px 9px; }
+    .topbar-divider { display: none; }
+    .doc-chip-name, .doc-chip-role { display: none; }
+    .doc-profile-chip { padding: 5px; }
+    .topbar-brand { font-size: 0.82rem; }
+    .dash-main { padding: 18px 14px 10px; }
+    .page-header { flex-direction: column; align-items: flex-start; gap: 12px; padding: 20px; }
+    .page-header::before, .page-header::after { display: none; }
+}
+</style>
+
+<div class="dash-wrapper">
+
+<!-- ══════════════════════════════════════ -->
+<!--  DOCTOR PANEL TOP BAR                 -->
+<!-- ══════════════════════════════════════ -->
+<div class="doctor-topbar">
+    <div class="left">
+        <div class="topbar-brand">
+            <i class="fas fa-tooth"></i>
+            <span>Doctor Panel</span>
+        </div>
+        <div class="topbar-divider"></div>
+
+        <a href="{% url 'doctors:dashboard' %}" class="topbar-nav-link">
+            <i class="fas fa-gauge-high"></i>
+            <span>ড্যাশবোর্ড</span>
+        </a>
+        <a href="{% url 'doctors:patient_list' %}" class="topbar-nav-link active">
+            <i class="fas fa-users"></i>
+            <span>রোগী তালিকা</span>
+        </a>
+        <a href="{% url 'medicines:manage' %}" class="topbar-nav-link">
+            <i class="fas fa-pills"></i>
+            <span>মেডিসিন</span>
+        </a>
+    </div>
+
+    <div class="right">
+        <div class="doc-profile-chip">
+            <div class="doc-chip-avatar">
+                <i class="fas fa-user-doctor"></i>
+            </div>
+            <div>
+                <div class="doc-chip-name">Dr. A. K. Azad</div>
+                <div class="doc-chip-role">BDS, FCPS</div>
+            </div>
+        </div>
+        <a href="{% url 'doctors:logout' %}" class="btn-logout-top">
+            <i class="fas fa-right-from-bracket"></i>
+            <span>Logout</span>
+        </a>
+    </div>
+</div>
+
+<!-- ══════════════════════════════════════ -->
+<!--  MAIN CONTENT                         -->
+<!-- ══════════════════════════════════════ -->
+<div class="dash-main">
+
+    <!-- Page Header -->
+    <div class="page-header">
+        <div>
+            <h2><i class="fas fa-users me-2" style="font-size:1rem;opacity:0.85;"></i>All Patients</h2>
+            <p>সকল নিবন্ধিত রোগীর তালিকা এখানে দেখুন।</p>
+        </div>
+        <div class="header-icon">
+            <i class="fas fa-hospital-user"></i>
+        </div>
+    </div>
+
+    <!-- Patient Table -->
+    <div class="section-card">
+        <div class="section-card-header">
+            <h5><i class="fas fa-list-ul"></i> Patient List</h5>
+            {% if patients %}
+            <span class="count-pill">{{ patients|length }} জন</span>
+            {% endif %}
+        </div>
+
+        <div class="table-responsive">
+            <table class="table dash-table">
+                <thead>
+                    <tr>
+                        <th>#</th>
+                        <th>Name</th>
+                        <th>Phone</th>
+                        <th>Gender</th>
+                        <th>Action</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for patient in patients %}
+                    <tr>
+                        <td><strong>{{ forloop.counter }}</strong></td>
+                        <td><span class="patient-name">{{ patient.name }}</span></td>
+                        <td><span class="phone-tag">{{ patient.phone }}</span></td>
+                        <td>
+                            <span class="gender-badge {% if patient.gender|lower == 'male' %}male{% elif patient.gender|lower == 'female' %}female{% else %}other{% endif %}">
+                                {% if patient.gender|lower == 'male' %}<i class="fas fa-mars me-1"></i>{% elif patient.gender|lower == 'female' %}<i class="fas fa-venus me-1"></i>{% endif %}
+                                {{ patient.gender }}
+                            </span>
+                        </td>
+                        <td>
+                            <a href="{% url 'doctors:patient_detail' patient.id %}" class="btn-open">
+                                <i class="fas fa-arrow-up-right-from-square me-1"></i>profile
+                            </a>
+                        </td>
+                    </tr>
+                    {% empty %}
+                    <tr>
+                        <td colspan="5">
+                            <div class="empty-state">
+                                <i class="fas fa-user-slash"></i>
+                                কোনো রোগী পাওয়া যায়নি।
+                            </div>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+</div><!-- /dash-main -->
+</div><!-- /dash-wrapper -->
+
+{% endblock %}

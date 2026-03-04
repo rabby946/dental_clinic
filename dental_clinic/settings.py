@@ -4,7 +4,7 @@ import environ
 from pathlib import Path
 import os
 from dotenv import load_dotenv
-
+import cloudinary
 
 
 # ----------------------
@@ -98,6 +98,13 @@ DATABASES = {
 BREVO_API_KEY = os.getenv('BREVO_API_KEY')
 BREVO_SENDER_EMAIL = os.getenv('BREVO_SENDER_EMAIL')
 ADMIN_EMAIL = os.getenv('ADMIN_EMAIL')
+
+cloudinary.config( 
+    cloud_name = os.getenv('CLOUDINARY_CLOUD_NAME'),
+    api_key = os.getenv('CLOUDINARY_API_KEY'), 
+    api_secret = os.getenv('CLOUDINNARY_API_SECRET'),
+    secure=True
+)
 
 
 # Optional: SSL mode (Supabase requires in production)

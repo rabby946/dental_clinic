@@ -2,7 +2,17 @@ from decimal import Decimal
 from django.shortcuts import get_object_or_404, redirect, render
 from django.contrib import messages
 from django.views.decorators.csrf import csrf_exempt
-
+from decimal import Decimal
+from django.http import JsonResponse
+from django.shortcuts import get_object_or_404, render
+from django.views.decorators.http import require_http_methods
+from django.contrib.auth.decorators import login_required
+from django.utils import timezone
+from django.db.models import Max
+from django.utils import timezone
+from apps.core.models import Appointment
+from apps.patients.models import Patient
+from .models import Payment, calculate_due
 from apps.core.models import Appointment
 from .models import Payment
 from apps.patients.views import patient_required
@@ -10,7 +20,7 @@ from apps.doctors.decorators import doctor_required
 from apps.billing.models import calculate_due
 
 @patient_required
-def patient_pay_init(request, appointment_id):
+def patient_init(request, appointment_id):
     appointment = get_object_or_404(
         Appointment,
         id=appointment_id,
@@ -64,78 +74,72 @@ def bkash_callback(request):
     messages.success(request, "Payment successful!")
     return redirect('patients:payment_list')
 
-@doctor_required
-def add_charge(request, appointment_id):
-    appointment = get_object_or_404(Appointment, id=appointment_id)
 
-    if request.method == 'POST':
-        amount = Decimal(request.POST.get('amount'))
+@login_required
+@require_http_methods(["GET", "POST"])
+def patient_billing(request, patient_id):
 
-        Payment.objects.create(
-            appointment=appointment,
-            type='charge',
-            amount=amount
+    patient = get_object_or_404(Patient, id=patient_id)
+
+    # 🔹 Get latest appointment
+    appointment = Appointment.objects.filter(
+        patient=patient
+    ).order_by('-created_at').first()
+    
+
+    today = timezone.now().date()
+    # 🔹 If no appointment exists → create one
+    if not appointment:
+    # Get today's last serial
+        last_serial = (
+            Appointment.objects
+            .filter(date=today)
+            .aggregate(Max('serial_number'))['serial_number__max']
         )
 
-        messages.success(request, "Charge added successfully.")
-        return redirect('doctors:appointment_detail', pk=appointment.id)
+        next_serial = (last_serial or 0) + 1
 
-    return render(request, 'billing/add_charge.html', {
-        'appointment': appointment
-    })
-
-@doctor_required
-def add_manual_payment(request, appointment_id):
-    appointment = get_object_or_404(Appointment, id=appointment_id)
-
-    if request.method == 'POST':
-        amount = Decimal(request.POST.get('amount'))
-        method = request.POST.get('method')
-
-        Payment.objects.create(
-            appointment=appointment,
-            type='paid',
-            method=method,
-            amount=amount
+        appointment = Appointment.objects.create(
+            patient=patient,
+            date=today,
+            time=timezone.now().time(),
+            serial_number=next_serial,
+            problem="Consultation",
+            status='completed'
         )
 
-        messages.success(request, "Payment recorded.")
-        return redirect('doctors:appointment_detail', pk=appointment.id)
+    # ================= POST =================
+    if request.method == "POST":
+        try:
+            amount = Decimal(request.POST.get("amount"))
+            payment_type = request.POST.get("type")
+            method = request.POST.get("method")
 
-    return render(request, 'billing/add_manual_payment.html', {
-        'appointment': appointment,
-        'methods': Payment.PAYMENT_METHOD
+            if amount <= 0:
+                return JsonResponse({"error": "Invalid amount"}, status=400)
+
+            Payment.objects.create(
+                appointment=appointment,
+                type=payment_type,
+                method=method if payment_type == "paid" else None,
+                amount=amount
+            )
+
+            return JsonResponse({"success": True})
+
+        except Exception as e:
+            return JsonResponse({"error": str(e)}, status=400)
+
+    # ================= GET =================
+    payments = Payment.objects.filter(
+        appointment__patient=patient
+    ).order_by('-created_at')[:100]
+
+    due = calculate_due(appointment)
+
+    return render(request, "billing/appointment_billing.html", {
+        "patient": patient,
+        "appointment": appointment,
+        "payments": payments,
+        "due": due
     })
-
-
-# apps/billing/views.py
-# from django.shortcuts import render, redirect, get_object_or_404
-# from django.contrib import messages
-# from django.utils import timezone
-# from apps.patients.models import Patient
-# from apps.billing.models import Charge
-# from apps.doctors.decorators import doctor_required
-
-
-# @doctor_required
-# def add_charge(request):
-#     patient_id = request.GET.get('patient')
-#     patient = get_object_or_404(Patient, id=patient_id)
-
-#     if request.method == 'POST':
-#         amount = request.POST.get('amount')
-#         description = request.POST.get('description')
-
-#         Charge.objects.create(
-#             patient=patient,
-#             amount=amount,
-#             description=description,
-#             created_at=timezone.now()
-#         )
-
-#         messages.success(request, "Charge added successfully.")
-#         return redirect('doctors:patient_detail', pk=patient.id)
-
-#     return render(request, 'billing/add_charge.html', {
-#         'patient': patient
-#     })

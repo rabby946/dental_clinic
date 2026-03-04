@@ -25,15 +25,17 @@ class Appointment(models.Model):
     updated_at = models.DateTimeField(auto_now=True)
 
     class Meta:
-        unique_together = ('date', 'serial_number')   # ✅ safety
+        unique_together = ('date', 'serial_number')   
         ordering = ['date', 'serial_number']
 
     def __str__(self):
         return f"{self.patient.name} - {self.date} - #{self.serial_number}"
 
 
+from cloudinary.models import CloudinaryField
+
 class Document(models.Model):
     patient = models.ForeignKey(Patient, on_delete=models.CASCADE)
     title = models.CharField(max_length=255)
-    file = models.FileField(upload_to='documents/')
+    file = CloudinaryField('file')
     uploaded_at = models.DateTimeField(auto_now_add=True)

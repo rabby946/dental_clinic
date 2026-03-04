@@ -1,24 +1,146 @@
-{% extends 'core/base.html' %}
+{% extends "core/base.html" %}
 
-{% block title %}Upload Document{% endblock %}
+{% block title %}Add Document - {{ patient.name }}{% endblock %}
 
 {% block content %}
+<style>
+    /* Document Upload Custom Styles */
+    .upload-card {
+        border: none;
+        border-radius: 16px;
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.05);
+        background-color: #fff;
+        overflow: hidden;
+    }
+
+    .upload-header {
+        background: rgba(13, 110, 253, 0.05);
+        border-bottom: 2px solid rgba(13, 110, 253, 0.1);
+        padding: 2rem 1.5rem;
+        text-align: center;
+    }
+
+    .upload-icon {
+        font-size: 3.5rem;
+        color: var(--color-primary);
+        margin-bottom: 15px;
+        filter: drop-shadow(0 4px 6px rgba(13, 110, 253, 0.2));
+    }
+
+    .form-label {
+        font-weight: 600;
+        color: var(--color-secondary);
+        margin-bottom: 0.6rem;
+    }
+
+    .form-control {
+        border-radius: 8px;
+        padding: 0.8rem 1rem;
+        border: 1px solid #dee2e6;
+        box-shadow: none;
+        transition: all 0.3s;
+    }
+
+    .form-control:focus {
+        border-color: var(--color-primary);
+        box-shadow: 0 0 0 0.25rem rgba(13, 110, 253, 0.15);
+    }
+
+    /* Custom File Upload Area */
+    .file-upload-wrapper {
+        position: relative;
+        border: 2px dashed #cbd5e1;
+        border-radius: 12px;
+        padding: 2.5rem 1.5rem;
+        text-align: center;
+        background-color: #f8fafc;
+        transition: all 0.3s ease;
+        cursor: pointer;
+    }
+
+    .file-upload-wrapper:hover {
+        border-color: var(--color-primary);
+        background-color: rgba(13, 110, 253, 0.02);
+    }
+
+    /* Make the actual input invisible but clickable over the whole box */
+    .file-upload-input {
+        position: absolute;
+        left: 0;
+        top: 0;
+        width: 100%;
+        height: 100%;
+        opacity: 0;
+        cursor: pointer;
+        z-index: 2;
+    }
+
+    .btn-submit {
+        background: var(--gradient-btn);
+        color: white;
+        border: none;
+        font-weight: 600;
+        padding: 0.8rem 2rem;
+        border-radius: 8px;
+        transition: all 0.3s ease;
+    }
+
+    .btn-submit:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 8px 20px rgba(13, 110, 253, 0.3);
+        color: white;
+    }
+</style>
+
 <div class="container py-5">
-    <div class="card shadow-sm p-4">
-        <h4>Upload Document - {{ patient.name }}</h4>
+    <div class="row justify-content-center">
+        <div class="col-md-8 col-lg-6">
+            
+            <div class="upload-card">
+                <div class="upload-header">
+                    <i class="fas fa-cloud-upload-alt upload-icon"></i>
+                    <h4 class="fw-bold" style="color: var(--color-secondary);">ডকুমেন্ট আপলোড করুন</h4>
+                    <p class="text-muted mb-0 mt-2">রোগী: <strong class="text-primary">{{ patient.name }}</strong></p>
+                </div>
 
-        <form method="post" enctype="multipart/form-data">
-            {% csrf_token %}
+                <div class="card-body p-4 p-md-5">
+                    <form method="POST" enctype="multipart/form-data">
+                        {% csrf_token %}
 
-            <div class="mb-3">
-                <label>Select File</label>
-                <input type="file" name="file" class="form-control" required>
+                        <div class="mb-4">
+                            <label for="documentTitle" class="form-label">
+                                <i class="fas fa-heading text-primary me-2"></i> ডকুমেন্টের শিরোনাম
+                            </label>
+                            <input type="text" class="form-control" id="documentTitle" name="title" placeholder="যেমন: X-Ray Report, Blood Test" required>
+                        </div>
+
+                        <div class="mb-4">
+                            <label class="form-label">
+                                <i class="fas fa-file-medical text-primary me-2"></i> ফাইল নির্বাচন করুন
+                            </label>
+                            <div class="file-upload-wrapper">
+                                <input type="file" class="file-upload-input" name="file" required>
+                                <div class="upload-content">
+                                    <i class="fas fa-file-upload text-muted fs-1 mb-3"></i>
+                                    <h6 class="fw-bold text-dark mb-1">ক্লিক করুন অথবা ফাইল ড্র্যাগ করে আনুন</h6>
+                                    <p class="text-muted small mb-0">PDF, JPG, PNG সাপোর্টেড</p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="d-flex justify-content-between align-items-center mt-5">
+                            <a href="javascript:history.back()" class="btn btn-light border text-muted px-4 py-2" style="border-radius: 8px; font-weight: 500;">
+                                <i class="fas fa-arrow-left me-2"></i> ফিরে যান
+                            </a>
+                            <button type="submit" class="btn btn-submit px-4 py-2">
+                                <i class="fas fa-upload me-2"></i> আপলোড করুন
+                            </button>
+                        </div>
+                    </form>
+                </div>
             </div>
 
-            <button type="submit" class="btn btn-info">
-                Upload
-            </button>
-        </form>
+        </div>
     </div>
 </div>
 {% endblock %}

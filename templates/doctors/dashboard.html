@@ -5,174 +5,522 @@
 
 {% block content %}
 <style>
-.dashboard-section {
+:root {
+    --color-primary: #0d6efd;
+    --color-secondary: #052c65;
+    --gradient-btn: linear-gradient(135deg, #0d6efd 0%, #00d2ff 100%);
+    --dash-bg: #eef4fc;
+    --card-radius: 14px;
+    --card-shadow: 0 4px 24px rgba(5,44,101,0.08);
+}
+
+.dash-wrapper {
+    background: var(--dash-bg);
     min-height: 80vh;
-    padding: 40px 0;
-    background-color: #f4f9fd;
+    padding-bottom: 60px;
 }
 
-.dashboard-card {
+/* ─── TOP NAV BAR (doctor panel) ─── */
+.doctor-topbar {
     background: #fff;
-    padding: 30px;
-    border-radius: 12px;
-    box-shadow: 0 10px 30px rgba(0,0,0,0.08);
-    margin-bottom: 30px;
+    border-bottom: 1px solid #e8eef6;
+    box-shadow: 0 2px 12px rgba(5,44,101,0.07);
+    padding: 0 24px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    height: 60px;
+    position: sticky;
+    top: 0;
+    z-index: 500;
+}
+.doctor-topbar .left { display: flex; align-items: center; gap: 6px; flex-wrap: wrap; }
+.topbar-brand {
+    font-weight: 800; font-size: 0.9rem; color: var(--color-secondary);
+    display: flex; align-items: center; gap: 7px; margin-right: 8px;
+    white-space: nowrap;
+}
+.topbar-brand i { color: var(--color-primary); }
+.topbar-divider {
+    width: 1px; height: 22px; background: #dde4f0;
+    margin: 0 6px; flex-shrink: 0;
+}
+.topbar-nav-link {
+    display: inline-flex; align-items: center; gap: 6px;
+    color: #5a6a88; font-weight: 600; font-size: 0.8rem;
+    padding: 6px 11px; border-radius: 7px; text-decoration: none;
+    transition: all 0.2s; white-space: nowrap;
+}
+.topbar-nav-link i { font-size: 0.8rem; }
+.topbar-nav-link:hover { background: #eef4fc; color: var(--color-primary); }
+.topbar-nav-link.active {
+    background: rgba(13,110,253,0.1); color: var(--color-primary); font-weight: 700;
 }
 
-.dashboard-card h2,
-.dashboard-card h4 {
-    font-weight: 700;
+.doctor-topbar .right { display: flex; align-items: center; gap: 10px; flex-shrink: 0; }
+.doc-profile-chip {
+    display: flex; align-items: center; gap: 9px;
+    background: #f4f8ff; border-radius: 30px;
+    padding: 5px 14px 5px 5px; border: 1px solid #dde8fa;
+}
+.doc-chip-avatar {
+    width: 32px; height: 32px;
+    background: var(--gradient-btn);
+    border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 0.85rem; color: #fff;
+    flex-shrink: 0;
+}
+.doc-chip-name { font-weight: 700; font-size: 0.78rem; color: var(--color-secondary); }
+.doc-chip-role { font-size: 0.68rem; color: #8a9ab5; }
+.btn-logout-top {
+    display: inline-flex; align-items: center; gap: 6px;
+    background: rgba(220,53,69,0.08); color: #dc3545;
+    border: 1px solid rgba(220,53,69,0.2); border-radius: 7px;
+    padding: 7px 14px; font-weight: 600; font-size: 0.78rem;
+    text-decoration: none; transition: all 0.2s; white-space: nowrap;
+}
+.btn-logout-top:hover { background: #dc3545; color: #fff; }
+
+/* ─── MAIN CONTENT ─── */
+.dash-main { padding: 28px 24px 10px; max-width: 1200px; margin: 0 auto; }
+
+/* ─── WELCOME BANNER ─── */
+.welcome-banner {
+    background: linear-gradient(125deg, var(--color-secondary) 0%, #1a56db 60%, #0d6efd 100%);
+    border-radius: var(--card-radius);
+    padding: 26px 30px;
+    color: #fff;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 24px;
+    position: relative;
+    overflow: hidden;
+}
+.welcome-banner::before {
+    content: '';
+    position: absolute; right: -20px; top: -40px;
+    width: 180px; height: 180px; border-radius: 50%;
+    background: rgba(255,255,255,0.05);
+}
+.welcome-banner::after {
+    content: '';
+    position: absolute; right: 70px; bottom: -60px;
+    width: 150px; height: 150px; border-radius: 50%;
+    background: rgba(255,255,255,0.04);
+}
+.welcome-text h2 { font-weight: 700; font-size: 1.3rem; margin-bottom: 3px; }
+.welcome-text p  { opacity: 0.72; margin: 0; font-size: 0.85rem; }
+.welcome-date-box {
+    background: rgba(255,255,255,0.12);
+    border: 1px solid rgba(255,255,255,0.18);
+    border-radius: 10px;
+    padding: 12px 20px; text-align: center;
+    z-index: 1; flex-shrink: 0;
+}
+.welcome-date-box .day-num  { font-size: 1.9rem; font-weight: 700; line-height: 1; }
+.welcome-date-box .day-info { font-size: 0.75rem; opacity: 0.75; margin-top: 3px; }
+
+/* ─── STAT CARDS ─── */
+.stat-card {
+    background: #fff;
+    border-radius: var(--card-radius);
+    padding: 20px 18px;
+    box-shadow: var(--card-shadow);
+    display: flex; align-items: center; gap: 14px;
+    transition: transform 0.25s, box-shadow 0.25s;
+    border-left: 4px solid transparent;
+    height: 100%;
+}
+.stat-card:hover { transform: translateY(-3px); box-shadow: 0 10px 28px rgba(5,44,101,0.13); }
+.stat-card.blue   { border-left-color: var(--color-primary); }
+.stat-card.green  { border-left-color: #22c55e; }
+.stat-card.orange { border-left-color: #f59e0b; }
+.stat-card.red    { border-left-color: #ef4444; }
+.stat-icon {
+    width: 48px; height: 48px; border-radius: 11px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 1.1rem; flex-shrink: 0;
+}
+.stat-card.blue   .stat-icon { background: rgba(13,110,253,0.1);  color: var(--color-primary); }
+.stat-card.green  .stat-icon { background: rgba(34,197,94,0.1);   color: #16a34a; }
+.stat-card.orange .stat-icon { background: rgba(245,158,11,0.1);  color: #d97706; }
+.stat-card.red    .stat-icon { background: rgba(239,68,68,0.1);   color: #dc2626; }
+.stat-val { font-size: 1.6rem; font-weight: 700; color: var(--color-secondary); line-height: 1; }
+.stat-lbl { font-size: 0.75rem; color: #6c757d; margin-top: 3px; font-weight: 500; }
+
+/* ─── SECTION CARDS ─── */
+.section-card {
+    background: #fff;
+    border-radius: var(--card-radius);
+    box-shadow: var(--card-shadow);
+    margin-bottom: 22px;
+    overflow: hidden;
+}
+.section-card-header {
+    padding: 16px 22px;
+    border-bottom: 1px solid #eef2f7;
+    display: flex; align-items: center; justify-content: space-between;
+}
+.section-card-header h5 {
+    font-weight: 700; color: var(--color-secondary); margin: 0; font-size: 0.92rem;
+    display: flex; align-items: center; gap: 8px;
+}
+.section-card-header h5 i { color: var(--color-primary); }
+.count-pill {
+    font-size: 0.7rem; font-weight: 700; padding: 3px 10px;
+    border-radius: 20px; background: rgba(13,110,253,0.1); color: var(--color-primary);
 }
 
-.table th {
-    background-color: #f1f5f9;
+/* ─── QUICK ACTION CARDS ─── */
+.quick-card {
+    background: #fff;
+    border-radius: var(--card-radius);
+    box-shadow: var(--card-shadow);
+    padding: 22px;
+    height: 100%;
 }
-
-.badge-status {
-    font-size: 0.85rem;
-    padding: 6px 10px;
+.quick-card h5 {
+    font-weight: 700; color: var(--color-secondary); margin-bottom: 13px;
+    font-size: 0.92rem; display: flex; align-items: center; gap: 8px;
 }
+.quick-card h5 i { color: var(--color-primary); }
+.quick-card .form-control {
+    border-color: #dbe4f0; font-size: 0.86rem;
+    border-radius: 8px 0 0 8px !important; padding: 10px 13px; height: auto;
+}
+.quick-card .form-control:focus {
+    border-color: var(--color-primary); box-shadow: 0 0 0 3px rgba(13,110,253,0.1);
+}
+.btn-search {
+    background: var(--gradient-btn); color: #fff; border: none;
+    border-radius: 0 8px 8px 0; padding: 0 18px; font-weight: 600;
+    font-size: 0.84rem; transition: opacity 0.2s; white-space: nowrap;
+}
+.btn-search:hover { opacity: 0.88; color: #fff; }
+.btn-medicine {
+    display: inline-flex; align-items: center; gap: 7px;
+    background: linear-gradient(135deg, #22c55e 0%, #16a34a 100%);
+    color: #fff; border: none; border-radius: 8px;
+    padding: 10px 22px; font-weight: 600; font-size: 0.85rem;
+    text-decoration: none; transition: all 0.25s;
+    box-shadow: 0 4px 12px rgba(34,197,94,0.3);
+}
+.btn-medicine:hover { color: #fff; transform: translateY(-2px); box-shadow: 0 7px 18px rgba(34,197,94,0.35); }
 
-.quick-action input {
-    height: 46px;
+/* ─── TABLE ─── */
+.dash-table { margin: 0; }
+.dash-table thead th {
+    background: #f7faff; color: var(--color-secondary);
+    font-weight: 600; font-size: 0.73rem; text-transform: uppercase;
+    letter-spacing: 0.5px; padding: 12px 18px; border: none;
+    border-bottom: 2px solid #eef2f7;
+}
+.dash-table tbody td {
+    padding: 12px 18px; border-color: #f0f5fa;
+    font-size: 0.85rem; vertical-align: middle; color: #3d4a60;
+}
+.dash-table tbody tr:hover { background: #f7faff; }
+.patient-name { font-weight: 600; color: var(--color-secondary); }
+.phone-tag {
+    background: #eef4fc; color: var(--color-primary);
+    padding: 3px 9px; border-radius: 20px; font-size: 0.74rem; font-weight: 600;
+}
+.time-tag { font-weight: 600; color: #374151; }
+.sbadge {
+    padding: 4px 11px; border-radius: 20px; font-size: 0.72rem; font-weight: 600;
+    display: inline-block;
+}
+.sbadge.completed { background: #dcfce7; color: #166534; }
+.sbadge.pending   { background: #fef9c3; color: #854d0e; }
+.sbadge.cancelled { background: #fee2e2; color: #991b1b; }
+.btn-open {
+    background: var(--gradient-btn); color: #fff; border: none;
+    padding: 5px 14px; border-radius: 6px; font-size: 0.76rem; font-weight: 600;
+    text-decoration: none; transition: all 0.2s; display: inline-block;
+    box-shadow: 0 2px 8px rgba(13,110,253,0.2);
+}
+.btn-open:hover { color: #fff; opacity: 0.88; transform: translateY(-1px); }
+.btn-view {
+    background: transparent; color: var(--color-primary);
+    border: 1.5px solid var(--color-primary);
+    padding: 4px 12px; border-radius: 6px; font-size: 0.76rem; font-weight: 600;
+    text-decoration: none; transition: all 0.2s; display: inline-block;
+}
+.btn-view:hover { background: var(--color-primary); color: #fff; }
+.empty-state {
+    padding: 32px 24px; text-align: center; color: #6c757d; font-size: 0.88rem;
+}
+.empty-state i { font-size: 2rem; margin-bottom: 10px; display: block; opacity: 0.3; }
+
+/* ─── RESPONSIVE ─── */
+@media (max-width: 767.98px) {
+    .doctor-topbar { padding: 0 14px; height: auto; min-height: 56px; flex-wrap: wrap; gap: 8px; padding-top: 10px; padding-bottom: 10px; }
+    .doctor-topbar .left { gap: 4px; }
+    .topbar-nav-link span { display: none; } /* icon only on very small */
+    .topbar-nav-link { padding: 6px 9px; }
+    .topbar-divider { display: none; }
+    .doc-chip-name, .doc-chip-role { display: none; }
+    .doc-profile-chip { padding: 5px; }
+    .dash-main { padding: 18px 14px 10px; }
+    .welcome-banner { flex-direction: column; align-items: flex-start; gap: 14px; padding: 20px 20px; }
+    .welcome-banner::before, .welcome-banner::after { display: none; }
+    .welcome-date-box { width: 100%; display: flex; align-items: center; gap: 12px; padding: 10px 16px; }
+    .welcome-date-box .day-num { font-size: 1.4rem; }
+    .topbar-brand { font-size: 0.82rem; }
+}
+@media (max-width: 575px) {
+    .topbar-nav-link span { display: none; }
 }
 </style>
 
-<section class="dashboard-section">
-<div class="container">
+<div class="dash-wrapper">
 
-    <!-- ===================== -->
-    <!-- Welcome Card -->
-    <!-- ===================== -->
-    <div class="dashboard-card text-center">
-        {% if messages %}
-            {% for message in messages %}
-                <div class="alert alert-{{ message.tags }} alert-dismissible fade show small mb-3">
-                    {{ message }}
-                    <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
-                </div>
-            {% endfor %}
-        {% endif %}
+<!-- ══════════════════════════════════════════ -->
+<!--  DOCTOR PANEL TOP BAR                      -->
+<!-- ══════════════════════════════════════════ -->
+<div class="doctor-topbar">
+    <div class="left">
+        <div class="topbar-brand">
+            <i class="fas fa-tooth"></i>
+            <span>Doctor Panel</span>
+        </div>
+        <div class="topbar-divider"></div>
 
-        <h2>স্বাগতম, Dr. {{ request.user.get_full_name|default:request.user.username }}</h2>
-        <p class="text-muted mb-0">আজকের অ্যাপয়েন্টমেন্ট ও রোগীর তথ্য নিচে দেখুন</p>
+        <a href="{% url 'doctors:dashboard' %}" class="topbar-nav-link active">
+            <i class="fas fa-gauge-high"></i>
+            <span>ড্যাশবোর্ড</span>
+        </a>
+        
+        <a href="{% url 'doctors:patient_list' %}" class="topbar-nav-link">
+            <i class="fas fa-users"></i>
+            <span>রোগী তালিকা</span>
+        </a>
+        <a href="{% url 'medicines:manage' %}" class="topbar-nav-link">
+            <i class="fas fa-pills"></i>
+            <span>মেডিসিন</span>
+        </a>
+        
     </div>
 
-    <!-- ===================== -->
+    <div class="right">
+        <div class="doc-profile-chip">
+            <div class="doc-chip-avatar">
+                <i class="fas fa-user-doctor"></i>
+            </div>
+            <div>
+                <div class="doc-chip-name">Dr. A. K. Azad</div>
+                <div class="doc-chip-role">BDS, FCPS</div>
+            </div>
+        </div>
+        <a href="{% url 'doctors:logout' %}" class="btn-logout-top">
+            <i class="fas fa-right-from-bracket"></i>
+            <span>Logout</span>
+        </a>
+    </div>
+</div>
+
+<!-- ══════════════════════════════════════════ -->
+<!--  MAIN CONTENT                              -->
+<!-- ══════════════════════════════════════════ -->
+<div class="dash-main">
+
+    <!-- {% if messages %}
+        {% for message in messages %}
+            <div class="alert alert-{{ message.tags }} alert-dismissible fade show border-0 mb-3"
+                 style="font-size:0.85rem;border-radius:10px;box-shadow:var(--card-shadow);">
+                <i class="fas fa-circle-info me-2"></i>{{ message }}
+                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+            </div>
+        {% endfor %}
+    {% endif %} -->
+
+    <!-- Welcome Banner -->
+    <div class="welcome-banner mb-4">
+        <div class="welcome-text">
+            <h2>স্বাগতম, Dr. Abul Kalam Azad 👋</h2>
+            <p>আজকের অ্যাপয়েন্টমেন্ট ও রোগীর সব তথ্য এখানে দেখুন।</p>
+        </div>
+        <div class="welcome-date-box">
+            <div class="day-num" id="todayNum">--</div>
+            <div class="day-info" id="todayInfo">Loading...</div>
+        </div>
+    </div>
+
+    <!-- Stat Cards -->
+    <div class="row g-3 mb-3">
+        <div class="col-6 col-lg-3">
+            <div class="stat-card blue">
+                <div class="stat-icon"><i class="fas fa-calendar-day"></i></div>
+                <div>
+                    <div class="stat-val">{{ appointments_today|length|default:"0" }}</div>
+                    <div class="stat-lbl">আজকের অ্যাপয়েন্টমেন্ট</div>
+                </div>
+            </div>
+        </div>
+        <div class="col-6 col-lg-3">
+            <div class="stat-card orange">
+                <div class="stat-icon"><i class="fas fa-hourglass-half"></i></div>
+                <div>
+                    <div class="stat-val">{{ pending_appointments|length|default:"0" }}</div>
+                    <div class="stat-lbl">Pending</div>
+                </div>
+            </div>
+        </div>
+        <div class="col-6 col-lg-3">
+            <div class="stat-card green">
+                <div class="stat-icon"><i class="fas fa-circle-check"></i></div>
+                <div>
+                    <div class="stat-val">{{completed_today}}</div>
+                    <div class="stat-lbl">সম্পন্ন আজকে</div>
+                </div>
+            </div>
+        </div>
+        <div class="col-6 col-lg-3">
+            <div class="stat-card red">
+                <div class="stat-icon"><i class="fas fa-users"></i></div>
+                <div>
+                    <div class="stat-val">{{total_patients}}</div>
+                    <div class="stat-lbl">মোট রোগী</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <!-- Quick Actions -->
-    <!-- ===================== -->
-    <div class="row">
-        <div class="col-md-6">
-            <div class="dashboard-card quick-action">
-                <h4 class="mb-3">রোগী খুঁজুন</h4>
+    <div class="row g-3 mb-3">
+        <div class="col-md-7">
+            <div class="quick-card">
+                <h5><i class="fas fa-magnifying-glass"></i> রোগী খুঁজুন</h5>
                 <form method="post" action="{% url 'doctors:patient_search' %}">
                     {% csrf_token %}
                     <div class="input-group">
                         <input type="text" name="phone" class="form-control"
-                               placeholder="রোগীর ফোন নাম্বার লিখুন" required>
-                        <button class="btn btn-primary">Search</button>
+                               placeholder="রোগীর ফোন নাম্বার দিয়ে খুঁজুন…" required>
+                        <button class="btn-search" type="submit">
+                            <i class="fas fa-search me-1"></i> Search
+                        </button>
                     </div>
                 </form>
             </div>
         </div>
-
-        <div class="col-md-6">
-            <div class="dashboard-card text-center">
-                <h4 class="mb-3">Medicine Management</h4>
-                <a href="{% url 'medicines:create' %}" class="btn btn-success px-4">
-                    + নতুন মেডিসিন যোগ করুন
+        <div class="col-md-5">
+            <div class="quick-card d-flex flex-column align-items-center justify-content-center text-center">
+                <h5><i class="fas fa-capsules"></i> Medicine Management</h5>
+                <a href="{% url 'medicines:manage' %}" class="btn-medicine">
+                    <i class="fas fa-plus"></i> নতুন মেডিসিন যোগ করুন
                 </a>
             </div>
         </div>
     </div>
 
-    <!-- ===================== -->
     <!-- Today's Appointments -->
-    <!-- ===================== -->
-    <div class="dashboard-card">
-        <h4 class="mb-3">আজকের অ্যাপয়েন্টমেন্ট</h4>
-
+    <div class="section-card">
+        <div class="section-card-header">
+            <h5><i class="fas fa-calendar-day"></i> আজকের অ্যাপয়েন্টমেন্ট</h5>
+            <span class="count-pill">{{ appointments_today|length|default:"0" }} টি</span>
+        </div>
         {% if appointments_today %}
-        <table class="table table-bordered table-hover align-middle">
-            <thead>
-                <tr>
-                    <th>#</th>
-                    <th>সময়</th>
-                    <th>রোগী</th>
-                    <th>ফোন</th>
-                    <th>স্ট্যাটাস</th>
-                    <th>Action</th>
-                </tr>
-            </thead>
-            <tbody>
-                {% for appt in appointments_today %}
-                <tr>
-                    <td>{{ forloop.counter }}</td>
-                    <td>{{ appt.time|time:"h:i A" }}</td>
-                    <td>{{ appt.patient.name }}</td>
-                    <td>{{ appt.patient.phone }}</td>
-                    <td>
-                        <span class="badge badge-status
-                        {% if appt.status == 'completed' %}bg-success
-                        {% elif appt.status == 'pending' %}bg-warning
-                        {% else %}bg-secondary{% endif %}">
-                            {{ appt.status|title }}
-                        </span>
-                    </td>
-                    <td>
-                        <a href="{% url 'doctors:patient_detail' appt.patient.id %}"
-                           class="btn btn-sm btn-primary">
-                            Open
-                        </a>
-                    </td>
-                </tr>
-                {% endfor %}
-            </tbody>
-        </table>
+        <div class="table-responsive">
+            <table class="table dash-table">
+                <thead>
+                    <tr>
+                        <th>#</th>
+                        <th>সময়</th>
+                        <th>রোগী</th>
+                        <th>ফোন</th>
+                        <th>স্ট্যাটাস</th>
+                        <th>Action</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for appt in appointments_today %}
+                    <tr>
+                        <td><strong>{{ forloop.counter }}</strong></td>
+                        <td><span class="time-tag">{{ appt.time|time:"h:i A" }}</span></td>
+                        <td><span class="patient-name">{{ appt.patient.name }}</span></td>
+                        <td><span class="phone-tag">{{ appt.patient.phone }}</span></td>
+                        <td>
+                            <span class="sbadge {% if appt.status == 'completed' %}completed{% elif appt.status == 'pending' %}pending{% else %}cancelled{% endif %}">
+                                {% if appt.status == 'completed' %}<i class="fas fa-check me-1"></i>{% elif appt.status == 'pending' %}<i class="fas fa-clock me-1"></i>{% else %}<i class="fas fa-xmark me-1"></i>{% endif %}
+                                {{ appt.status|title }}
+                            </span>
+                        </td>
+                        <td>
+                            <a href="{% url 'doctors:patient_detail' appt.patient.id %}" class="btn-open">
+                                <i class="fas fa-arrow-up-right-from-square me-1"></i>Open
+                            </a>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
         {% else %}
-            <div class="alert alert-info mb-0">আজ কোনো অ্যাপয়েন্টমেন্ট নেই</div>
+        <div class="empty-state">
+            <i class="fas fa-calendar-xmark"></i>
+            আজ কোনো অ্যাপয়েন্টমেন্ট নেই
+        </div>
         {% endif %}
     </div>
 
-    <!-- ===================== -->
     <!-- Pending Appointments -->
-    <!-- ===================== -->
-    <div class="dashboard-card">
-        <h4 class="mb-3">Pending Appointments</h4>
-
+    <div class="section-card">
+        <div class="section-card-header">
+            <h5><i class="fas fa-hourglass-half"></i> Pending Appointments</h5>
+            <span class="count-pill" style="background:rgba(245,158,11,0.1);color:#d97706;">
+                {{ pending_appointments|length|default:"0" }} টি
+            </span>
+        </div>
         {% if pending_appointments %}
-        <table class="table table-bordered table-hover align-middle">
-            <thead>
-                <tr>
-                    <th>তারিখ</th>
-                    <th>সময়</th>
-                    <th>রোগী</th>
-                    <th>ফোন</th>
-                    <th>Action</th>
-                </tr>
-            </thead>
-            <tbody>
-                {% for appt in pending_appointments %}
-                <tr>
-                    <td>{{ appt.date }}</td>
-                    <td>{{ appt.time|time:"h:i A" }}</td>
-                    <td>{{ appt.patient.name }}</td>
-                    <td>{{ appt.patient.phone }}</td>
-                    <td>
-                        <a href="{% url 'doctors:patient_detail' appt.patient.id %}"
-                           class="btn btn-sm btn-outline-primary">
-                            View Patient
-                        </a>
-                    </td>
-                </tr>
-                {% endfor %}
-            </tbody>
-        </table>
+        <div class="table-responsive">
+            <table class="table dash-table">
+                <thead>
+                    <tr>
+                        <th>তারিখ</th>
+                        <th>সময়</th>
+                        <th>রোগী</th>
+                        <th>ফোন</th>
+                        <th>Action</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for appt in pending_appointments %}
+                    <tr>
+                        <td><strong>{{ appt.date }}</strong></td>
+                        <td><span class="time-tag">{{ appt.time|time:"h:i A" }}</span></td>
+                        <td><span class="patient-name">{{ appt.patient.name }}</span></td>
+                        <td><span class="phone-tag">{{ appt.patient.phone }}</span></td>
+                        <td>
+                            <a href="{% url 'doctors:patient_detail' appt.patient.id %}" class="btn-view">
+                                <i class="fas fa-eye me-1"></i>View Patient
+                            </a>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
         {% else %}
-            <div class="alert alert-success mb-0">কোনো Pending অ্যাপয়েন্টমেন্ট নেই 🎉</div>
+        <div class="empty-state">
+            <i class="fas fa-circle-check" style="color:#22c55e;opacity:1;font-size:2.2rem;"></i>
+            কোনো Pending অ্যাপয়েন্টমেন্ট নেই 🎉
+        </div>
         {% endif %}
     </div>
 
-</div>
-</section>
+</div><!-- /dash-main -->
+</div><!-- /dash-wrapper -->
+
+<script>
+(function() {
+    const now = new Date();
+    const days   = ['রবিবার','সোমবার','মঙ্গলবার','বুধবার','বৃহস্পতিবার','শুক্রবার','শনিবার'];
+    const months = ['জানুয়ারি','ফেব্রুয়ারি','মার্চ','এপ্রিল','মে','জুন','জুলাই','আগস্ট','সেপ্টেম্বর','অক্টোবর','নভেম্বর','ডিসেম্বর'];
+    document.getElementById('todayNum').textContent  = now.getDate();
+    document.getElementById('todayInfo').textContent = days[now.getDay()] + ', ' + months[now.getMonth()];
+})();
+</script>
+
 {% endblock %}

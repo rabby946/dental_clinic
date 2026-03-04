@@ -18,28 +18,7 @@
             </p>
 
             {% if due_amount >= 0 and appointment_id %}
-                <form method="post" action="{% url 'billing:bkash_init' %}">
-                    {% csrf_token %}
-
-                    <input type="hidden" name="appointment_id" value="{{ appointment_id }}">
-
-                    <div class="row g-2 align-items-center">
-                        <div class="col-md-4">
-                            <input type="number"
-                                   name="amount"
-                                   class="form-control"
-                                   placeholder="Enter amount"
-                                   min="1"
-                                   max="{{ due_amount }}"
-                                   required>
-                        </div>
-                        <div class="col-md-4">
-                            <button type="submit" class="btn btn-success w-100">
-                                Pay with bKash
-                            </button>
-                        </div>
-                    </div>
-                </form>
+            
             {% else %}
                 <div class="alert alert-success mt-3">
                     No dues pending 🎉
@@ -58,7 +37,6 @@
                     <th>Type</th>
                     <th>Method</th>
                     <th>Amount</th>
-                    <th>Action</th>
                 </tr>
             </thead>
             <tbody>
@@ -73,12 +51,7 @@
                         </td>
                         <td>{{ payment.method|default:"—"|title }}</td>
                         <td>৳ {{ payment.amount }}</td>
-                        <td>
-                            <a href="{% url 'patients:payment_detail' payment.id %}"
-                               class="btn btn-sm btn-primary">
-                                View
-                            </a>
-                        </td>
+                        
                     </tr>
                 {% endfor %}
             </tbody>

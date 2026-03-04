@@ -1,77 +1,235 @@
 {% extends 'core/base.html' %}
 
-{% block title %}Patient Profile{% endblock %}
+{% block title %}Patient Profile - {{ patient.name }}{% endblock %}
 
 {% block content %}
-<div class="container py-4">
-
-    <!-- Patient Info -->
-    <div class="card shadow-sm mb-4 p-4">
-        <h4 class="fw-bold">{{ patient.name }}</h4>
-        <p class="mb-1"><strong>Phone:</strong> {{ patient.phone }}</p>
-        <p><strong>Gender:</strong> {{ patient.gender }}</p>
-
-        <div class="mt-3">
-            <a href="{% url 'billing:add_charge' %}?patient={{ patient.id }}" class="btn btn-warning btn-sm">
-                + Add Charge
-            </a>
-
-            <a href="{% url 'prescriptions:create' patient.id %}" class="btn btn-primary btn-sm">
-                + Add Prescription
-            </a>
-
-            <a href="{% url 'doctors:add_document' patient.id %}" class="btn btn-info btn-sm">
-                + Add Document
-            </a>
-        </div>
-    </div>
-
+<style>
+    /* Patient Profile Custom Styles */
+    .profile-card {
+        border: none;
+        border-radius: 12px;
+        box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
+        border-top: 4px solid var(--color-primary);
+        background-color: #fff;
+    }
     
+    .avatar-circle {
+        width: 90px;
+        height: 90px;
+        background: var(--gradient-btn);
+        color: white;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 2.5rem;
+        margin: 0 auto 15px;
+        box-shadow: 0 4px 10px rgba(13, 110, 253, 0.3);
+    }
 
-    <!-- Prescriptions -->
-    <div class="card shadow-sm mb-4 p-4">
-        <h5 class="fw-bold">Prescriptions</h5>
+    .info-list p {
+        font-size: 0.95rem;
+        color: var(--color-text-dark);
+        margin-bottom: 0.8rem;
+        display: flex;
+        align-items: center;
+    }
 
-        {% for p in prescriptions %}
-    <div class="border-bottom py-2 d-flex justify-content-between align-items-center">
-        <span>{{ p.created_at|date:"d M Y" }}</span>
+    .info-icon {
+        width: 30px;
+        color: var(--color-primary);
+        font-size: 1.1rem;
+    }
 
-        <a href="{% url 'prescriptions:detail' p.id %}" class="btn btn-sm btn-outline-primary">
-            View
-        </a>
-    </div>
-    {% empty %}
-    <p>No prescriptions.</p>
-    {% endfor %}
-    </div>
+    .action-btn {
+        border-radius: 8px;
+        font-weight: 500;
+        padding: 0.6rem 1rem;
+        transition: all 0.3s ease;
+    }
 
-    <!-- Documents -->
-    <div class="card shadow-sm p-4">
-        <h5 class="fw-bold">Documents</h5>
+    .action-btn:hover {
+        transform: translateY(-2px);
+    }
 
-        {% for doc in documents %}
-        <div class="border-bottom py-2">
-            <a href="{{ doc.file.url }}" target="_blank">
-                {{ doc.file.name }}
-            </a>
-        </div>
-        {% empty %}
-        <p>No documents uploaded.</p>
-        {% endfor %}
-    </div>
+    /* Widget Cards */
+    .widget-card {
+        border: none;
+        border-radius: 12px;
+        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.03);
+        height: 100%;
+        background-color: #fff;
+    }
+
+    .widget-header {
+        background-color: #f8f9fa;
+        border-radius: 12px 12px 0 0;
+        padding: 1rem 1.5rem;
+        border-bottom: 1px solid #edf2f7;
+        font-weight: 600;
+        color: var(--color-secondary);
+        display: flex;
+        align-items: center;
+        gap: 10px;
+    }
+
+    .widget-body {
+        padding: 0;
+    }
+
+    .list-custom {
+        padding: 1rem 1.5rem;
+        border-bottom: 1px solid #edf2f7;
+        transition: background-color 0.2s;
+    }
     
-    <!-- Appointments -->
-    <div class="card shadow-sm mb-4 p-4">
-        <h5 class="fw-bold">Appointments</h5>
+    .list-custom:last-child {
+        border-bottom: none;
+    }
 
-        {% for appt in appointments %}
-        <div class="border-bottom py-2">
-            {{ appt.date }} | {{ appt.status }}
-        </div>
-        {% empty %}
-        <p>No appointments.</p>
-        {% endfor %}
+    .list-custom:hover {
+        background-color: #fcfcfc;
+    }
+
+    .empty-state {
+        text-align: center;
+        padding: 2rem;
+        color: var(--color-text-muted);
+    }
+    
+    .empty-state i {
+        font-size: 2.5rem;
+        color: #dee2e6;
+        margin-bottom: 10px;
+    }
+
+    .date-badge {
+        background-color: rgba(13, 110, 253, 0.1);
+        color: var(--color-primary-dark);
+        padding: 5px 10px;
+        border-radius: 6px;
+        font-size: 0.85rem;
+        font-weight: 600;
+    }
+</style>
+
+<div class="container py-5">
+    
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h3 class="fw-bold" style="color: var(--color-secondary);">
+            <i class="fas fa-user-injured me-2 text-primary"></i> রোগীর প্রোফাইল
+        </h3>
     </div>
 
+    <div class="row g-4">
+        <div class="col-lg-4">
+            <div class="profile-card p-4 text-center">
+                <div class="avatar-circle">
+                    <i class="fas fa-user"></i>
+                </div>
+                <h4 class="fw-bold mb-3" style="color: var(--color-secondary);">{{ patient.name }}</h4>
+                <h6 class="fw-bold mb-2" style="color: var(--color-secondary);">Age : {{age}} years</h6>
+                
+                
+                <div class="info-list text-start mt-4 border-top pt-4">
+                    <p><i class="fas fa-phone-alt info-icon"></i> <strong>ফোন:&nbsp;</strong> {{ patient.phone }}</p>
+                    <p><i class="fas fa-venus-mars info-icon text-info"></i> <strong>লিঙ্গ:&nbsp;</strong> {{ patient.gender }}</p>
+                </div>
+
+                <div class="mt-4 pt-3 border-top">
+                    <p class="text-muted small mb-3 text-start fw-bold">কুইক অ্যাকশনস</p>
+                    <div class="d-grid gap-2">
+                        <a href="{% url 'billing:patient_billing' patient.id %}" class="btn btn-warning action-btn text-dark">
+                            <i class="fas fa-file-invoice-dollar me-2"></i> Add Charge
+                        </a>
+                        <a href="{% url 'prescriptions:create' patient.id %}" class="btn action-btn text-white" style="background: var(--gradient-btn);">
+                            <i class="fas fa-pills me-2"></i> Add Prescription
+                        </a>
+                        <a href="{% url 'doctors:add_document' patient.id %}" class="btn btn-outline-info action-btn">
+                            <i class="fas fa-file-upload me-2"></i> Add Document
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-lg-8">
+            <div class="row g-4">
+                
+                <div class="col-12">
+                    <div class="widget-card">
+                        <div class="widget-header">
+                            <i class="fas fa-calendar-check text-primary"></i> অ্যাপয়েন্টমেন্ট সমূহ
+                        </div>
+                        <div class="widget-body">
+                            {% for appt in appointments %}
+                            <div class="list-custom d-flex justify-content-between align-items-center">
+                                <div>
+                                    <span class="date-badge"><i class="far fa-calendar-alt me-1"></i> {{ appt.date }}</span>
+                                </div>
+                                <div>
+                                    <span class="badge rounded-pill bg-primary px-3 py-2">{{ appt.status }}</span>
+                                </div>
+                            </div>
+                            {% empty %}
+                            <div class="empty-state">
+                                <i class="far fa-calendar-times d-block"></i>
+                                <span>কোনো অ্যাপয়েন্টমেন্ট পাওয়া যায়নি।</span>
+                            </div>
+                            {% endfor %}
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-md-6">
+                    <div class="widget-card">
+                        <div class="widget-header">
+                            <i class="fas fa-prescription-bottle-alt text-success"></i> প্রেসক্রিপশন
+                        </div>
+                        <div class="widget-body">
+                            {% for p in prescriptions %}
+                            <div class="list-custom d-flex justify-content-between align-items-center">
+                                <span class="date-badge text-success bg-success bg-opacity-10">{{ p.created_at|date:"d M Y" }}</span>
+                                <a href="{% url 'prescriptions:detail' p.id %}" class="btn btn-sm btn-outline-success rounded-pill px-3">
+                                    View
+                                </a>
+                            </div>
+                            {% empty %}
+                            <div class="empty-state">
+                                <i class="fas fa-notes-medical d-block"></i>
+                                <span>কোনো প্রেসক্রিপশন নেই।</span>
+                            </div>
+                            {% endfor %}
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-md-6">
+                    <div class="widget-card">
+                        <div class="widget-header">
+                            <i class="fas fa-folder-open text-warning"></i> ডকুমেন্টস
+                        </div>
+                        <div class="widget-body">
+                            {% for doc in documents %}
+                            <div class="list-custom d-flex justify-content-between align-items-center">
+                                <span class="date-badge text-warning bg-warning bg-opacity-10 text-dark">{{ doc.uploaded_at|date:"d M Y" }}</span>
+                                <span class="date-badge text-warning bg-warning bg-opacity-10 text-dark">{{ doc.title }}</span>
+                                <a href="{% url 'doctors:detail' doc.id %}" class="btn btn-sm btn-outline-warning rounded-pill px-3 text-dark">
+                                    View
+                                </a>
+                            </div>
+                            {% empty %}
+                            <div class="empty-state">
+                                <i class="fas fa-folder-minus d-block"></i>
+                                <span>কোনো ডকুমেন্ট নেই।</span>
+                            </div>
+                            {% endfor %}
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </div>
 </div>
 {% endblock %}

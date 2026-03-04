@@ -8,8 +8,8 @@ urlpatterns = [
     # ---------- Patient payments ----------
     path(
         'pay/<int:appointment_id>/',
-        views.patient_pay_init,
-        name='patient_pay_init'
+        views.patient_init,
+        name='patient_init'
     ),
     path(
         'bkash/callback/',
@@ -18,10 +18,10 @@ urlpatterns = [
     ),
 
     # ---------- Doctor / Staff ----------
-    path('add-charge/', views.add_charge, name='add_charge'),
+    # billing/urls.py
     path(
-        'doctor/manual-payment/<int:appointment_id>/',
-        views.add_manual_payment,
-        name='add_manual_payment'
+        'patient/<int:patient_id>/billing/',
+        views.patient_billing,
+        name='patient_billing'
     ),
 ]

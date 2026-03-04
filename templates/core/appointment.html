@@ -7,10 +7,11 @@
 
 <style>
     /* --- Page Specific Styles for Professional Look --- */
-    
+
     /* 1. Page Header Banner */
     .page-header-banner {
-        background-color: var(--color-secondary); /* Using theme navy blue */
+        background-color: var(--color-secondary);
+        /* Using theme navy blue */
         /* Adding a subtle, professional pattern overlay */
         background-image: linear-gradient(rgba(5, 44, 101, 0.9), rgba(5, 44, 101, 0.9)), url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%230d6efd' fill-opacity='0.08'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
         padding: 80px 0 60px;
@@ -18,11 +19,13 @@
         text-align: center;
         margin-bottom: 50px;
     }
+
     .page-header-title {
         font-weight: 700;
         font-size: 2.8rem;
         margin-bottom: 15px;
     }
+
     .page-header-lead {
         font-size: 1.15rem;
         opacity: 0.9;
@@ -36,9 +39,10 @@
         padding: 40px;
         border-radius: 8px;
         /* A subtle, clean shadow for depth */
-        box-shadow: 0 5px 25px rgba(0,0,0,0.05);
+        box-shadow: 0 5px 25px rgba(0, 0, 0, 0.05);
         border: 1px solid #edf2f7;
     }
+
     .form-section-title {
         color: var(--color-secondary);
         font-weight: 700;
@@ -47,6 +51,7 @@
         border-bottom: 2px solid #f0f0f0;
         position: relative;
     }
+
     /* Small accent line under title */
     .form-section-title::after {
         content: '';
@@ -66,6 +71,7 @@
         border: 1px solid #eef4f8;
         margin-bottom: 30px;
     }
+
     .sidebar-title {
         font-weight: 700;
         color: var(--color-secondary);
@@ -73,9 +79,18 @@
         display: flex;
         align-items: center;
     }
-    .sidebar-title i { color: var(--color-primary); margin-right: 10px; }
-    
-    .trust-list { list-style: none; padding: 0; margin: 0; }
+
+    .sidebar-title i {
+        color: var(--color-primary);
+        margin-right: 10px;
+    }
+
+    .trust-list {
+        list-style: none;
+        padding: 0;
+        margin: 0;
+    }
+
     .trust-list li {
         margin-bottom: 12px;
         display: flex;
@@ -83,11 +98,17 @@
         font-size: 0.95rem;
         color: var(--color-text-dark);
     }
-    .trust-list i { color: #28a745; margin-right: 10px; margin-top: 4px; }
+
+    .trust-list i {
+        color: #28a745;
+        margin-right: 10px;
+        margin-top: 4px;
+    }
 
     .contact-alt-box {
         text-align: center;
     }
+
     .contact-alt-phone {
         font-size: 1.5rem;
         font-weight: 700;
@@ -97,22 +118,40 @@
     }
 
     /* Form Controls & Button */
-    .form-floating label { color: var(--color-text-muted); }
+    .form-floating label {
+        color: var(--color-text-muted);
+    }
+
     .btn-submit-pro {
-        background: var(--gradient-btn); border: none; color: white;
-        font-weight: 600; padding: 12px 40px; border-radius: 4px;
-        box-shadow: 0 5px 15px rgba(13, 110, 253, 0.2); transition: all 0.3s;
+        background: var(--gradient-btn);
+        border: none;
+        color: white;
+        font-weight: 600;
+        padding: 12px 40px;
+        border-radius: 4px;
+        box-shadow: 0 5px 15px rgba(13, 110, 253, 0.2);
+        transition: all 0.3s;
         font-size: 1.05rem;
     }
+
     .btn-submit-pro:hover {
         transform: translateY(-2px);
-        box-shadow: 0 10px 25px rgba(13, 110, 253, 0.3); color: white;
+        box-shadow: 0 10px 25px rgba(13, 110, 253, 0.3);
+        color: white;
     }
 
     @media (max-width: 991.98px) {
-        .page-header-banner { padding: 60px 0 40px; }
-        .page-header-title { font-size: 2.2rem; }
-        .form-container-professional { padding: 25px; }
+        .page-header-banner {
+            padding: 60px 0 40px;
+        }
+
+        .page-header-title {
+            font-size: 2.2rem;
+        }
+
+        .form-container-professional {
+            padding: 25px;
+        }
     }
 </style>
 
@@ -120,7 +159,8 @@
     <div class="container">
         <h1 class="page-header-title">অ্যাপয়েন্টমেন্ট নিন</h1>
         <p class="page-header-lead">
-            আপনার দন্ত সুরক্ষায় আমরা প্রতিশ্রুতিবদ্ধ। নিচের ফর্মটি পূরণ করে সহজেই যাত্রাবাড়ীতে আমাদের বিশেষজ্ঞ ডাক্তারের পরামর্শের জন্য সময় নির্ধারণ করুন।
+            আপনার দন্ত সুরক্ষায় আমরা প্রতিশ্রুতিবদ্ধ। নিচের ফর্মটি পূরণ করে সহজেই যাত্রাবাড়ীতে আমাদের বিশেষজ্ঞ
+            ডাক্তারের পরামর্শের জন্য সময় নির্ধারণ করুন।
         </p>
     </div>
 </header>
@@ -128,42 +168,53 @@
 
 <section class="container pb-5">
     <div class="row g-5">
-        
+
         <div class="col-lg-8 animate__animated animate__fadeInLeft">
             <div class="form-container-professional">
                 <h3 class="form-section-title">বুকিং তথ্য পূরণ করুন</h3>
-                
+
                 <form method="post">
                     {% csrf_token %}
                     <div class="row g-3">
-                        
+
                         <div class="col-md-6">
                             <div class="form-floating">
-                                <input type="text" class="form-control" id="name" name="name" placeholder="রোগীর নাম" required>
+                                <input type="text" class="form-control" id="name" name="name" placeholder="রোগীর নাম"
+                                    required>
                                 <label for="id_name">রোগীর সম্পূর্ণ নাম *</label>
                             </div>
                         </div>
 
                         <div class="col-md-6">
                             <div class="form-floating">
-                                <input type="tel" class="form-control" id="phone" name="phone" placeholder="ফোন নম্বর" required>
+                                <input type="tel" class="form-control" id="phone" name="phone" placeholder="ফোন নম্বর"
+                                    required>
                                 <label for="id_phone">ফোন নম্বর *</label>
                             </div>
                         </div>
 
                         <div class="col-12 mt-4">
-                            <h6 class="text-secondary mb-3"><i class="far fa-calendar-alt me-2 text-primary"></i>পছন্দের সময়সূচী</h6>
+                            <h6 class="text-secondary mb-3"><i class="far fa-calendar-alt me-2 text-primary"></i>পছন্দের
+                                সময়সূচী</h6>
                         </div>
                         <div class="col-md-6">
                             <div class="form-floating">
-                                <input type="date" class="form-control" id="date" name="date" required>
-                                <label for="date">পছন্দের তারিখ *</label>
+                                <input type="date" class="form-control" id="appointment_date" name="date" required>
+                                <label for="appointment_date">পছন্দের তারিখ *</label>
+                            </div>
+                        </div>
+
+                        <div class="col-md-6">
+                            <div class="form-floating">
+                                <input type="date" class="form-control" id="birth_date" name="b_date" required>
+                                <label for="birth_date">Date of birth *</label>
                             </div>
                         </div>
 
                         <div class="col-12">
                             <div class="form-floating">
-                                <textarea class="form-control" placeholder="সমস্যার সংক্ষিপ্ত বিবরণ (ঐচ্ছিক)" id="message" name="message" style="height: 100px"></textarea>
+                                <textarea class="form-control" placeholder="সমস্যার সংক্ষিপ্ত বিবরণ (ঐচ্ছিক)"
+                                    id="message" name="message" style="height: 100px"></textarea>
                                 <label for="id_message">সমস্যার সংক্ষিপ্ত বিবরণ (ঐচ্ছিক)</label>
                             </div>
                         </div>
@@ -173,7 +224,8 @@
                                 অ্যাপয়েন্টমেন্টের অনুরোধ পাঠান <i class="fas fa-paper-plane ms-2"></i>
                             </button>
                             <p class="text-muted small mt-3 mb-0">
-                                <i class="fas fa-shield-alt me-1 text-primary"></i> দ্রষ্টব্য: এই ফর্মটি জমা দেওয়ার পর, আমাদের প্রতিনিধি আপনার সাথে ফোনে যোগাযোগ করে অ্যাপয়েন্টমেন্টটি চূড়ান্ত করবেন।
+                                <i class="fas fa-shield-alt me-1 text-primary"></i> দ্রষ্টব্য: এই ফর্মটি জমা দেওয়ার পর,
+                                আমাদের প্রতিনিধি আপনার সাথে ফোনে যোগাযোগ করে অ্যাপয়েন্টমেন্টটি চূড়ান্ত করবেন।
                             </p>
                         </div>
                     </div>
@@ -183,7 +235,7 @@
 
 
         <div class="col-lg-4 animate__animated animate__fadeInRight">
-            
+
             <div class="sidebar-box">
                 <h5 class="sidebar-title"><i class="fas fa-check-circle"></i> কেন আমাদের বেছে নেবেন?</h5>
                 <ul class="trust-list">
@@ -207,7 +259,7 @@
 </section>
 
 <script>
-    document.addEventListener('DOMContentLoaded', function() {
+    document.addEventListener('DOMContentLoaded', function () {
         const dateInput = document.getElementById('id_date');
         if (dateInput) {
             const today = new Date().toISOString().split('T')[0];

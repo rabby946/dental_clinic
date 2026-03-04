@@ -1,7 +1,8 @@
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth.decorators import login_required
 from django.utils import timezone
-
+from django.db.models import Max
+from django.utils import timezone
 from apps.patients.models import Patient
 from apps.core.models import Appointment
 from apps.prescriptions.models import Prescription, PrescriptionItem
@@ -17,13 +18,24 @@ def prescription_create(request, patient_id):
         .order_by('-date', '-time')
         .first()
     )
+    
 
+    today = timezone.now().date()
     if not appointment:
+    # Get today's last serial
+        last_serial = (
+            Appointment.objects
+            .filter(date=today)
+            .aggregate(Max('serial_number'))['serial_number__max']
+        )
+
+        next_serial = (last_serial or 0) + 1
+
         appointment = Appointment.objects.create(
             patient=patient,
-            date=timezone.now().date(),
+            date=today,
             time=timezone.now().time(),
-            serial_number=1,
+            serial_number=next_serial,
             problem="Consultation",
             status='completed'
         )
@@ -61,6 +73,10 @@ def prescription_create(request, patient_id):
         'patient': patient,
         'medicines': medicines,
     })
+
+# patients/models.py
+
+
 @login_required
 def prescription_detail(request, pk):
     prescription = get_object_or_404(
@@ -71,7 +87,15 @@ def prescription_detail(request, pk):
         ),
         pk=pk
     )
+    age=None
 
+    if prescription.appointment.patient.date_of_birth:
+        today = timezone.now().date()
+        age = today.year - prescription.appointment.patient.date_of_birth.year - (
+            (today.month, today.day) <
+            (prescription.appointment.patient.date_of_birth.month, prescription.appointment.patient.date_of_birth.day)
+        )
     return render(request, "prescriptions/detail.html", {
-        "prescription": prescription
+        "prescription": prescription,
+        "age" : age,
     })
