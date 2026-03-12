@@ -1,35 +1,126 @@
 {% extends "patients/base.html" %}
 
+{% block page_title %}Document Details{% endblock %}
+
 {% block content %}
-<div class="container mt-4" style="max-width: 800px;">
+<div class="detail-container">
 
-    <div class="card">
-        <div class="card-body">
-
-            <h5 class="mb-3">Document Details</h5>
-
-            <p>
-                <strong>Title:</strong> {{ document.title }} <br>
-                <strong>Uploaded:</strong> {{ document.uploaded_at|date:"Y-m-d H:i" }}
-            </p>
-
-            <hr>
-
-            <div class="mb-3">
-                <a href="{{ document.file.url }}"
-                   class="btn btn-success"
-                   target="_blank">
-                    Open / Download Document
-                </a>
+    <div class="detail-card">
+        <div class="detail-header">
+            <div class="header-title-group">
+                <div class="header-icon icon-ocean">
+                    <i class="bi bi-file-earmark-medical"></i>
+                </div>
+                <div>
+                    <h4 class="detail-title">Document Details</h4>
+                    <p class="detail-subtitle">File Information</p>
+                </div>
             </div>
+        </div>
 
-            <a href="{% url 'patients:documents' %}"
-               class="btn btn-secondary btn-sm">
-                Back to Documents
+        <div class="detail-body">
+            <div class="document-focus-area">
+                <div class="file-icon-large">
+                    <i class="bi bi-file-earmark-text"></i>
+                </div>
+                <h3 class="document-name">{{ document.title }}</h3>
+                
+                <div class="upload-meta">
+                    <span class="meta-item">
+                        <i class="bi bi-calendar-check text-muted-blue"></i> {{ document.uploaded_at|date:"F d, Y" }}
+                    </span>
+                    <span class="meta-item">
+                        <i class="bi bi-clock text-muted-blue"></i> {{ document.uploaded_at|time:"h:i A" }}
+                    </span>
+                </div>
+
+                <div class="action-wrapper mt-4">
+                    <a href="{{ document.file.url }}" class="btn-primary-action" target="_blank" rel="noopener noreferrer">
+                        <i class="bi bi-box-arrow-up-right"></i> Open / Download Document
+                    </a>
+                </div>
+            </div>
+        </div>
+
+        <div class="detail-footer">
+            <a href="{% url 'patients:documents' %}" class="btn-back">
+                <i class="bi bi-arrow-left-short"></i> Back to Documents
             </a>
-
         </div>
     </div>
 
 </div>
+
+<style>
+    /* Container & Core Card */
+    .detail-container { max-width: 700px; margin: 0 auto; padding-bottom: 2rem; padding-top: 1rem; }
+    
+    .detail-card {
+        background: var(--bg-card, #ffffff); border: 1px solid var(--border-color, #e2e8f0);
+        border-radius: 16px; box-shadow: var(--shadow-sm, 0 4px 6px rgba(0,0,0,0.02)); overflow: hidden;
+    }
+
+    /* Header Section */
+    .detail-header {
+        padding: 24px 32px; border-bottom: 1px solid var(--border-color, #e2e8f0);
+        background: var(--sky-lighter, #f8fafc); display: flex; align-items: center; gap: 16px;
+    }
+    
+    .header-title-group { display: flex; align-items: center; gap: 16px; }
+    .header-icon {
+        width: 48px; height: 48px; border-radius: 14px; display: flex; align-items: center; justify-content: center;
+        font-size: 20px; color: white; flex-shrink: 0;
+    }
+    .icon-ocean { background: var(--primary-gradient, linear-gradient(135deg, #0284c7 0%, #0369a1 100%)); }
+    .detail-title { font-size: 18px; font-weight: 700; color: var(--ocean-dark, #0f172a); margin: 0 0 4px; }
+    .detail-subtitle { font-size: 13px; color: var(--text-secondary, #64748b); margin: 0; }
+
+    /* Body & Document Focus Area */
+    .detail-body { padding: 40px 32px; }
+    
+    .document-focus-area { text-align: center; }
+    
+    .file-icon-large {
+        font-size: 64px; color: var(--ocean-main, #0284c7); margin-bottom: 16px;
+        opacity: 0.9;
+    }
+    
+    .document-name { font-size: 22px; font-weight: 700; color: var(--ocean-dark, #0f172a); margin-bottom: 16px; }
+    
+    .upload-meta {
+        display: inline-flex; flex-wrap: wrap; justify-content: center; gap: 20px;
+        background: var(--sky-lighter, #f8fafc); padding: 12px 24px; border-radius: 50px; border: 1px solid var(--border-color, #e2e8f0);
+    }
+    .meta-item { display: flex; align-items: center; gap: 8px; font-size: 14px; font-weight: 500; color: var(--text-primary, #334155); }
+    .text-muted-blue { color: var(--ocean-main, #0ea5e9); font-size: 16px; }
+
+    /* Primary Open/Download Button */
+    .btn-primary-action {
+        display: inline-flex; align-items: center; gap: 10px; padding: 14px 28px; border-radius: 12px;
+        font-size: 16px; font-weight: 600; background: #10b981; color: white; /* Clean green */
+        text-decoration: none; transition: all 0.2s ease; box-shadow: 0 4px 6px rgba(16, 185, 129, 0.2);
+    }
+    .btn-primary-action:hover { background: #059669; color: white; transform: translateY(-2px); box-shadow: 0 6px 12px rgba(16, 185, 129, 0.3); }
+
+    /* Footer & Buttons */
+    .detail-footer {
+        padding: 20px 32px; background: white; border-top: 1px solid var(--border-color, #e2e8f0);
+        display: flex; justify-content: flex-start;
+    }
+    .btn-back {
+        display: inline-flex; align-items: center; gap: 4px; padding: 10px 20px; border-radius: 10px; font-size: 14px; font-weight: 600;
+        color: var(--text-secondary, #64748b); background: #f1f5f9; text-decoration: none; transition: all 0.2s ease; border: 1px solid transparent;
+    }
+    .btn-back:hover { background: #e2e8f0; color: var(--ocean-dark, #0f172a); }
+    .btn-back i { font-size: 18px; margin-left: -4px; transition: transform 0.2s ease; }
+    .btn-back:hover i { transform: translateX(-2px); }
+
+    /* Responsive adjustments */
+    @media (max-width: 576px) {
+        .detail-body { padding: 32px 20px; }
+        .upload-meta { border-radius: 12px; flex-direction: column; gap: 10px; width: 100%; text-align: left; }
+        .detail-footer { padding: 20px; }
+        .btn-back, .btn-primary-action { width: 100%; justify-content: center; }
+    }
+</style>
 {% endblock %}

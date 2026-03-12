@@ -1,37 +1,141 @@
 {% extends "patients/base.html" %}
 
+{% block page_title %}My Documents{% endblock %}
+
 {% block content %}
-<div class="container mt-4">
+<div class="documents-container">
 
-    <h4 class="mb-3">My Documents</h4>
+    <div class="page-header-card mb-4">
+        <div class="header-icon icon-ocean">
+            <i class="bi bi-folder2-open"></i>
+        </div>
+        <div class="header-info">
+            <h4 class="page-title">My Documents</h4>
+            <p class="page-subtitle">View and manage your medical records and uploaded files</p>
+        </div>
+        </div>
 
-    <table class="table table-bordered table-sm">
-        <thead>
-            <tr>
-                <th>Title</th>
-                <th>Uploaded At</th>
-                <th>Action</th>
-            </tr>
-        </thead>
-        <tbody>
-            {% for doc in documents %}
-            <tr>
-                <td>{{ doc.title }}</td>
-                <td>{{ doc.uploaded_at|date:"Y-m-d" }}</td>
-                <td>
-                    <a href="{% url 'patients:document_details' doc.id %}"
-                       class="btn btn-sm btn-primary">
-                        View
-                    </a>
-                </td>
-            </tr>
-            {% empty %}
-            <tr>
-                <td colspan="3">No documents uploaded yet.</td>
-            </tr>
-            {% endfor %}
-        </tbody>
-    </table>
+    <div class="modern-table-card">
+        <div class="table-responsive">
+            <table class="modern-table">
+                <thead>
+                    <tr>
+                        <th>Document Title</th>
+                        <th>Uploaded Date</th>
+                        <th class="text-end">Action</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for doc in documents %}
+                    <tr>
+                        <td>
+                            <div class="document-title-cell">
+                                <i class="bi bi-file-earmark-text text-ocean"></i>
+                                <span class="doc-name">{{ doc.title }}</span>
+                            </div>
+                        </td>
+                        <td>
+                            <div class="date-cell">
+                                <i class="bi bi-calendar-event text-muted-blue"></i>
+                                <span>{{ doc.uploaded_at|date:"M d, Y" }}</span>
+                            </div>
+                        </td>
+                        <td class="text-end">
+                            <a href="{% url 'patients:document_details' doc.id %}" class="btn-action-outline">
+                                View <i class="bi bi-arrow-right-short"></i>
+                            </a>
+                        </td>
+                    </tr>
+                    {% empty %}
+                    <tr>
+                        <td colspan="3">
+                            <div class="empty-state">
+                                <div class="empty-state-icon">
+                                    <i class="bi bi-file-earmark-x"></i>
+                                </div>
+                                <h5>No Documents Found</h5>
+                                <p>There are no documents uploaded to your profile yet.</p>
+                            </div>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
 
 </div>
+
+<style>
+    /* Container & Header */
+    .documents-container { max-width: 900px; margin: 0 auto; padding-bottom: 2rem; }
+    
+    .page-header-card {
+        background: var(--bg-card, #ffffff); border: 1px solid var(--border-color, #e2e8f0);
+        padding: 24px; border-radius: 16px; display: flex; align-items: center; gap: 20px;
+        box-shadow: var(--shadow-sm, 0 2px 4px rgba(0,0,0,0.02));
+    }
+    
+    .header-icon {
+        width: 56px; height: 56px; border-radius: 16px;
+        display: flex; align-items: center; justify-content: center;
+        font-size: 24px; color: white; flex-shrink: 0;
+    }
+    .icon-ocean { background: var(--primary-gradient, linear-gradient(135deg, #0284c7 0%, #0369a1 100%)); }
+    
+    .header-info { flex: 1; }
+    .page-title { font-size: 20px; font-weight: 700; color: var(--ocean-dark, #0f172a); margin: 0 0 4px; }
+    .page-subtitle { font-size: 13px; color: var(--text-secondary, #64748b); margin: 0; }
+    
+    /* Modern Table Styling */
+    .modern-table-card {
+        background: var(--bg-card, #ffffff); border-radius: 16px;
+        border: 1px solid var(--border-color, #e2e8f0); overflow: hidden;
+        box-shadow: var(--shadow-sm, 0 2px 4px rgba(0,0,0,0.02));
+    }
+    .modern-table { width: 100%; border-collapse: collapse; }
+    .modern-table th {
+        background: var(--sky-lighter, #f8fafc); color: var(--text-secondary, #64748b);
+        font-size: 12px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px;
+        padding: 16px 24px; text-align: left; border-bottom: 1px solid var(--border-color, #e2e8f0);
+    }
+    .modern-table td {
+        padding: 16px 24px; vertical-align: middle;
+        border-bottom: 1px solid var(--border-color, #f1f5f9);
+        color: var(--text-primary, #334155); font-size: 14px;
+    }
+    .modern-table tbody tr:last-child td { border-bottom: none; }
+    .modern-table tbody tr:hover td { background: var(--sky-lighter, #f8fafc); transition: background 0.2s ease; }
+
+    /* Cell Content Styling */
+    .document-title-cell { display: flex; align-items: center; gap: 10px; font-weight: 600; color: var(--ocean-dark, #0f172a); }
+    .text-ocean { color: var(--ocean-main, #0284c7); font-size: 18px; }
+    .date-cell { display: flex; align-items: center; gap: 8px; font-weight: 500; }
+    .text-muted-blue { color: var(--ocean-main, #0ea5e9); opacity: 0.8; font-size: 16px; }
+
+    /* Action Buttons */
+    .btn-action-outline {
+        display: inline-flex; align-items: center; gap: 4px; padding: 8px 16px; border-radius: 8px; font-size: 13px; font-weight: 600;
+        color: var(--ocean-main, #0284c7); border: 1px solid var(--border-color, #e2e8f0); background: transparent; text-decoration: none; transition: all 0.2s ease;
+    }
+    .btn-action-outline:hover { background: var(--sky-lighter, #f0f9ff); border-color: var(--sky-light, #bae6fd); color: var(--ocean-dark, #0369a1); }
+    .btn-action-outline i { font-size: 16px; margin-right: -4px; transition: transform 0.2s ease; }
+    .btn-action-outline:hover i { transform: translateX(2px); }
+
+    /* Empty State */
+    .empty-state { text-align: center; padding: 48px 24px; }
+    .empty-state-icon {
+        width: 64px; height: 64px; border-radius: 50%; background: #f1f5f9; color: #94a3b8;
+        display: flex; align-items: center; justify-content: center; font-size: 28px; margin: 0 auto 16px;
+    }
+    .empty-state h5 { font-size: 16px; font-weight: 600; color: var(--ocean-dark, #0f172a); margin: 0 0 8px; }
+    .empty-state p { font-size: 14px; color: var(--text-secondary, #64748b); margin: 0; }
+
+    .text-end { text-align: right !important; }
+
+    @media (max-width: 768px) {
+        .page-header-card { padding: 20px; }
+        .modern-table th, .modern-table td { padding: 12px 16px; }
+    }
+</style>
 {% endblock %}

@@ -1,39 +1,171 @@
 {% extends "patients/base.html" %}
 
+{% block page_title %}My Prescriptions{% endblock %}
+
 {% block content %}
-<div class="container mt-4">
+<div class="prescriptions-container">
 
-    <h4 class="mb-3">My Prescriptions</h4>
+    <div class="page-header-card mb-4">
+        <div class="header-icon icon-ocean">
+            <i class="bi bi-file-earmark-medical"></i>
+        </div>
+        <div class="header-info">
+            <h4 class="page-title">My Prescriptions</h4>
+            <p class="page-subtitle">Access your medical records and treatment plans</p>
+        </div>
+    </div>
 
-    <table class="table table-bordered table-sm">
-        <thead>
-            <tr>
-                <th>Date</th>
-                <th>Appointment</th>
-                <th>Action</th>
-            </tr>
-        </thead>
-        <tbody>
-            {% for p in prescriptions %}
-            <tr>
-                <td>{{ p.created_at|date:"Y-m-d" }}</td>
-                <td>
-                    {{ p.appointment.date }} (#{{ p.appointment.serial_number }})
-                </td>
-                <td>
-                    <a href="{% url 'patients:prescription_detail' p.id %}"
-                       class="btn btn-sm btn-primary">
-                        View Details
-                    </a>
-                </td>
-            </tr>
-            {% empty %}
-            <tr>
-                <td colspan="3">No prescriptions found</td>
-            </tr>
-            {% endfor %}
-        </tbody>
-    </table>
+    <div class="modern-table-card">
+        <div class="table-responsive">
+            <table class="modern-table">
+                <thead>
+                    <tr>
+                        <th>Date Issued</th>
+                        <th>Related Appointment</th>
+                        <th class="text-end">Action</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for p in prescriptions %}
+                    <tr>
+                        <td>
+                            <div class="date-cell">
+                                <i class="bi bi-calendar-check text-muted-blue"></i>
+                                <span>{{ p.created_at|date:"M d, Y" }}</span>
+                            </div>
+                        </td>
+                        <td>
+                            <div class="appointment-reference">
+                                <span class="ref-date">{{ p.appointment.date|date:"M d, Y" }}</span>
+                                <span class="serial-number" title="Appointment Serial">#{{ p.appointment.serial_number|stringformat:"03d" }}</span>
+                            </div>
+                        </td>
+                        <td class="text-end">
+                            <a href="{% url 'patients:prescription_detail' p.id %}" class="btn-action-outline">
+                                View Details <i class="bi bi-arrow-right-short"></i>
+                            </a>
+                        </td>
+                    </tr>
+                    {% empty %}
+                    <tr>
+                        <td colspan="3">
+                            <div class="empty-state">
+                                <div class="empty-state-icon">
+                                    <i class="bi bi-file-earmark-x"></i>
+                                </div>
+                                <h5>No Prescriptions Found</h5>
+                                <p>You don't have any medical prescriptions on record yet.</p>
+                            </div>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
 
 </div>
+
+<style>
+    /* Container & Header (Matching Previous Pages) */
+    .prescriptions-container { max-width: 900px; margin: 0 auto; padding-bottom: 2rem; }
+    
+    .page-header-card {
+        background: var(--bg-card, #ffffff);
+        border: 1px solid var(--border-color, #e2e8f0);
+        padding: 24px;
+        border-radius: 16px;
+        display: flex;
+        align-items: center;
+        gap: 20px;
+        box-shadow: var(--shadow-sm, 0 2px 4px rgba(0,0,0,0.02));
+    }
+    
+    .header-icon {
+        width: 56px; height: 56px; border-radius: 16px;
+        display: flex; align-items: center; justify-content: center;
+        font-size: 24px; color: white; flex-shrink: 0;
+    }
+    .icon-ocean { background: var(--primary-gradient, linear-gradient(135deg, #0284c7 0%, #0369a1 100%)); }
+    
+    .header-info { flex: 1; }
+    .page-title { font-size: 20px; font-weight: 700; color: var(--ocean-dark, #0f172a); margin: 0 0 4px; }
+    .page-subtitle { font-size: 13px; color: var(--text-secondary, #64748b); margin: 0; }
+    
+    /* Modern Table Styling */
+    .modern-table-card {
+        background: var(--bg-card, #ffffff);
+        border-radius: 16px;
+        border: 1px solid var(--border-color, #e2e8f0);
+        overflow: hidden;
+        box-shadow: var(--shadow-sm, 0 2px 4px rgba(0,0,0,0.02));
+    }
+    
+    .modern-table { width: 100%; border-collapse: collapse; }
+    
+    .modern-table th {
+        background: var(--sky-lighter, #f8fafc);
+        color: var(--text-secondary, #64748b);
+        font-size: 12px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px;
+        padding: 16px 24px; text-align: left; border-bottom: 1px solid var(--border-color, #e2e8f0);
+    }
+    
+    .modern-table td {
+        padding: 16px 24px;
+        vertical-align: middle;
+        border-bottom: 1px solid var(--border-color, #f1f5f9);
+        color: var(--text-primary, #334155);
+        font-size: 14px;
+    }
+    
+    .modern-table tbody tr:last-child td { border-bottom: none; }
+    .modern-table tbody tr:hover td { background: var(--sky-lighter, #f8fafc); transition: background 0.2s ease; }
+
+    /* Cell Content Styling */
+    .date-cell { display: flex; align-items: center; gap: 8px; font-weight: 500; }
+    .text-muted-blue { color: var(--ocean-main, #0ea5e9); font-size: 16px; }
+    
+    .appointment-reference { display: flex; align-items: center; gap: 8px; }
+    .ref-date { color: var(--text-primary, #334155); font-weight: 500; }
+    .serial-number { 
+        font-family: monospace; font-weight: 600; color: var(--ocean-main, #0284c7); 
+        background: var(--sky-lighter, #f0f9ff); padding: 4px 8px; 
+        border-radius: 6px; border: 1px solid var(--sky-light, #bae6fd); 
+    }
+
+    /* Action Buttons */
+    .btn-action-outline {
+        display: inline-flex; align-items: center; gap: 4px;
+        padding: 8px 16px; border-radius: 8px; font-size: 13px; font-weight: 600;
+        color: var(--ocean-main, #0284c7); border: 1px solid var(--border-color, #e2e8f0);
+        background: transparent; text-decoration: none; transition: all 0.2s ease;
+    }
+    .btn-action-outline:hover {
+        background: var(--sky-lighter, #f0f9ff);
+        border-color: var(--sky-light, #bae6fd);
+        color: var(--ocean-dark, #0369a1);
+    }
+    .btn-action-outline i { font-size: 16px; margin-right: -4px; transition: transform 0.2s ease; }
+    .btn-action-outline:hover i { transform: translateX(2px); }
+
+    /* Empty State */
+    .empty-state { text-align: center; padding: 48px 24px; }
+    .empty-state-icon {
+        width: 64px; height: 64px; border-radius: 50%; background: #f1f5f9;
+        color: #94a3b8; display: flex; align-items: center; justify-content: center;
+        font-size: 28px; margin: 0 auto 16px;
+    }
+    .empty-state h5 { font-size: 16px; font-weight: 600; color: var(--ocean-dark, #0f172a); margin: 0 0 8px; }
+    .empty-state p { font-size: 14px; color: var(--text-secondary, #64748b); margin: 0; }
+
+    /* Utilities */
+    .text-end { text-align: right !important; }
+
+    /* Responsive adjustments */
+    @media (max-width: 768px) {
+        .page-header-card { padding: 20px; }
+        .modern-table th, .modern-table td { padding: 12px 16px; }
+        .appointment-reference { flex-direction: column; align-items: flex-start; gap: 4px; }
+    }
+</style>
 {% endblock %}

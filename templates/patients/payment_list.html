@@ -1,66 +1,203 @@
 {% extends "patients/base.html" %}
-{% block title %}My Payments{% endblock %}
+
+{% block page_title %}My Payments{% endblock %}
 
 {% block content %}
-<div class="container mt-4">
+<div class="payments-container">
 
-    <h3 class="mb-3">My Payments</h3>
+    <div class="page-header-card mb-4">
+        <div class="header-icon icon-ocean">
+            <i class="bi bi-wallet2"></i>
+        </div>
+        <div class="header-info">
+            <h4 class="page-title">Billing & Payments</h4>
+            <p class="page-subtitle">View your current dues and payment history</p>
+        </div>
+    </div>
 
-    <!-- ===== Due & Payment Box ===== -->
-    <div class="card mb-4">
-        <div class="card-body">
-
-            <p class="mb-2">
-                <strong>Due Amount:</strong>
-                <span class="text-danger fs-5">
-                    ৳ {{ due_amount }}
-                </span>
-            </p>
-
+    <div class="billing-summary-card mb-4">
+        <div class="summary-details">
+            <span class="summary-label">Total Due Amount</span>
+            <div class="summary-amount {% if due_amount > 0 %}text-danger-custom{% else %}text-success-custom{% endif %}">
+                <span class="currency-symbol">৳</span> {{ due_amount }}
+            </div>
+        </div>
+        
+        <div class="summary-status">
             {% if due_amount >= 0 and appointment_id %}
-            
+                {% if due_amount > 0 %}
+                    <span class="status-badge status-due">
+                        <i class="bi bi-exclamation-circle-fill"></i> Payment Required
+                    </span>
+                {% endif %}
             {% else %}
-                <div class="alert alert-success mt-3">
-                    No dues pending 🎉
-                </div>
+                <span class="status-badge status-completed">
+                    <i class="bi bi-check-circle-fill"></i> No dues pending 🎉
+                </span>
             {% endif %}
         </div>
     </div>
 
-    <!-- ===== Payment History ===== -->
-    {% if payments %}
-        <table class="table table-bordered table-hover">
-            <thead class="table-light">
-                <tr>
-                    <th>#</th>
-                    <th>Date</th>
-                    <th>Type</th>
-                    <th>Method</th>
-                    <th>Amount</th>
-                </tr>
-            </thead>
-            <tbody>
-                {% for payment in payments %}
-                    <tr>
-                        <td>{{ forloop.counter }}</td>
-                        <td>{{ payment.created_at|date:"d M Y, h:i A" }}</td>
-                        <td>
-                            <span class="badge {% if payment.type == 'paid' %}bg-success{% else %}bg-danger{% endif %}">
-                                {{ payment.type|upper }}
-                            </span>
-                        </td>
-                        <td>{{ payment.method|default:"—"|title }}</td>
-                        <td>৳ {{ payment.amount }}</td>
-                        
-                    </tr>
-                {% endfor %}
-            </tbody>
-        </table>
-    {% else %}
-        <div class="alert alert-info">
-            No payment records found.
+    <div class="modern-table-card">
+        <div class="table-header">
+            <h5 class="table-title"><i class="bi bi-clock-history"></i> Payment History</h5>
         </div>
-    {% endif %}
+        <div class="table-responsive">
+            <table class="modern-table">
+                <thead>
+                    <tr>
+                        <th width="5%">#</th>
+                        <th>Transaction Date</th>
+                        <th>Type</th>
+                        <th>Method</th>
+                        <th class="text-end">Amount</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% if payments %}
+                        {% for payment in payments %}
+                        <tr>
+                            <td class="text-secondary">{{ forloop.counter }}</td>
+                            <td>
+                                <div class="date-cell">
+                                    <i class="bi bi-calendar-check text-muted-blue"></i>
+                                    <span>{{ payment.created_at|date:"d M Y" }}</span>
+                                    <span class="time-muted">{{ payment.created_at|date:"h:i A" }}</span>
+                                </div>
+                            </td>
+                            <td>
+                                <span class="badge-soft {% if payment.type == 'paid' %}badge-success{% else %}badge-danger{% endif %}">
+                                    {{ payment.type|upper }}
+                                </span>
+                            </td>
+                            <td>
+                                <span class="method-text">{{ payment.method|default:"—"|title }}</span>
+                            </td>
+                            <td class="text-end amount-cell">
+                                ৳ {{ payment.amount }}
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    {% else %}
+                        <tr>
+                            <td colspan="5">
+                                <div class="empty-state">
+                                    <div class="empty-state-icon">
+                                        <i class="bi bi-receipt"></i>
+                                    </div>
+                                    <h5>No Payment Records</h5>
+                                    <p>You don't have any payment history on your account yet.</p>
+                                </div>
+                            </td>
+                        </tr>
+                    {% endif %}
+                </tbody>
+            </table>
+        </div>
+    </div>
 
 </div>
+
+<style>
+    /* Container & Header (Matching Previous Pages) */
+    .payments-container { max-width: 900px; margin: 0 auto; padding-bottom: 2rem; }
+    
+    .page-header-card {
+        background: var(--bg-card, #ffffff); border: 1px solid var(--border-color, #e2e8f0);
+        padding: 24px; border-radius: 16px; display: flex; align-items: center; gap: 20px;
+        box-shadow: var(--shadow-sm, 0 2px 4px rgba(0,0,0,0.02));
+    }
+    
+    .header-icon {
+        width: 56px; height: 56px; border-radius: 16px;
+        display: flex; align-items: center; justify-content: center;
+        font-size: 24px; color: white; flex-shrink: 0;
+    }
+    .icon-ocean { background: var(--primary-gradient, linear-gradient(135deg, #0284c7 0%, #0369a1 100%)); }
+    
+    .header-info { flex: 1; }
+    .page-title { font-size: 20px; font-weight: 700; color: var(--ocean-dark, #0f172a); margin: 0 0 4px; }
+    .page-subtitle { font-size: 13px; color: var(--text-secondary, #64748b); margin: 0; }
+    
+    /* Billing Summary Card */
+    .billing-summary-card {
+        background: white; border: 1px solid var(--border-color, #e2e8f0);
+        border-radius: 16px; padding: 24px 32px;
+        display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 16px;
+        box-shadow: var(--shadow-sm, 0 2px 4px rgba(0,0,0,0.02));
+        border-left: 4px solid var(--ocean-main, #0ea5e9);
+    }
+    
+    .summary-label { display: block; font-size: 13px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px; color: var(--text-secondary, #64748b); margin-bottom: 4px; }
+    .summary-amount { font-size: 32px; font-weight: 700; line-height: 1.2; display: flex; align-items: center; gap: 6px; }
+    .currency-symbol { font-size: 24px; opacity: 0.8; font-weight: 500; }
+    
+    .text-danger-custom { color: #dc2626; }
+    .text-success-custom { color: #059669; }
+
+    /* Badges */
+    .status-badge { display: inline-flex; align-items: center; gap: 8px; padding: 10px 16px; border-radius: 50px; font-size: 14px; font-weight: 600; }
+    .status-badge i { font-size: 16px; }
+    .status-completed { background: #dcfce7; color: #166534; }
+    .status-due { background: #fee2e2; color: #991b1b; }
+
+    /* Modern Table Styling */
+    .modern-table-card {
+        background: var(--bg-card, #ffffff); border-radius: 16px;
+        border: 1px solid var(--border-color, #e2e8f0); overflow: hidden;
+        box-shadow: var(--shadow-sm, 0 2px 4px rgba(0,0,0,0.02));
+    }
+    
+    .table-header { padding: 20px 24px; border-bottom: 1px solid var(--border-color, #e2e8f0); background: white; }
+    .table-title { margin: 0; font-size: 16px; font-weight: 600; color: var(--ocean-dark, #0f172a); display: flex; align-items: center; gap: 8px; }
+    .table-title i { color: var(--ocean-main, #0284c7); }
+
+    .modern-table { width: 100%; border-collapse: collapse; }
+    .modern-table th {
+        background: var(--sky-lighter, #f8fafc); color: var(--text-secondary, #64748b);
+        font-size: 12px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px;
+        padding: 16px 24px; text-align: left; border-bottom: 1px solid var(--border-color, #e2e8f0);
+    }
+    .modern-table td {
+        padding: 16px 24px; vertical-align: middle;
+        border-bottom: 1px solid var(--border-color, #f1f5f9);
+        color: var(--text-primary, #334155); font-size: 14px;
+    }
+    .modern-table tbody tr:last-child td { border-bottom: none; }
+    .modern-table tbody tr:hover td { background: var(--sky-lighter, #f8fafc); transition: background 0.2s ease; }
+
+    /* Cell Content */
+    .date-cell { display: flex; align-items: center; gap: 8px; font-weight: 500; }
+    .time-muted { color: var(--text-secondary, #94a3b8); font-size: 13px; font-weight: 400; margin-left: 4px; }
+    .text-muted-blue { color: var(--ocean-main, #0ea5e9); font-size: 16px; }
+    
+    .method-text { font-weight: 500; color: var(--ocean-dark, #475569); }
+    .amount-cell { font-weight: 600; color: var(--ocean-dark, #0f172a); font-size: 15px; }
+
+    /* Small Soft Badges for Table */
+    .badge-soft { padding: 4px 10px; border-radius: 6px; font-size: 12px; font-weight: 600; letter-spacing: 0.5px; }
+    .badge-success { background: #dcfce7; color: #166534; }
+    .badge-danger { background: #fee2e2; color: #991b1b; }
+
+    /* Empty State */
+    .empty-state { text-align: center; padding: 48px 24px; }
+    .empty-state-icon {
+        width: 64px; height: 64px; border-radius: 50%; background: #f1f5f9; color: #94a3b8;
+        display: flex; align-items: center; justify-content: center; font-size: 28px; margin: 0 auto 16px;
+    }
+    .empty-state h5 { font-size: 16px; font-weight: 600; color: var(--ocean-dark, #0f172a); margin: 0 0 8px; }
+    .empty-state p { font-size: 14px; color: var(--text-secondary, #64748b); margin: 0; }
+
+    /* Utilities */
+    .text-end { text-align: right !important; }
+    .text-secondary { color: var(--text-secondary, #64748b) !important; }
+
+    /* Responsive adjustments */
+    @media (max-width: 768px) {
+        .billing-summary-card { flex-direction: column; align-items: flex-start; }
+        .modern-table th, .modern-table td { padding: 12px 16px; }
+        .date-cell { flex-direction: column; align-items: flex-start; gap: 2px; }
+        .time-muted { margin-left: 0; }
+    }
+</style>
 {% endblock %}

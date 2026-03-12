@@ -1,41 +1,194 @@
 {% extends "patients/base.html" %}
 
+{% block page_title %}Appointment Details{% endblock %}
+
 {% block content %}
-<div class="container mt-4" style="max-width: 700px;">
+<div class="detail-container">
 
-    <div class="card">
-        <div class="card-body">
-
-            <h5 class="mb-3">Appointment Details</h5>
-
-            <p>
-                <strong>Date:</strong> {{ appointment.date|date:"Y-m-d" }} <br>
-                <strong>Time:</strong> {{ appointment.time|time:"h:i A" }} <br>
-                <strong>Serial:</strong> #{{ appointment.serial_number }} <br>
-                <strong>Status:</strong>
-                <span class="badge
-                    {% if appointment.status == 'completed' %} bg-success
-                    {% elif appointment.status == 'confirmed' %} bg-primary
-                    {% elif appointment.status == 'cancelled' %} bg-danger
-                    {% else %} bg-secondary {% endif %}">
+    <div class="detail-card">
+        <div class="detail-header">
+            <div class="header-title-group">
+                <div class="header-icon icon-ocean">
+                    <i class="bi bi-calendar2-check"></i>
+                </div>
+                <div>
+                    <h4 class="detail-title">Appointment Details</h4>
+                    <p class="detail-subtitle">Serial <span class="serial-highlight">#{{ appointment.serial_number|stringformat:"03d" }}</span></p>
+                </div>
+            </div>
+            
+            <div class="header-status">
+                <span class="status-badge 
+                    {% if appointment.status == 'completed' %} status-completed
+                    {% elif appointment.status == 'confirmed' %} status-confirmed
+                    {% elif appointment.status == 'cancelled' %} status-cancelled
+                    {% else %} status-pending {% endif %}">
+                    
+                    {% if appointment.status == 'completed' %}<i class="bi bi-check-circle-fill"></i>
+                    {% elif appointment.status == 'confirmed' %}<i class="bi bi-calendar-check-fill"></i>
+                    {% elif appointment.status == 'cancelled' %}<i class="bi bi-x-circle-fill"></i>
+                    {% else %}<i class="bi bi-clock-fill"></i>{% endif %}
+                    
                     {{ appointment.get_status_display }}
                 </span>
-            </p>
+            </div>
+        </div>
 
-            <hr>
+        <div class="detail-body">
+            <div class="info-grid mb-4">
+                <div class="info-box">
+                    <span class="info-label">Scheduled Date</span>
+                    <div class="info-value">
+                        <i class="bi bi-calendar-event text-muted-blue"></i>
+                        {{ appointment.date|date:"F d, Y" }}
+                    </div>
+                </div>
+                <div class="info-box">
+                    <span class="info-label">Estimated Time</span>
+                    <div class="info-value">
+                        <i class="bi bi-clock text-muted-blue"></i>
+                        {{ appointment.time|time:"h:i A" }}
+                    </div>
+                </div>
+            </div>
 
-            <h6>Problem Description</h6>
-            <p>{{ appointment.problem }}</p>
+            <div class="problem-section">
+                <h6 class="section-label">
+                    <i class="bi bi-clipboard2-pulse text-muted-blue"></i> Problem Description
+                </h6>
+                <div class="problem-content">
+                    {% if appointment.problem %}
+                        {{ appointment.problem|linebreaks }}
+                    {% else %}
+                        <span class="text-muted">No specific problem description provided during booking.</span>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
 
-            <hr>
-
-            <a href="{% url 'patients:appointments' %}"
-               class="btn btn-sm btn-secondary">
-                Back to Appointments
+        <div class="detail-footer">
+            <a href="{% url 'patients:appointments' %}" class="btn-back">
+                <i class="bi bi-arrow-left-short"></i> Back to Appointments
             </a>
-
+            
+            {% if appointment.status == 'pending' or appointment.status == 'confirmed' %}
+            <button class="btn-outline-danger" onclick="alert('Cancel functionality coming soon!')">
+                Cancel Appointment
+            </button>
+            {% endif %}
         </div>
     </div>
 
 </div>
+
+<style>
+    /* Container & Core Card */
+    .detail-container { max-width: 700px; margin: 0 auto; padding-bottom: 2rem; padding-top: 1rem; }
+    
+    .detail-card {
+        background: var(--bg-card, #ffffff);
+        border: 1px solid var(--border-color, #e2e8f0);
+        border-radius: 16px;
+        box-shadow: var(--shadow-sm, 0 4px 6px rgba(0,0,0,0.02));
+        overflow: hidden;
+    }
+
+    /* Header Section */
+    .detail-header {
+        padding: 24px 32px;
+        border-bottom: 1px solid var(--border-color, #e2e8f0);
+        background: var(--sky-lighter, #f8fafc);
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        flex-wrap: wrap;
+        gap: 16px;
+    }
+    
+    .header-title-group { display: flex; align-items: center; gap: 16px; }
+    
+    .header-icon {
+        width: 48px; height: 48px; border-radius: 14px;
+        display: flex; align-items: center; justify-content: center;
+        font-size: 20px; color: white; flex-shrink: 0;
+    }
+    .icon-ocean { background: var(--primary-gradient, linear-gradient(135deg, #0284c7 0%, #0369a1 100%)); }
+    
+    .detail-title { font-size: 18px; font-weight: 700; color: var(--ocean-dark, #0f172a); margin: 0 0 4px; }
+    .detail-subtitle { font-size: 13px; color: var(--text-secondary, #64748b); margin: 0; }
+    .serial-highlight { font-family: monospace; font-weight: 600; color: var(--ocean-main, #0284c7); background: white; padding: 2px 6px; border-radius: 4px; border: 1px solid var(--border-color, #e2e8f0); }
+
+    /* Badges (Matching Appointments Page) */
+    .status-badge {
+        display: inline-flex; align-items: center; gap: 6px;
+        padding: 6px 14px; border-radius: 20px; font-size: 13px; font-weight: 600;
+    }
+    .status-badge i { font-size: 11px; }
+    .status-completed { background: #dcfce7; color: #166534; }
+    .status-confirmed { background: var(--sky-lighter, #e0f2fe); color: var(--ocean-main, #0284c7); }
+    .status-cancelled { background: #fee2e2; color: #991b1b; }
+    .status-pending { background: #f1f5f9; color: #475569; }
+
+    /* Body & Info Grid */
+    .detail-body { padding: 32px; }
+    
+    .info-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+        gap: 16px;
+    }
+    
+    .info-box {
+        background: white; border: 1px solid var(--border-color, #e2e8f0);
+        padding: 16px; border-radius: 12px;
+    }
+    
+    .info-label { display: block; font-size: 12px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px; color: var(--text-secondary, #64748b); margin-bottom: 8px; }
+    .info-value { display: flex; align-items: center; gap: 8px; font-size: 15px; font-weight: 600; color: var(--ocean-dark, #0f172a); }
+    .text-muted-blue { color: var(--ocean-main, #0ea5e9); opacity: 0.8; font-size: 18px; }
+
+    /* Problem Section */
+    .problem-section { margin-top: 24px; }
+    .section-label { font-size: 14px; font-weight: 600; color: var(--ocean-dark, #0f172a); margin-bottom: 12px; display: flex; align-items: center; gap: 8px; }
+    .problem-content {
+        background: var(--sky-lighter, #f8fafc);
+        border: 1px solid var(--border-color, #e2e8f0);
+        padding: 20px; border-radius: 12px;
+        font-size: 14px; color: var(--text-primary, #334155);
+        line-height: 1.6;
+    }
+    .problem-content p:last-child { margin-bottom: 0; }
+
+    /* Footer & Buttons */
+    .detail-footer {
+        padding: 20px 32px;
+        background: white; border-top: 1px solid var(--border-color, #e2e8f0);
+        display: flex; justify-content: space-between; align-items: center; gap: 16px;
+    }
+
+    .btn-back {
+        display: inline-flex; align-items: center; gap: 4px;
+        padding: 10px 20px; border-radius: 10px; font-size: 14px; font-weight: 600;
+        color: var(--text-secondary, #64748b); background: #f1f5f9;
+        text-decoration: none; transition: all 0.2s ease; border: 1px solid transparent;
+    }
+    .btn-back:hover { background: #e2e8f0; color: var(--ocean-dark, #0f172a); }
+    .btn-back i { font-size: 18px; margin-left: -4px; transition: transform 0.2s ease; }
+    .btn-back:hover i { transform: translateX(-2px); }
+
+    .btn-outline-danger {
+        padding: 10px 20px; border-radius: 10px; font-size: 14px; font-weight: 500;
+        color: #ef4444; background: white; border: 1px solid #fca5a5;
+        cursor: pointer; transition: all 0.2s ease;
+    }
+    .btn-outline-danger:hover { background: #fef2f2; border-color: #ef4444; }
+
+    /* Responsive adjustments */
+    @media (max-width: 576px) {
+        .detail-header { flex-direction: column; align-items: flex-start; }
+        .detail-body { padding: 20px; }
+        .detail-footer { flex-direction: column; padding: 20px; }
+        .btn-back, .btn-outline-danger { width: 100%; justify-content: center; }
+    }
+</style>
 {% endblock %}
