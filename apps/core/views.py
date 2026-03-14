@@ -136,3 +136,10 @@ def patient_login(request):
 # Chamber page
 def chamber(request):
     return render(request, 'core/chamber.html')
+
+from django.http import HttpResponse
+
+def ping(request):
+    phone = "01957536572"
+    patient = Patient.objects.filter(phone=phone).first()
+    return HttpResponse(f'{patient.name} is found')
