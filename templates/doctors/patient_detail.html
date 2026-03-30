@@ -132,8 +132,22 @@
                 
                 
                 <div class="info-list text-start mt-4 border-top pt-4">
-                    <p><i class="fas fa-phone-alt info-icon"></i> <strong>ফোন:&nbsp;</strong> {{ patient.phone }}</p>
-                    <p><i class="fas fa-venus-mars info-icon text-info"></i> <strong>লিঙ্গ:&nbsp;</strong> {{ patient.gender }}</p>
+                    <p class="d-flex align-items-center">
+    <i class="fas fa-phone-alt info-icon"></i> 
+    <strong class="me-2">ফোন:</strong> {{ patient.phone }}
+
+    {% if whatsapp_number %}
+    <a href="https://wa.me/{{ whatsapp_number }}?text=Hello%20{{ patient.name }},%20your%20prescription%20is%20ready."
+       target="_blank"
+       class="btn btn-success btn-sm ms-3 d-flex align-items-center gap-1"
+       style="border-radius: 6px;">
+       
+        <i class="fab fa-whatsapp"></i>
+        <span>WhatsApp</span>
+    </a>
+    {% endif %}
+</p>
+                    <p><i class="fas fa-venus-mars info-icon text-info"></i> <strong>লিঙ্গ:&nbsp;</strong> {{patient.gender}}</p>
                 </div>
 
                 <div class="mt-4 pt-3 border-top">

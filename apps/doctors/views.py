@@ -186,6 +186,23 @@ def patient_create(request):
 
     return render(request, 'doctors/patient_create.html', {'phone': phone})
 
+
+def format_whatsapp_number(phone):
+    if not phone:
+        return ""
+    
+    phone = phone.strip().replace(" ", "").replace("-", "")
+
+    # remove +
+    if phone.startswith("+"):
+        phone = phone[1:]
+
+    # BD local → international
+    if phone.startswith("01"):
+        phone = "880" + phone[1:]
+
+    return phone
+
 @doctor_required
 def patient_detail(request, pk):
     patient = get_object_or_404(Patient, pk=pk)
@@ -205,12 +222,15 @@ def patient_detail(request, pk):
             (today.month, today.day) <
             (patient.date_of_birth.month, patient.date_of_birth.day)
         )
+    whatsapp_number = format_whatsapp_number(patient.phone)
+
     context = {
         'patient': patient,
         'appointments': appointments,
         'prescriptions': prescriptions,
         'documents': documents,
         'age' : age,
+        'whatsapp_number' : whatsapp_number,
     }
     return render(request, 'doctors/patient_detail.html', context)
 
