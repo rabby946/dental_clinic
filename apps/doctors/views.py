@@ -40,6 +40,22 @@ from django.contrib.auth import authenticate, login
 from django.contrib import messages
 from django.contrib.auth.models import User
 
+def format_whatsapp_number(phone):
+    if not phone:
+        return ""
+    
+    phone = phone.strip().replace(" ", "").replace("-", "")
+
+    # remove +
+    if phone.startswith("+"):
+        phone = phone[1:]
+
+    # BD local → international
+    if phone.startswith("01"):
+        phone = "880" + phone[1:]
+
+    return phone
+
 def doctor_login(request):
 
     # If already logged in, redirect to dashboard
@@ -138,6 +154,7 @@ def patient_search(request):
         if not phone:
             messages.error(request, "Phone number required.")
             return redirect('doctors:doctor_dashboard')
+        phone = format_whatsapp_number(phone)
 
         try:
             patient = Patient.objects.get(phone=phone)
@@ -155,7 +172,7 @@ def patient_confirm_create(request):
 
     if not phone:
         return redirect('doctors:doctor_dashboard')
-
+    phone = format_whatsapp_number(phone)
     return render(request, 'doctors/patient_confirm_create.html', {
         'phone': phone
     })
@@ -166,7 +183,7 @@ def patient_create(request):
 
     if not phone:
         return redirect('doctors:doctor_dashboard')
-
+    phone = format_whatsapp_number(phone)
     if request.method == 'POST':
         name = request.POST.get('name')
         gender = request.POST.get('gender')
@@ -187,21 +204,7 @@ def patient_create(request):
     return render(request, 'doctors/patient_create.html', {'phone': phone})
 
 
-def format_whatsapp_number(phone):
-    if not phone:
-        return ""
-    
-    phone = phone.strip().replace(" ", "").replace("-", "")
 
-    # remove +
-    if phone.startswith("+"):
-        phone = phone[1:]
-
-    # BD local → international
-    if phone.startswith("01"):
-        phone = "880" + phone[1:]
-
-    return phone
 
 @doctor_required
 def patient_detail(request, pk):

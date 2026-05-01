@@ -12,6 +12,10 @@ class Prescription(models.Model):
         on_delete=models.CASCADE,
         related_name='prescriptions'
     )
+    chief_complaint = models.TextField(blank=True)
+    medical_history = models.TextField(blank=True)
+    oe = models.TextField(blank=True)  # On Examination
+    treatment_plan = models.TextField(blank=True)
 
     note = models.TextField(blank=True)
     created_at = models.DateTimeField(auto_now_add=True)
@@ -28,3 +32,28 @@ class PrescriptionItem(models.Model):
 
     def __str__(self):
         return f"{self.medicine.name}"
+
+class Investigation(models.Model):
+    name = models.CharField(max_length=255)
+    description = models.TextField(blank=True)
+    is_active = models.BooleanField(default=True)
+
+    def __str__(self):
+        return self.name
+    
+class PrescriptionInvestigation(models.Model):
+    prescription = models.ForeignKey(
+        Prescription,
+        on_delete=models.CASCADE,
+        related_name='investigations'
+    )
+
+    investigation = models.ForeignKey(
+        Investigation,
+        on_delete=models.CASCADE
+    )
+
+    notes = models.CharField(max_length=255, blank=True)
+
+    def __str__(self):
+        return f"{self.prescription.id} - {self.investigation.name}"

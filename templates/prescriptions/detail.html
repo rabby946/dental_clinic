@@ -1,129 +1,293 @@
 {% extends 'core/base.html' %}
+{% load static %}
 {% block title %}Prescription{% endblock %}
 
 {% block content %}
 
 <style>
-    @media print {
 
-        body * {
-            visibility: hidden;
-        }
+/* A4 */
+@page {
+    size: A4;
+    margin: 0.5in;
+}
 
-        #print-area,
-        #print-area * {
-            visibility: visible;
-        }
+@media print {
 
-        #print-area {
-            position: absolute;
-            left: 0;
-            top: 0;
-            width: 100%;
-        }
-
-        .no-print {
-            display: none !important;
-        }
+    body{
+        -webkit-print-color-adjust: exact;
+        print-color-adjust: exact;
     }
+
+    html, body{
+        margin:0 !important;
+        padding:0 !important;
+    }
+
+    .container,
+    .container-fluid{
+        width:100% !important;
+        max-width:100% !important;
+        padding:0 !important;
+        margin:0 !important;
+    }
+
+    .card{
+        border:none !important;
+        box-shadow:none !important;
+        padding:0 !important;
+        margin:0 !important;
+    }
+
+    .row{
+        margin-left:0 !important;
+        margin-right:0 !important;
+    }
+
+    [class*="col-"]{
+        padding-left:6px !important;
+        padding-right:6px !important;
+    }
+
+    body *{
+        visibility:hidden;
+    }
+
+    #print-area,
+    #print-area *{
+        visibility:visible;
+    }
+
+    #print-area{
+        position:absolute;
+        left:0;
+        top:0;
+        width:100%;
+    }
+
+    .no-print{
+        display:none !important;
+    }
+}
+
+/* make layout tighter */
+
+
+
+
+/* WATERMARK */
+.watermark{
+    position:absolute;
+    top:45%;
+    left:50%;
+    transform:translate(-50%,-50%) rotate(-30deg);
+    font-size:70px;
+    font-weight:700;
+    opacity:0.04;
+    color:#000;
+    white-space:nowrap;
+    pointer-events:none;
+}
+
+/* HEADER */
+.clinic-header{
+    border-bottom:2px solid #000;
+    padding-bottom:6px;
+    margin-bottom:8px;
+}
+
+.logo{
+    height:55px;
+}
+
+/* LEFT BOXES */
+.rx-box{
+    min-height:50px;
+    padding:3px 0;
+}
+
+
+
+.rx-title{
+    font-weight:600;
+    font-size:13px;
+    margin-bottom:2px;
+}
+
+/* MEDICINE */
+.rx-symbol{
+    font-size:20px;
+    font-weight:bold;
+}
+
+.medicine-row{
+    padding:3px 0;
+    font-size:13px;
+}
+
+.patient-info{
+    font-size:14px;
+}
+
+.signature{
+    margin-top:30px;
+}
+
 </style>
 
-<div class="container py-4">
 
-    <div class="card shadow p-4">
+<div class="container py-3">
+<div class="card shadow p-3">
 
-        <div id="print-area">
+<div id="print-area">
 
-            <!-- Header -->
-            <div class="text-center mb-4">
-                <h3 class="fw-bold">Dental Clinic</h3>
-                <p>Dr. Abul Kalam Azad | BDS, DDS</p>
-                <hr>
-            </div>
+<div class="watermark">
+New Oro Dent Care
+</div>
 
-            <!-- Patient Info -->
-            <div class="row mb-3">
-                <div class="col-md-6">
-                    <strong>Patient:</strong>
-                    {{ prescription.appointment.patient.name }} <br>
+<!-- HEADER -->
+<div class="clinic-header">
+<div class="row align-items-center">
 
-                    <strong>Age:</strong>
-                    {{age}} <br>
+<div class="col-2">
+<img src="{% static 'images/logo.png' %}" class="logo">
+</div>
 
-                    <strong>Phone:</strong>
-                    {{ prescription.appointment.patient.phone }}
-                </div>
+<div class="col-8 text-center">
+<h4 class="mb-0 fw-bold">New Oro Dent Care</h4>
+<small>Dr. Abul Kalam Azad | BDS, DDS</small><br>
+<small>Dental & Oral Care Specialist</small>
+</div>
 
-                <div class="col-md-6 text-md-end">
-                    <strong>Date:</strong>
-                    {{ prescription.created_at|date:"d M Y" }} <br>
+<div class="col-2 text-end">
+<small>
+Date: {{ prescription.created_at|date:"d M Y" }} <br>
+Rx: #{{ prescription.id }}
+</small>
+</div>
 
-                    <strong>Prescription ID:</strong>
-                    #{{ prescription.id }}
-                </div>
-            </div>
+</div>
+</div>
 
-            <hr>
+<!-- PATIENT INFO -->
+<div class="row patient-info mb-2">
+<div class="col-6">
+<strong>Patient:</strong> {{ prescription.appointment.patient.name }} <br>
+<strong>Age:</strong> {{ age }} <br>
+<strong>Phone:</strong> {{ prescription.appointment.patient.phone }}
+</div>
 
-            <!-- Medicine List -->
-            <h5 class="fw-bold mb-3">Medicines</h5>
+<div class="col-6 text-end">
+<strong>Appointment:</strong> {{ prescription.appointment.id }} <br>
+<strong>Doctor:</strong> Dr. Abul Kalam Azad
+</div>
+</div>
 
-            <table class="table table-bordered">
-                <thead>
-                    <tr>
-                        <th>#</th>
-                        <th>Medicine Details</th>
-                        <th>Dosage</th>
-                        <th>Duration</th>
-                        <th>Instructions</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    {% for item in prescription.items.all %}
-                    <tr>
-                        <td>{{ forloop.counter }}</td>
-                        <td>
-                            <strong>{{ item.medicine.name }}</strong><br>
-                            <small>
-                                {{ item.medicine.type }} |
-                                {{ item.medicine.strength }} |
-                                {{ item.medicine.brand }}
-                            </small>
-                        </td>
-                        <td>{{ item.dosage }}</td>
-                        <td>{{ item.duration }}</td>
-                        <td>
-                            {{ item.instructions|default:item.medicine.instructions }}
-                        </td>
-                    </tr>
-                    {% endfor %}
-                </tbody>
-            </table>
+<hr class="my-2">
 
-            {% if prescription.note %}
-            <div class="mt-4">
-                <strong>Doctor Note:</strong>
-                <p>{{ prescription.note }}</p>
-            </div>
-            {% endif %}
+<div class="row">
 
-            <!-- Footer -->
-            <div class="mt-5 text-end">
-                __________________________ <br>
-                Doctor Signature
-            </div>
+<!-- LEFT SIDE -->
+<div class="col-7 pe-3">
 
-        </div>
+<div class="rx-box">
+<div class="rx-title">Chief Complaint</div>
+{{ prescription.chief_complaint|linebreaks }}
+</div>
 
-        <!-- Print Button -->
-        <div class="mt-4 text-center no-print">
-            <button onclick="window.print()" class="btn btn-dark">
-                Download / Print Prescription
-            </button>
-        </div>
+<div class="rx-box">
+<div class="rx-title">Medical History</div>
+{{ prescription.medical_history|linebreaks }}
+</div>
 
-    </div>
+<div class="rx-box">
+<div class="rx-title">O/E (On Examination)</div>
+{{ prescription.oe|linebreaks }}
+</div>
 
+<div class="rx-box">
+<div class="rx-title">Investigation</div>
+
+{% for inv in prescription.investigations.all %}
+• {{ inv.investigation.name }} <br>
+{% empty %}
+<span class="text-muted">None</span>
+{% endfor %}
+
+</div>
+
+<div class="rx-box">
+<div class="rx-title">Treatment Plan</div>
+{{ prescription.treatment_plan|linebreaks }}
+</div>
+
+{% if prescription.note %}
+<div class="rx-box">
+<div class="rx-title">Doctor Note</div>
+{{ prescription.note|linebreaks }}
+</div>
+{% endif %}
+
+</div>
+
+
+<!-- RIGHT SIDE -->
+<div class="col-5 border-start ps-3">
+
+<div class="d-flex align-items-center mb-1">
+<span class="rx-symbol me-2">℞</span>
+<strong>Medicines</strong>
+</div>
+
+{% for item in prescription.items.all %}
+<div class="medicine-row">
+
+<div class="fw-semibold">
+{{ forloop.counter }}. {{ item.medicine.name }}
+</div>
+
+<small class="text-muted">
+{{ item.medicine.type }} |
+{{ item.medicine.strength }} |
+{{ item.medicine.brand }}
+</small>
+
+<div>
+Dose: {{ item.dosage }} |
+Duration: {{ item.duration }}
+</div>
+
+<div>
+{{ item.instructions|default:item.medicine.instructions }}
+</div>
+
+</div>
+{% endfor %}
+
+</div>
+
+</div>
+
+<!-- SIGNATURE -->
+<div class="row signature">
+<div class="col-6"></div>
+
+<div class="col-6 text-center">
+<br><br>
+_________________________<br>
+Doctor Signature
+</div>
+</div>
+
+</div>
+
+<div class="text-center mt-3 no-print">
+<button onclick="window.print()" class="btn btn-dark">
+Print Prescription
+</button>
+</div>
+
+</div>
 </div>
 
 {% endblock %}
